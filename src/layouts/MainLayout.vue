@@ -6,16 +6,50 @@
           flat
           dense
           round
-          icon="menu"
+          icon="las la-bars"
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
 
         <q-toolbar-title>
-          Quasar App
+          Dashboard de Pruebas
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn 
+          flat
+          push 
+          icon="las la-door-open"
+          label="Ingresar"
+          @click="goToLogin"
+        />
+
+        <q-btn
+          flat
+          dense
+          round
+          icon="las la-user-circle"
+          aria-label="Profile"
+          @click="goToProfile"
+        />
+
+        <q-btn
+          flat
+          dense
+          round
+          icon="las la-bell"
+          aria-label="Notifications"
+          @click="goToNotifications"
+        />
+
+        <q-btn
+          flat
+          dense
+          round
+          icon="las la-cog"
+          aria-label="Configuration"
+          @click="goToConfigurations"
+        />
+
       </q-toolbar>
     </q-header>
 
@@ -28,7 +62,7 @@
         <q-item-label
           header
         >
-          Essential Links
+        Aplicaciones
         </q-item-label>
 
         <EssentialLink
@@ -46,61 +80,48 @@
 </template>
 
 <script setup>
+//import { computed } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 import { ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
+import { linksList } from '../router/link-list'
+//import { getsideMenuOpen } from 'src/store/UI/getters';
 
 defineOptions({
   name: 'MainLayout'
 })
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
-
 const leftDrawerOpen = ref(false)
+const store = useStore()
 
 function toggleLeftDrawer () {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
+
+/* getsideMenuOpen: computed( () => store.getters['ui/isSideMenuOpen'])
+ */
+/* function toggleSideMenu() {
+  store.commit('ui/toggleSideMenu')
+} */
+
+
+const router = useRouter()
+
+const goToProfile = () => {
+  router.push({ name: 'profile' }) 
+}
+
+const goToNotifications = () => {
+  router.push({ name: 'notifications' }) 
+}
+
+const goToConfigurations = () => {
+  router.push({ name: 'configurations' }) 
+}
+
+const goToLogin = () => {
+  router.push({ name: 'login' }) 
+}
+
 </script>

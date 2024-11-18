@@ -40,5 +40,6 @@ export const linksList = [
       caption: 'quasar.dev',
       icon: 'las la-graduation-cap',
       link: 'https://quasar.dev'
-    }
+    },
+    //Calendar links
   ]

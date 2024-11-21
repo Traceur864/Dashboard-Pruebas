@@ -1,6 +1,6 @@
 export function someGetter (/* state */) {
 }
 
-export function getsideMenuOpen (state) {
-    return state.sideMenuOpen
+export function isSideMenuOpen ( state ) {
+    return state.isSideMenuOpen
 }

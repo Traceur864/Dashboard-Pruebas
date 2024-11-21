@@ -8,7 +8,7 @@
           <q-card class="create-account-card" style="width: 400px">
 
             <q-card-section>
-                <span class="text-h4 text-weight-regular">Iniciar Sesión</span>
+                <span class="text-h4 text-weight-regular" style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Iniciar Sesión</span>
             </q-card-section>
             <q-card-section>
                 <q-form @submit="handleLogin" ref="loginForm">
@@ -23,16 +23,29 @@
                 <q-input
                     v-model="password"
                     label="Contraseña"
-                    type="password"
-                    :rules="[val => val && val.length > 0 || 'Este campo es requerido']"
+                    :type="isPwd ? 'password' : 'text'"
+                    :rules="[
+                      val => val && val.length > 0 || 'Este campo es requerido',
+                      val => val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
+                      val => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(val) || 'La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial',
+                      ]"
                     outlined
                     dense
-                />
-                <div class="flex justify-end">
+                  >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="isPwd ? 'visibility_off' : 'visibility'"
+                      class="cursor-pointer"
+                      @click="isPwd = !isPwd"
+                    />
+                  </template>
+                </q-input>
+
+                <div class="flex justify-end q-mt-md">
                     <q-btn
                         label="Iniciar sesión"
                         icon-right="las la-sign-in-alt"
-                        color="primary"
+                        color="secondary"
                         type="submit"
                         push
                         no-caps
@@ -51,10 +64,11 @@
 <script setup>
 import { ref } from 'vue'
 
-const email = ref('');
-const password = ref('');
-const loading = ref([false]);
-const loginForm = ref(null);
+const email = ref('')
+const password = ref('')
+const loading = ref([false])
+const loginForm = ref(null)
+const isPwd = ref(true)
 
 function handleLogin() {
   // Validar si el formulario es válido antes de iniciar el proceso de carga

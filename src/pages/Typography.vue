@@ -44,10 +44,21 @@
           <span class="text-strike">Dark</span>
         <q-separator/>
 
+        <q-btn
+          color="primary" 
+          label="Abrir menu lateral"
+          class="q-mt-md"      
+          @click="toggleSideMenu" 
+        />
+
     </q-page>
   </template>
   
   <script setup>
+  
+  import useUI from '../composables/useUI'
+  const { toggleSideMenu} = useUI()
+
   defineOptions({
     name: 'TypographyPage'
   });

@@ -36,9 +36,24 @@ export const linksList = [
       link: 'strain-gauge'
     },
     {
+      title: 'Vacation Planner',
+      caption: 'RH',
+      icon: 'lar la-calendar',
+      link: 'vacation-planner'
+    },
+    {
+      title: 'Label Center',
+      caption: 'Control de Etiquetas',
+      icon: 'las la-ticket-alt',
+      link: 'label-center'
+    },
+    {
       title: 'Docs',
       caption: 'quasar.dev',
       icon: 'las la-graduation-cap',
       link: 'https://quasar.dev'
     }
+    
+
+
   ]

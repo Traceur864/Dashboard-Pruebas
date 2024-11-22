@@ -18,7 +18,7 @@ const routes = [
       { path: 'mda', name:'mda', component: () => import('pages/TeamTests/MDA.vue')},
       { path: 'ict', name:'ict', component: () => import('pages/TeamTests/ICT.vue')},
       { path: 'organigrama', name:'organigrama', component: () => import('pages/TeamTests/Organigrama.vue')},
-      { path: 'straingauge', name:'strain-gauge', component: () => import('pages/TeamTests/StrainGauge.vue')},
+      { path: 'straingauge', name:'strain_gauge', component: () => import('pages/TeamTests/StrainGauge.vue')},
 
       //Calendar routes
       { path: 'calendar/vacations', name:'vacation_calendar' , component: () => import('pages/calendar/VacationCalendar.vue') },

@@ -13,7 +13,7 @@
             <q-card-section>
                 <q-form @submit="handleLogin" ref="loginForm">
                 <q-input
-                    v-model="email"
+                    v-model="userForm.email"
                     label="Correo electrónico"
                     type="email"
                     :rules="[val => val && val.length > 0 || 'Este campo es requerido']"
@@ -21,14 +21,13 @@
                     dense
                 />
                 <q-input
-                    v-model="password"
+                    v-model="userForm.password"
                     label="Contraseña"
                     :type="isPwd ? 'password' : 'text'"
                     :rules="[
                       val => val && val.length > 0 || 'Este campo es requerido',
                       val => val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
-                      val => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(val) || 'La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial',
-                      ]"
+                    ]"
                     outlined
                     dense
                   >
@@ -37,6 +36,26 @@
                       :name="isPwd ? 'visibility_off' : 'visibility'"
                       class="cursor-pointer"
                       @click="isPwd = !isPwd"
+                    />
+                  </template>
+                </q-input>
+                <q-input
+                    v-model="userForm.passwordRepeat"
+                    label="Repetir contraseña"
+                    :type="isPwd2 ? 'password' : 'text'"
+                    :rules="[
+                      val => val && val.length > 0 || 'Este campo es requerido',
+                      val => val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
+                      isSamePassword
+                    ]"
+                    outlined
+                    dense
+                  >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="isPwd2 ? 'visibility_off' : 'visibility'"
+                      class="cursor-pointer"
+                      @click="isPwd2 = !isPwd2"
                     />
                   </template>
                 </q-input>
@@ -64,16 +83,23 @@
 <script setup>
 import { ref } from 'vue'
 
-const email = ref('')
-const password = ref('')
+const userForm = ref({
+  email: '',
+  password: '',
+  passwordRepeat: ''
+})
+
 const loading = ref([false])
 const loginForm = ref(null)
 const isPwd = ref(true)
+const isPwd2 = ref(true)
 
 function handleLogin() {
   // Validar si el formulario es válido antes de iniciar el proceso de carga
   if (loginForm.value && loginForm.value.validate()) {
     // Si es válido, activar el loading
+    console.log(userForm.value)
+    
     simulateProgress(0);
   }
 }
@@ -88,7 +114,25 @@ function simulateProgress(number) {
   loading.value[number] = false;
   // Aquí puedes manejar lo que sucede después de intentar iniciar sesión, 
   // como redirigir a otra página o mostrar un mensaje de error
+
+  onReset()
   }, 3000);
+
+  
+}
+
+function isSamePassword(val){
+  return (val == userForm.value.password) || 'Las contraseñas no son iguales'
+}
+
+function onReset () {
+
+    userForm.value = {
+    email: '',
+    password: '',
+    passwordRepeat: ''
+  }
+  
 }
 
 defineOptions({

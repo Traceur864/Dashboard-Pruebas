@@ -5,10 +5,21 @@ const useUI = () => {
     const store = useStore()
 
     return {
-        sideMenuOpen: computed( () => store.getters['ui/isSideMenuOpen']),
+        sideMenuOpen: computed( {
+            get(){
+                return store.getters['ui/isSideMenuOpen']
+            },
+            set(val){
+                console.log({val})
+                store.commit('ui/toggleSideMenu')          
+            }
+        }),
         toggleSideMenu(){
             store.commit('ui/toggleSideMenu')
           },
+
+        //Add more methods for the UI state and mutations
+        
     }
     //Side menu options
     

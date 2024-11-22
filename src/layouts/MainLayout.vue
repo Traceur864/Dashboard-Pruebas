@@ -10,24 +10,31 @@
           aria-label="Menu"
           @click="toggleSideMenu"
         />
-
         
-      <q-toolbar-title>
-        <q-btn 
-          flat
-          size="18px" 
-          label="Dashboard de Pruebas" 
-          to="/" 
-          class="q-px-none" 
-        />
-      </q-toolbar-title>
+        <q-toolbar-title>
+          
+          <q-img
+              src="/public/imgs/Ingrasys.png"
+              alt="Ingrasys"
+              :style="{ width:'115px'}"
+              class="q-mr-sm"
+            />
+
+          <q-btn 
+            flat
+            size="18px" 
+            label="Dashboard de Pruebas" 
+            to="/" 
+          />
+
+        </q-toolbar-title>
         
         <q-btn
           flat 
           icon="las la-door-open"
           label="Ingresar"
           @click="goToLogin"
-        />
+          />
 
         <q-btn
           flat
@@ -35,69 +42,67 @@
           round
           icon="las la-user-circle"
           aria-label="Profile"
-        >
+          >
+
         <q-menu 
           transition-show="scale"
           transition-hide="scale"
-        >
-        <div class="row no-wrap q-pa-md">
-          <div class="column">
-            <div class="text-h6 q-mb-md">Opciones</div>
-            <q-btn
-              size="12px"
-              label="Perfil"
-              color="secondary"
-              push
-              dense
-              @click="goToProfile"
-            />
-            <br>
-            <q-btn
-              size="12px"
-              label="Notifications"
-              color="secondary"
-              push
-              dense
-              @click="goToNotifications"
-            />
-            <br>
-            <q-btn
-              size="12px"
-              label="Configuración"
-              color="secondary"
-              push
-              dense
-              class="q-pa-xs"
-              @click="goToConfigurations"
-            />
-          </div>
-
-          <q-separator vertical inset class="q-mx-md"/>
-
-          <div class="column items-center">
-            <q-avatar size="72px">
-              <img src="/public/imgs/GitHub.jpg">
-            </q-avatar>
-
-            <div class="flex items-center q-mt-lg">
-              <span class="text-subtitle2 text-center">Edwin Lopez</span>
-            </div>
-
-            <div class="flex itmes-center q-mt-sm">
+          >
+          <div class="row no-wrap q-pa-md">
+            <div class="column">
+              <div class="text-h6 q-mb-lg">Opciones</div>
               <q-btn
-              class="q-mt-md"
-              color="primary"
-              label="Logout"
-              push
-              size="sm"
-              @click="goToLogin"
-              v-close-popup
-            />
-            </div>
+                size="sm"
+                label="Perfil"
+                color="secondary"
+                push
+                @click="goToProfile"
+              />
+              <br>
+              <q-btn
+                size="sm"
+                label="Notifications"
+                color="secondary"
+                push
+                @click="goToNotifications"
+              />
+              <br>
+              <q-btn
+                size="sm"
+                label="Configuración"
+                color="secondary"
+                push
+                class="q-pa-xs"
+                @click="goToConfigurations"
+                />
+              </div>
+
+              <q-separator vertical inset class="q-mx-md"/>
+
+              <div class="column items-center">
+                <q-avatar size="66px">
+                  <img src="/public/imgs/GitHub.jpg">
+                </q-avatar>
+
+              <div class="flex items-end q-mt-md">
+                <span class="text-subtitle2 text-center">Edwin Lopez</span>
+              </div>
+
+              <div class="flex itmes-center q-mt-sm">
+                <q-btn
+                class="q-mt-md"
+                color="primary"
+                label="Logout"
+                push
+                size="sm"
+                @click="goToLogin"
+                v-close-popup
+                />
+                </div>
+              </div>
           </div>
-        </div>
-      </q-menu>
-      </q-btn>
+        </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
@@ -133,7 +138,6 @@ import { useRouter } from 'vue-router';
 import { ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 import { linksList } from '../router/link-list'
-//import { getsideMenuOpen } from 'src/store/UI/getters';
 const mobileData = ref(true)
 const bluetooth = ref(false)
 

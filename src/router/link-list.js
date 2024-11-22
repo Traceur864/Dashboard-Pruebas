@@ -1,17 +1,5 @@
 export const linksList = [
     {
-      title: 'Typography',
-      caption: 'Tipo de letras',
-      icon: 'las la-file-alt',
-      link: 'typography'
-    },
-    {
-      title: 'Flex Layout',
-      caption: 'Estilos con flex',
-      icon: 'las la-cube',
-      link: 'flex'
-    },
-    {
       title: 'ICT',
       caption: 'Visualizacion de datos ICT',
       icon: 'las la-chart-bar',

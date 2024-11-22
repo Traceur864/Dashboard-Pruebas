@@ -1,7 +1,9 @@
 export default function () {
   
   return {
-    isSideMenuOpen : true
+    isSideMenuOpen : true,
   }
+
+
   
 }

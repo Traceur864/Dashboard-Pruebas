@@ -99,12 +99,7 @@
         '25612-B00-GB05'
         ],
 
-        areas:[
-          'ICT',
-          'MDA',
-          'ISP',
-          'BSI'
-        ],
+        areas:[],
 
         monitos: [
             "Juan Carlos",
@@ -155,10 +150,23 @@
           var data = response.data
           this.models = []
           for (const ele in data) {
-            var helper = {}
-            helper.value = data[ele].ID_MODEL
-            helper.label = data[ele].MODEL
-            this.models.push(helper)
+            this.models.push({
+              value: data[ele].ID_MODEL,
+              label: data[ele].MODEL
+            })
+          }
+        }).catch((err)=>{
+          console.error(err);
+        })
+
+        api.get('/area').then((response) =>{
+          var data = response.data
+          this.areas = []
+          for (const ele in data) {
+            this.areas.push({
+              value: data[ele].ID_AREA,
+              label: data[ele].AREA
+            })
           }
         }).catch((err)=>{
           console.error(err);

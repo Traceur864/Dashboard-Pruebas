@@ -1,4 +1,4 @@
 <template>
-    <div class="text-h4">Tester registrados</div>
+    <div class="text-h4">Editar Tester</div>
     
 </template>

@@ -1,6 +1,6 @@
 <template>
     <q-dialog :model-value="insert_test_dialog">
-      <q-card style="width: 700px; max-width: 80vw;">
+      <q-card style="width: 80vw; max-width: 80vw;">
             <q-tabs
             v-model="tab"
             class="text-grey"
@@ -11,23 +11,17 @@
             >
 
             <q-tab :ripple="false" name="administrar" label="Administrar" />
-            <q-tab :ripple="false" name="editar" label="Editar" />
-            <q-tab :ripple="false" name="insertar" label="Insertar" />
+            <q-tab :ripple="false" name="insertar" label="Registrar" />
 
             </q-tabs>
 
 
             <q-tab-panels v-model="tab" animated>
                 <q-tab-panel name="administrar">
-                    <EditTesterForm/>
-                </q-tab-panel>
-                <q-tab-panel name="editar">
-                    <div class="text-h6">Alarms</div>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    <ShowTestersForm/>
                 </q-tab-panel>
                 <q-tab-panel name="insertar">
-                    <div class="text-h6">Movies</div>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    <InsertTesterForm/>
                 </q-tab-panel>
             </q-tab-panels>
 
@@ -40,6 +34,9 @@
 
 <script>
     import EditTesterForm from './EditTesterForm.vue';
+    import InsertTesterForm from './InsertTesterForm.vue';
+    import ShowTestersForm from './ShowTestersForm.vue';
+
     export default {
         data(){
             return {
@@ -47,7 +44,8 @@
             }
         },
         components:{
-            EditTesterForm
+            InsertTesterForm,
+            ShowTestersForm,
         },
         //Import variable as prop so it can be accessed from parent
         props:[

@@ -8,7 +8,7 @@
 
         <q-card-section>
           <q-form @submit="HandleLogin" ref="loginForm" >
-            <div class="row justify-between q-mb-md">
+            <div class="row justify-between q-mb-sm">
               <div class="col-md-5">
                 <q-input
                   dense
@@ -50,7 +50,7 @@
                 </q-input>
               </div>
             </div>
-            <div class="row justify-between q-mb-md">
+            <div class="row justify-between q-mb-sm">
               <div class="col-md-5">
                 <q-input
                   dense
@@ -99,7 +99,7 @@
                 </q-input>
               </div>
             </div>
-            <div class="row justify-between q-mb-md">
+            <div class="row justify-between q-mb-sm">
               <div class="col-md-5">
                 <q-select 
                   dense
@@ -141,7 +141,7 @@
                 </q-select>
               </div>
             </div>
-            <div class="row justify-between q-mb-md">
+            <div class="row justify-between q-mb-sm">
             <div class="col-md-5">
               <q-select 
                 dense  
@@ -190,7 +190,7 @@
               </q-input>
             </div>
             </div>
-            <div class="row justify-between q-mb-md">
+            <div class="row justify-between q-mb-sm">
               <div class="col-md-5">
                 <q-input
                   dense

@@ -148,8 +148,8 @@ icon: 'warning'
     { img: '/public/imgs/Insta.jpg', name: 'Fernando Gutiérrez', role: 'Test Engineer', alt: 'Profile Image' },
     { img: '/public/imgs/GitHub.jpg', name: 'Monica Lopez', role: 'Test Engineer', alt: 'Profile Image' },
     { img: '/public/imgs/Xbox.jpg', name: 'Abraham Flores', role: 'Test Engineer Senior', alt: 'Profile Image' },
-    { img: '/public/imgs/Nike.png', name: 'Edwin Lopez', role: 'Test Jr', alt: 'Profile Image' },
-    { img: '/public/imgs/Insta.jpg', name: 'Edwin Lopez', role: 'Test Jr', alt: 'Profile Image' },
+    { img: '/public/imgs/Nike.png', name: 'Juan Ruvalcaba', role: 'Test Jr', alt: 'Profile Image' },
+    { img: '/public/imgs/Insta.jpg', name: 'Montse Lopez', role: 'Test Jr', alt: 'Profile Image' },
     { img: '/public/imgs/GitHub.jpg', name: 'Edwin Lopez', role: 'Test Jr', alt: 'Profile Image' },
     { img: '/public/imgs/Xbox.jpg', name: 'Edwin Lopez', role: 'Test Jr', alt: 'Profile Image' }
   ]

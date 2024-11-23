@@ -21,13 +21,13 @@ export const linksList = [
       title: 'Strain Gauge',
       caption: 'Mantenimiento de equipos',
       icon: 'las la-calendar-check',
-      link: 'strain_gauge'
+      link: 'strain-gauge'
     },
     {
       title: 'Vacation Planner',
       caption: 'RH',
       icon: 'lar la-calendar',
-      link: 'vacation-planner'
+      link: 'vacation_calendar'
     },
     {
       title: 'Label Center',
@@ -41,7 +41,5 @@ export const linksList = [
       icon: 'las la-graduation-cap',
       link: 'https://quasar.dev'
     }
-    
-
 
   ]

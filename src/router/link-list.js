@@ -21,7 +21,7 @@ export const linksList = [
       title: 'Strain Gauge',
       caption: 'Mantenimiento de equipos',
       icon: 'las la-calendar-check',
-      link: 'strain-gauge'
+      link: 'strain_gauge'
     },
     {
       title: 'Vacation Planner',

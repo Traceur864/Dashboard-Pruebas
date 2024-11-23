@@ -8,22 +8,22 @@
 
         <q-card-section>
             <div class="flex row q-pa-sm">
-                <div class="col-5">
+                <div class="col-4">
                     <q-avatar size="150px" font-size="52px">
                         <img src="/public/imgs/GitHub.jpg"/>
                     </q-avatar>
                 </div>
-                <div class="col-6 column">
-                    <span class="text-subtitle1 q-mb-sm">
+                <div class="col-3 column">
+                    <span class="text-subtitle1 q-mb-sm q-ml-md">
                         <q-icon 
                         name="las la-signature" 
                         color="black"
                         size="20px"
                         class="q-mr-sm"
                     />
-                        Nombre: Edwin David Lopez Carpio
+                        Nombre:
                     </span>
-                    <span class="text-subtitle1 q-mb-sm">
+                    <span class="text-subtitle1 q-mb-sm q-ml-md">
                     
                     <q-icon 
                     name="las la-at"
@@ -34,7 +34,7 @@
                 
                     Correo:
                     </span>
-                    <span class="text-subtitle1 q-mb-sm">
+                    <span class="text-subtitle1 q-mb-sm q-ml-md">
                         
                         <q-icon 
                         name="las la-mobile-alt"
@@ -45,7 +45,7 @@
                     
                         Teléfono:
                     </span>
-                    <span class="text-subtitle1 q-mb-sm">
+                    <span class="text-subtitle1 q-mb-sm q-ml-md">
                     
                     <q-icon 
                       name="las la-id-card"
@@ -55,12 +55,19 @@
                     />
                   
                     No. Empleado:
-                </span>
-                </div>
-            </div>
-            <div class="flex row q-mb-md q-mt-lg">
-              <div class="col-5">
-                <span class="text-subtitle1 q-ml-lg">
+                  </span>
+              </div>
+              <div class="col-5 column">
+                <span class="text-subtitle1 q-mb-sm q-ml-lg">Edwin David Lopez Carpio</span>
+                <span class="text-subtitle1 q-mb-sm q-ml-lg">Edwin@correo.com</span>
+                <span class="text-subtitle1 q-mb-sm q-ml-lg">3329913903</span>
+                <span class="text-subtitle1 q-mb-sm q-ml-lg">123090</span>
+              </div>
+          </div>
+            
+          <div class="flex row justify-between q-ma-lg">
+              <div class="col-2">
+                <span class="text-subtitle1">
                     
                     <q-icon 
                       name="las la-briefcase"
@@ -72,7 +79,10 @@
                     Puesto:
                 </span>
               </div>
-              <div class="col-6">
+              <div class="col-4">
+                <span class="text-subtitle1 q-ml-md">Test Manager Engineer</span>
+              </div>
+              <div class="col-2">
                 <span class="text-subtitle1">
                     
                     <q-icon 
@@ -85,10 +95,13 @@
                     Area:
                 </span>
               </div>
-            </div>
-            <div class="flex row q-mb-md">
-            <div class="col-md-5">
-              <span class="text-subtitle1 q-ml-lg">
+              <div class="col-4">
+                <span class="text-subtitle1 q-ml-md">Programing</span>
+              </div>
+          </div>
+          <div class="flex row justify-between q-ma-lg">
+            <div class="col-2">
+              <span class="text-subtitle1">
                     
                     <q-icon 
                       name="las la-user-clock"
@@ -100,7 +113,10 @@
                     Turno:
                 </span>
             </div>
-            <div class="col-md-5">  
+            <div class="col-4">
+              <span class="text-subtitle1 q-ml-md">Turno 1</span>
+            </div>
+            <div class="col-2">  
                 <span class="text-subtitle1">
                     
                     <q-icon 
@@ -110,8 +126,11 @@
                       class="q-mr-sm"
                     />
                   
-                    Cumpleaños:
+                    Birthday:
                 </span>
+            </div>
+            <div class="col-4">
+              <span class="text-subtitle1 q-ml-md">15/03/1995</span>
             </div>
             </div>
         

@@ -219,7 +219,7 @@
             <q-separator />
 
             <q-card-actions class="flex justify-end">
-              <q-btn flat label="Cancelar" color="primary" v-close-popup />
+              <q-btn flat label="Cancelar" color="primary" v-close-popup/>
               <q-btn 
                 flat 
                 label="Registrar" 
@@ -238,22 +238,28 @@
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 
-const fixed = ref(false)
+// eslint-disable-next-line vue/valid-define-emits
+const emit = defineEmits()
 const loading = ref([false]);
 const loginForm = ref(null);
 const $q = useQuasar()
 
+function cancel() {
+  // Aquí emitimos el evento 'close-dialog' al componente padre
+  emit('close-dialog');
+}
+
 const userForm = ref({
 
-nombre: '',
-apellido: '',
-email: '',
-phone: false,
-puesto: '',
-area: '',
-turno: '',
-empleado: false,
-birthday: false
+  nombre: '',
+  apellido: '',
+  email: '',
+  phone: false,
+  puesto: '',
+  area: '',
+  turno: '',
+  empleado: false,
+  birthday: false
 
 })
 
@@ -313,8 +319,9 @@ function simulateProgress(number) {
       message: 'Registro completado con éxito.',
       icon: 'check'
     })
-    fixed.value = false // Cerrar el diálogo
-  }, 3000);
+    cancel()// Cerrar el diálogo
+     
+  }, 1500);
   
 }
 
@@ -338,7 +345,7 @@ const optionsJob = [
     'Turno 3'
   ]
 
-    defineOptions({
-        name: 'RegisterUser'
-    });
+defineOptions({
+    name: 'RegisterUser'
+});
 </script>

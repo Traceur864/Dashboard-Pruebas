@@ -238,6 +238,8 @@
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 
+// eslint-disable-next-line vue/valid-define-emits
+const emit = defineEmits()
 const editUserTest = ref(false)
 const loadingEdit = ref([false])
 const loginFormEdit = ref(null)
@@ -310,12 +312,17 @@ function simulateProgress(number) {
   // como redirigir a otra página o mostrar un mensaje de error
   $q.notify({
       color: 'positive',
-      message: 'Registro completado con éxito.',
+      message: 'Registro modificado con éxito.',
       icon: 'check'
     })
-    editUserTest.value = false // Cerrar el diálogo
+    cancel() // Cerrar el diálogo
   }, 3000);
   
+}
+
+function cancel() {
+  // Aquí emitimos el evento 'close-dialog' al componente padre
+  emit('close-dialog-edit');
 }
 
 const optionsJob = [

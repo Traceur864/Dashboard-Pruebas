@@ -8,27 +8,27 @@
         glossy
         label="Registrar" 
         color="primary"
-        @click="fixed = true" 
+        @click="openDialog"
       />
-    </div>
-    <div class="col-4 flex justify-end">
-      <q-btn 
-        push
-        glossy
-        label="Descargar" 
-        color="secondary"
-      />
-    </div>
+      </div>
+      <div class="col-4 flex justify-end">
+        <q-btn 
+          push
+          glossy
+          label="Descargar" 
+          color="secondary"
+        />
+      </div>
     </div>
     
 
          <!-- Dialog -->
     <q-dialog v-model="fixed" transition-show="fade" transition-hide="fade" transition-duration="300">
-      <RegisterUser />
+      <RegisterUser @close-dialog="closeDialog"/>
     </q-dialog>
 
     <q-dialog v-model="editUserTest" transition-show="fade" transition-hide="fade" transition-duration="300">
-      <EditUser />
+      <EditUser @close-dialog-edit="closeDialogEdit"/>
     </q-dialog>
 
     <q-dialog v-model="infoUserTest" transition-show="fade" transition-hide="fade" transition-duration="300">
@@ -139,6 +139,23 @@ color: 'negative',
 message: 'Porfavor, contactar al equipo de desarrollo.',
 icon: 'warning'
 }) */
+
+function openDialog() {
+  fixed.value = true;
+}
+
+function closeDialog() {
+  fixed.value = false;
+}
+
+function openDialogEdit() {
+  editUserTest.value = true;
+}
+
+function closeDialogEdit() {
+  editUserTest.value = false;
+}
+
 
 
   const items = [

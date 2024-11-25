@@ -1,24 +1,18 @@
 <template>
   <q-page class="q-pa-md">
 
-    <div class="flex row justify-between q-pa-md">
+    <div class="flex row q-pa-md">
+      <span class="text-h5 q-mr-sm">Testers</span>
       <div class="col-4">
       <q-btn 
         push
-        glossy
+        flat
         label="Registrar" 
-        color="primary"
+        color="black"
         @click="openDialog"
       />
       </div>
-      <div class="col-4 flex justify-end">
-        <q-btn 
-          push
-          glossy
-          label="Descargar" 
-          color="secondary"
-        />
-      </div>
+      
     </div>
     
 
@@ -37,7 +31,7 @@
 
    
       <div class="flex row q-pa-sm ">
-        <q-card class="my-card q-ma-sm" v-for="(item, index) in items" :key="index">
+        <q-card class="my-card q-ma-sm" v-for="(item, index) in TESTUSER" :key="index">
 
           <!-- Sección para la imagen -->
           <q-card-section class="q-pa-lg">
@@ -158,7 +152,7 @@ function closeDialogEdit() {
 
 
 
-  const items = [
+  /* const items = [
     { img: '/public/imgs/GitHub.jpg', name: 'Noel Mexia', role: 'Test Manager Engineer', alt: 'Profile Image' },
     { img: '/public/imgs/Xbox.jpg', name: 'Edwin Lopez', role: 'Test Jr', alt: 'Profile Image' },
     { img: '/public/imgs/Nike.png', name: 'Isela Vargas', role: 'Test Engineer', alt: 'Profile Image' },
@@ -169,7 +163,7 @@ function closeDialogEdit() {
     { img: '/public/imgs/Insta.jpg', name: 'Montse Lopez', role: 'Test Jr', alt: 'Profile Image' },
     { img: '/public/imgs/GitHub.jpg', name: 'Edwin Lopez', role: 'Test Jr', alt: 'Profile Image' },
     { img: '/public/imgs/Xbox.jpg', name: 'Edwin Lopez', role: 'Test Jr', alt: 'Profile Image' }
-  ]
+  ] */
 
 defineOptions({
     name: 'OrganigramaPage'

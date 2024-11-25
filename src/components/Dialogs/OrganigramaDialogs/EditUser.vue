@@ -212,7 +212,23 @@
                 </q-input>
               </div>
               <div class="col-md-5">
-                
+                <q-file 
+                  dense
+                  square filled
+                  v-model="userFormEdit.picture" 
+                  label="Foto"
+                  color="grey-3"
+                  label-color="secondary" 
+                  counter
+                  accept="image/*"
+                  >
+                  <template v-slot:prepend>
+                    <q-icon 
+                      name="lar la-image"
+                      color="secondary" 
+                    />
+                  </template>
+                </q-file>
               </div>
             </div>
         
@@ -240,7 +256,6 @@ import { useQuasar } from 'quasar'
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits()
-const editUserTest = ref(false)
 const loadingEdit = ref([false])
 const loginFormEdit = ref(null)
 const $q = useQuasar()
@@ -255,7 +270,8 @@ const userFormEdit = ref({
     area: '',
     turno: '',
     empleado: false,
-    birthday: false
+    birthday: false,
+    picture: null
 
 })
 

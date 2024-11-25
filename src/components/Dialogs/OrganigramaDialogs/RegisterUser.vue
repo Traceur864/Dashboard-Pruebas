@@ -7,7 +7,7 @@
         <q-separator />
 
         <q-card-section>
-          <q-form @submit="HandleLogin" ref="loginForm" >
+          <q-form @submit="HandleRegister" ref="loginForm" >
             <div class="row justify-between q-mb-sm">
               <div class="col-md-5">
                 <q-input
@@ -212,7 +212,24 @@
                 </q-input>
               </div>
               <div class="col-md-5">
-                
+                <q-file 
+                  dense
+                  square filled
+                  v-model="userForm.picture" 
+                  label="Foto"
+                  color="grey-3"
+                  label-color="secondary" 
+                  counter
+                  accept="image/*"
+                  @change="handleFileUpload"
+                  >
+                  <template v-slot:prepend>
+                    <q-icon 
+                      name="lar la-image"
+                      color="secondary" 
+                    />
+                  </template>
+                </q-file>
               </div>
             </div>
         
@@ -237,17 +254,32 @@
 
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
-
+import axios from 'axios';
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits()
 const loading = ref([false]);
 const loginForm = ref(null);
 const $q = useQuasar()
 
-function cancel() {
-  // Aquí emitimos el evento 'close-dialog' al componente padre
-  emit('close-dialog');
-}
+const optionsJob = [
+  'Test Manager Engineer', 
+  'Test Jr', 
+  'Test Engineer', 
+  'Test Engineer Senior'
+]
+
+const optionsArea = [
+  'ICT PG520', 
+  'ICT Vulcan', 
+  'MDA', 
+  'ICP'
+]
+
+const optionsTurn = [
+  'Turno 1', 
+  'Turno 2', 
+  'Turno 3'
+]
 
 const userForm = ref({
 
@@ -259,25 +291,31 @@ const userForm = ref({
   area: '',
   turno: '',
   empleado: false,
-  birthday: false
+  birthday: false,
+  picture: null,
 
 })
 
-function HandleLogin (){
-
-if (loginForm.value && loginForm.value.validate()) {
-
-  console.log('Validation passed');
-  confirm()
-
-}else {
-  // Si el formulario no es válido, mostrar un mensaje
-  $q.notify({
-    color: 'negative',
-    message: 'Por favor, completa todos los campos requeridos.',
-    icon: 'warning'
-  })
+function cancel() {
+  // Aquí emitimos el evento 'close-dialog' al componente padre
+  emit('close-dialog');
 }
+
+async function HandleRegister (){
+
+  if (loginForm.value && loginForm.value.validate()) {
+
+    console.log('Validation passed');
+    confirm()
+
+  }else {
+  // Si el formulario no es válido, mostrar un mensaje
+    $q.notify({
+      color: 'negative',
+      message: 'Por favor, completa todos los campos requeridos.',
+      icon: 'warning'
+    })
+  }
 }
 
 function confirm () {
@@ -290,60 +328,68 @@ $q.dialog({
     cancel: true,
     persistent: true
   }).onOk(() => {
+    console.log('Entrando a la funcion simulateProgress')
     simulateProgress(0)
-  }).onOk(() => {
-    console.log('simulateProgress');
-    // console.log('>>>> second OK catcher')
   }).onCancel(() => {
-    console.log('The user cancelled');
+    console.log('El usuario canceló.')
     // console.log('>>>> Cancel')
-  }).onDismiss(() => {
-    console.log('I am triggered on dismiss')
-    // console.log('I am triggered on both OK and Cancel')
   })
    
 }
 
 function simulateProgress(number) {    
     // Activamos el estado de carga
-  loading.value[number] = true;
+    loading.value[number] = true;
 
-  // Simulamos un retraso para simular un inicio de sesión
-  setTimeout(() => {
-  // Después de 3 segundos, desactivamos el estado de carga
-  loading.value[number] = false;
-  // Aquí puedes manejar lo que sucede después de intentar iniciar sesión, 
-  // como redirigir a otra página o mostrar un mensaje de error
-  $q.notify({
-      color: 'positive',
-      message: 'Registro completado con éxito.',
-      icon: 'check'
+    // Crear un objeto FormData y agregar todos los campos del formulario
+    const formData = new FormData()
+
+    formData.append('name', userForm.value.nombre)
+    formData.append('lastname', userForm.value.apellido)
+    formData.append('email', userForm.value.email)
+    formData.append('phone', userForm.value.phone)
+    formData.append('workstation', userForm.value.puesto)
+    formData.append('area', userForm.value.area)
+    formData.append('turn', userForm.value.turno)
+    formData.append('noemployee', userForm.value.empleado)
+    formData.append('birthday', userForm.value.birthday)
+
+    // Agregar el archivo de la imagen (si existe)
+    if (userForm.value.picture) {
+      formData.append('picture', userForm.value.picture)
+    }
+
+    axios.post('http://127.0.0.1:3000/api/testers', formData, {
+        headers: {
+        'Content-Type': 'multipart/form-data' // Importante para indicar que estamos enviando datos de formulario con archivos
+      }
+    }).then(response => {
+      console.log(response.data);
+      loading.value[number] = false
+
+      $q.notify({
+        color: 'positive',
+        message: 'Registro completado con éxito.',
+        icon: 'check'
+      })
+      cancel() // Cerrar el formulario
+
+    }).catch(error => {
+      loading.value[number] = false
+      console.error(error)
+      $q.notify({
+        color: 'negative',
+        message: 'Hubo un error al registrar al usuario.',
+        icon: 'error'
+      })
     })
-    cancel()// Cerrar el diálogo
-     
-  }, 1500);
-  
 }
 
-const optionsJob = [
-    'Test Manager Engineer', 
-    'Test Jr', 
-    'Test Engineer', 
-    'Test Engineer Senior'
-  ]
+// Función para manejar la carga de la imagen
+function handleFileUpload(event) {
+  userForm.value.picture = event.target.files[0] // Asignar el archivo a userForm
+}
 
-  const optionsArea = [
-    'ICT PG520', 
-    'ICT Vulcan', 
-    'MDA', 
-    'ICP'
-  ]
-
-  const optionsTurn = [
-    'Turno 1', 
-    'Turno 2', 
-    'Turno 3'
-  ]
 
 defineOptions({
     name: 'RegisterUser'

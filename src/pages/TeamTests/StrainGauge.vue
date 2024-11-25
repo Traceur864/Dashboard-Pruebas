@@ -11,7 +11,7 @@
   
         <div class="col column justify-center">
           <div class="col-auto self-end q-pb-lg">
-            <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Administrar Testers" @click="this.testerForm = true"/>
+            <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Administrar Testers" @click="this.tester_dialog = true"/>
             <q-btn class="q-mt-md" color="secondary" label="Administrar Fixturas" @click="showAlert()" />
           </div>
           <div class="q-col-gutter-y-md">
@@ -46,7 +46,7 @@
         </div>
       </div>
       <!-- ==================== DIALOGS ==================== -->
-      <InsertTesterForm v-model="testerForm" />
+      <TesterDialog v-model="tester_dialog" />
     </q-page>
   </template>
   
@@ -59,12 +59,12 @@
   import {api} from 'boot/axios'
   
   //Importing components
-  import InsertTesterForm from './Components/StrainGauge/Tester/TesterDialog.vue'
+  import TesterDialog from './Components/StrainGauge/Tester/TesterDialog.vue'
   
   export default {
     components: {
       FullCalendar, // make the <FullCalendar> tag available
-      InsertTesterForm, 
+      TesterDialog, 
     },
     data() {
       return {
@@ -118,12 +118,12 @@
         shift: null,
         modelo: null,
         asigned_to: null,
-        testerForm: false,
+        tester_dialog: false,
         models: null,
       }
     },
     //Get functionalities from imported component
-    mixins: [InsertTesterForm],
+    mixins: [TesterDialog],
     //Functions inside component
     methods: {
         add_event() {

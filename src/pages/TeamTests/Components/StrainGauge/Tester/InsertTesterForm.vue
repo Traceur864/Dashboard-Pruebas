@@ -4,6 +4,7 @@
             @submit="onSubmit"
             method="post"
             v-model="form"
+            style="height: 50vh;"
         >
             <div class="row">
 
@@ -55,16 +56,16 @@
         }, methods: {
             loadData() {
                 api.get('/model').then((response) =>{
-                var data = response.data
-                this.models = []
-                for (const ele in data) {
-                    this.models.push({
-                    value: data[ele].ID_MODEL,
-                    label: data[ele].MODEL
-                    })
-                }
+                    var data = response.data
+                    this.models = []
+                    for (const ele in data) {
+                        this.models.push({
+                        value: data[ele].ID_MODEL,
+                        label: data[ele].MODEL
+                        })
+                    }
                 }).catch((err)=>{
-                console.error(err);
+                    console.error(err);
                 })
 
                 api.get('/area').then((response) =>{
@@ -77,7 +78,7 @@
                     })
                 }
                 }).catch((err)=>{
-                console.error(err);
+                    console.error(err);
                 })
             },
             onSubmit(){
@@ -97,7 +98,7 @@
                         'content-type': 'application/x-www-form-urlencoded',
                         'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
                     }
-                } 
+                }
 
                 api.post('/tester',params, config).then((response)=>{
                     this.$q.notify({

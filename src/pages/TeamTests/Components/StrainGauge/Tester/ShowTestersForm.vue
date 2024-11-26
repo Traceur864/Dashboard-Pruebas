@@ -1,27 +1,32 @@
 <template>    
     <q-table
-        flat
+        
         title="Tester registrados"
         :rows="rows"
         :columns="columns"
         row-key="name"
         virtual-scroll
-        style="max-height:62vh;"
     >
         <template v-slot:body-cell-actions="props">
             <q-td :props="props">
                 <q-btn class="q-ma-xs" color="positive" icon="edit" @click="editTester(props.row)" />
-                <q-btn class="q-ma-xs" color="negative" icon="delete" @click="deleteTester(props.row)" />
+                <q-btn v-if="props.row.STATUS" class="q-ma-xs" color="negative" icon="delete" @click="deleteTester(props.row)" />
             </q-td>
         </template>
         <template v-slot:body-cell-status="props">
             <q-td :props="props">
+                <div v-if="props.row.STATUS">
+                    Activo
+                </div>
+                <div v-else>
+                    Inactivo
+                </div>
             </q-td>
         </template>
     </q-table>
 
     <EditTesterForm ref="editForm" @reload="getTesters"/>
-    <DeleteDialog ref="deleteDialog" />
+    <DeleteDialog ref="deleteDialog" @reload="getTesters"/>
 
 </template>
 
@@ -35,7 +40,7 @@
         setup(){
 
         },
-        emits: ["Prueba"],
+        emits: ["reload"],
         components:{
             EditTesterForm,
             DeleteDialog
@@ -51,7 +56,7 @@
                     { name : 'actions', field: 'btn', label: 'Acciones', required : true, align: 'center'},
                 ],
                 rows : [],
-                edit_tester_dialog : false
+                edit_tester_dialog : false,
             }
         },
         mixins:[EditTesterForm],
@@ -67,6 +72,7 @@
                 }).catch((error)=>{
                     console.error(error);
                 })
+                this.$emit('reload')
             },
             editTester(row){
                 this.$refs.editForm.open_dialog()

@@ -4,7 +4,6 @@
             @submit="onSubmit"
             method="post"
             v-model="form"
-            style="height: 50vh;"
         >
             <div class="row">
 
@@ -44,6 +43,7 @@
         setup(){
             const $q = useQuasar();
         },
+        emits:['reload'],
         data(){
             return {
                 insert_tester_name: '',
@@ -111,6 +111,7 @@
                     this.insert_model_tester = ''
                     this.insert_area_tester = ''
 
+                    this.$emit('reload')
                     dismiss()
                 }).catch((err)=>{
                     var errors = err.response.data.error

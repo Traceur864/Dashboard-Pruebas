@@ -29,6 +29,12 @@
                             </div>
                         </div>
 
+                        <div class="row q-col-gutter-x-sm">
+                            <div class="col column justify-center">
+                                <q-select square filled v-model="edit_status_tester" label="Estado" :options="status" />
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col"></div>
                             <div class="col-auto self-end">
@@ -68,6 +74,8 @@
                 edit_model_tester: "",
                 edit_area_tester: "",
                 tester_id: "",
+                edit_status_tester: "",
+                status : [ {value: true, label: 'Activo'}, {value: false, label: 'Inactivo'} ],
                 form: {},
                 models: [],
                 areas: [],
@@ -86,6 +94,7 @@
                 params.append('model_id', this.edit_model_tester.value)
                 params.append('area_id', this.edit_area_tester.value)
                 params.append('tester_name', this.edit_tester_name)
+                params.append('status', this.edit_status_tester.value)
                 params.append('tester_id', this.tester_id)
 
                 const config ={
@@ -107,10 +116,11 @@
                     this.edit_model_tester = ''
                     this.edit_area_tester = ''
                     this.edit_tester_name = ''
+                    this.edit_status_tester = ''
                     this.tester_id = ''
 
-                    this.edit_tester_dialog = false
                     this.$emit('reload')
+                    this.edit_tester_dialog = false
                 }).catch((error) => {
                     dismiss()
                     try {
@@ -164,6 +174,9 @@
                     )
                     this.edit_area_tester = this.areas.find(
                         (i) => i.value == data.ID_AREA
+                    )
+                    this.edit_status_tester = this.status.find(
+                        (i) => i.value == data.STATUS
                     )
                     this.tester_id = id_tester
                 }).catch((error)=>{

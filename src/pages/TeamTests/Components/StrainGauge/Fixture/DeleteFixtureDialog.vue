@@ -2,7 +2,7 @@
     <q-dialog v-model="deleteDialog">
         <q-card style="width: 100vh;">
             <q-card-section class="row items-center">
-                <span class="q-ml-sm text-h5">¿Eliminar Tester "{{tester_sn}}" ?</span>
+                <span class="q-ml-sm text-h5">¿Eliminar Fixtura "{{fixture_name}}" ?</span>
             </q-card-section>
             <q-card-actions align="right">
                 <q-btn flat label="Cancelar" color="dark" v-close-popup />
@@ -15,23 +15,23 @@
 <script>
     import {api} from 'boot/axios'
     import { useQuasar } from 'quasar';
-    import {ref} from 'vue';
 
     export default {
+        setup(){
+            const $q = useQuasar()
+         },
         data(){
             return{
                 deleteDialog: false,
-                tester_sn: "",
-                tester_id: "",
+                fixture_id: "",
+                fixture_name: "",
             }
         },
         methods:{
-            open_dialog(){
-                this.deleteDialog = true
-            },
-            set_data(data){
-                this.tester_sn = data.TESTER_SN;
-                this.tester_id = data.ID_TESTER;
+            openDialog(row){
+                this.deleteDialog = true            
+                this.fixture_id = row.ID_FIXTURE;
+                this.fixture_name = row.FIXTURE_ID;
             },
             onSubmit(){
                 const dismiss = this.$q.notify({
@@ -41,7 +41,7 @@
                 })
 
                 const params = new URLSearchParams()
-                params.append('tester_id', this.tester_id)
+                params.append('fixture_id', this.fixture_id)
 
                 const config ={
                     headers : {
@@ -50,15 +50,17 @@
                     }
                 }
 
-                api.put("tester/delete", params, config).then((response)=>{
+                api.put("fixture/delete", params, config).then((response)=>{
                     dismiss()
                     this.$q.notify({
-                        type:'possitive',
-                        message: "Tester eliminado exitosamente"
+                        type:'positive',
+                        message: response.data,
+                        position: "top"
                     })
 
                     this.$emit('reload')
                     this.deleteDialog = false
+
                 }).catch((error)=>{
                     dismiss()
                     try {
@@ -67,13 +69,14 @@
                         console.error(errors);
                     }
                     console.error(errors);
-                    for (const i in errors) {
+                    errors.forEach(ele => {
                         this.$q.notify({
                             type: 'negative',
-                            message: errors[i].msg,
+                            message: ele.msg,
                             position: "top"
-                        })
-                    }
+                        }) 
+                    });
+
                 });
             }
         },

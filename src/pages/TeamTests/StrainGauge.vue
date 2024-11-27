@@ -11,25 +11,30 @@
 
       <div class="col column justify-center">
         <div class="col-auto self-end q-pb-lg">
+          <div class="text-h6">Guía de colores</div>
+          <div class="col">
+            <q-badge color="purple" class="q-mx-xs" label="En proceso" />
+            <q-badge color="warning" text-color="black" class="q-mx-xs" label="Por expirar" />
+            <q-badge color="negative" class="q-mx-xs" label="Fallido" />
+            <q-badge color="primary" class="q-mx-xs" label="Asignado" />
+            <q-badge color="deep-orange" class="q-mx-xs" label="Atrasado" />
+            <q-badge color="positive" class="q-mx-xs" label="Finalizado" />
+          </div>
+        </div>
+        <div class="col-auto self-end q-pb-lg">
           <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Administrar Testers"
-            @click="this.tester_dialog = true" />
+            @click="this.$refs.testerDialog.openDialog()" />
           <q-btn class="q-mt-md" color="secondary" label="Administrar Fixturas"
             @click="this.$refs.fixtureDialog.openDialog()" />
         </div>
         <div class="q-col-gutter-y-md">
-          <div class="row q-col-gutter-x-sm">
-            <div class="col">
-              <q-select square filled v-model="modelo" label="Modelo" :options="models" />
-            </div>
-            <div class="col">
-              <q-select square filled v-model="area" label="Area en la que se realiza" :options="areas" />
-            </div>
-          </div>
 
-          <q-select ref="tester_select" v-on:update:model-value="prueba" :disable="disable" square filled
-            v-model="tester_sn" label="SN del tester" :options="tester_serialnumbers" />
-          <q-select ref="fixture_select" :disable="disable" square filled v-model="fixture_id" label="ID de la fixtura"
-            :options="fixture_ids" />
+          <q-select ref="tester_select" square filled v-model="tester_sn" label="SN del tester"
+            :options="tester_serialnumbers" @filter="filterTest" use-input input-debounce="0" />
+
+          <q-select ref="fixture_select" square filled v-model="fixture_id" label="ID de la fixtura"
+            :options="fixture_ids" @filter="filterFix" use-input input-debounce="0" />
+
           <q-input square filled v-model="start_date" :min="current_date" type="date" label="Fecha de inicio" />
 
           <div class="row q-col-gutter-x-sm">
@@ -50,8 +55,9 @@
       </div>
     </div>
     <!-- ==================== DIALOGS ==================== -->
-    <TesterDialog v-model="tester_dialog" @reload="loadData" />
+    <TesterDialog ref="testerDialog" @reload="loadData" />
     <FixtureDialog ref="fixtureDialog" @reload="loadData" />
+    <EventDialog ref="eventDialog" @reload="loadData" />
   </q-page>
 </template>
 
@@ -66,12 +72,14 @@ import { api } from 'boot/axios'
 //Importing components
 import TesterDialog from './Components/StrainGauge/Tester/TesterDialog.vue'
 import FixtureDialog from './Components/StrainGauge/Fixture/FixtureDialog.vue'
+import EventDialog from './Components/StrainGauge/Event/EventDialog.vue'
 
 export default {
   components: {
     FullCalendar, // make the <FullCalendar> tag available
     TesterDialog,
     FixtureDialog,
+    EventDialog,
   },
   data() {
     return {
@@ -88,6 +96,9 @@ export default {
           left: 'dayGridMonth,today',
           center: 'title',
           right: 'prev,next'
+        },
+        eventClick: (event) => {
+          this.$refs.eventDialog.openDialog(event.event.extendedProps.calendar_id);
         }
       },
 
@@ -122,31 +133,93 @@ export default {
     }
   },
   //Get functionalities from imported component
-  mixins: [TesterDialog],
+  // mixins: [TesterDialog],
   //Functions inside component
   methods: {
-    prueba() {
-      alert("Hola")
+    filterTest(val, update, abort) {
+      if (val === '') {
+        update(() => {
+          this.tester_serialnumbers = this.testers
+        })
+        return
+      }
+      update(() => {
+        const needle = val.toLowerCase()
+        this.tester_serialnumbers = this.tester_serialnumbers.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    filterFix(val, update, abort) {
+      if (val === '') {
+        update(() => {
+          this.fixture_ids = this.fixtures
+        })
+        return
+      }
+      update(() => {
+        const needle = val.toLowerCase()
+        this.fixture_ids = this.fixtures.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    eventInfo(info) {
+      this.$refs.eventDialog.openDialog(info.event.extendedProps.calendar_id);
     },
     add_event() {
-      console.log(this.$refs.tester_select.disable);
-      this.disable = false
-
       if (this.tester_sn && this.fixture_id && this.start_date && this.shift && this.asigned_to) {
-        this.calendarOptions.events.push(
-          {
-            'title': t_sn + f_id,
-            'start': this.start_date,
-            'end': this.start_date,
-            'color': "#433DE3",
-            'editable': false,
-            'calendar_id': 'Holi'
+        const dismiss = this.$q.notify({
+          spinner: true,
+          message: "Por favor, espera...",
+          timeout: 0
+        })
+
+        const params = new URLSearchParams()
+        params.append('tester_id', this.tester_sn.value)
+        params.append('fixture_id', this.fixture_id.value)
+        params.append('start_date', this.start_date)
+        params.append('shift', this.shift)
+        params.append('asigned_to', this.asigned_to)
+
+        const config = {
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+          }
+        }
+
+        api.post('/strain_gauge', params, config).then((response) => {
+          dismiss()
+          this.$q.notify({
+            type: "positive",
+            message: response.data,
+            position: 'top'
           })
 
+          this.get_events()
+
+        }).catch((error) => {
+
+          var error = err.response.data.error
+          console.error(error);
+
+          error.forEach(err => {
+            this.$q.notify({
+              type: 'negative',
+              message: err.msg,
+              position: "top"
+            })
+          });
+
+          dismiss()
+        })
         this.clear_fields()
+      } else {
+        this.$q.notify({
+          type: 'negative',
+          message: "Por favor llena todos los campos",
+          position: "right",
+          timeout: 1200
+        })
       }
     },
-
     loadData() {
       api.get('/model').then((response) => {
         var data = response.data
@@ -177,12 +250,16 @@ export default {
       api.get('/tester/active').then((response) => {
         var data = response.data
         this.tester_serialnumbers = []
+        this.testers = []
         data.forEach(ele => {
           this.tester_serialnumbers.push({
             value: ele.ID_TESTER,
             label: ele.TESTER_SN
           })
-          this.testers.push(ele.TESTER_SN)
+          this.testers.push({
+            value: ele.ID_TESTER,
+            label: ele.TESTER_SN
+          })
         });
 
       }).catch((err) => {
@@ -192,16 +269,45 @@ export default {
       api.get('/fixture/active').then((response) => {
         var data = response.data
         this.fixture_ids = []
+        this.fixtures = []
         data.forEach(ele => {
           this.fixture_ids.push({
             value: ele.ID_FIXTURE,
             label: ele.FIXTURE_ID
           })
-          this.fixtures.push(ele.FIXTURE_ID)
+          this.fixtures.push({
+            value: ele.ID_FIXTURE,
+            label: ele.FIXTURE_ID
+          })
         });
 
       }).catch((err) => {
         console.error(err);
+      })
+
+      this.get_events()
+    },
+
+    get_events() {
+      this.calendarOptions.events = []
+
+      api.get('/strain_gauge').then((response) => {
+        var data = response.data
+        data.forEach(el => {
+          console.log(el.STATUS_SG);
+
+          this.calendarOptions.events.push(
+            {
+              'title': "Tester: " + el.TESTER_SN + ", Fixtura:" + el.FIXTURE_ID,
+              'start': el.START_DATE.substring(0, 10),
+              'end': el.START_DATE.substring(0, 10),
+              'color': getColor(el.STATUS_SG),
+              'editable': false,
+              'calendar_id': el.ID_EVENT
+            })
+        });
+      }).catch((error) => {
+        console.error(error);
       })
     },
 
@@ -227,24 +333,32 @@ export default {
     }
   },
   mounted() {
+    let self = this
     this.loadData()
+  },
+  watch: {
+    modelo: function () {
+      console.log(this.modelo.value);
+    }
   }
 }
 
-function get_color(type) {
-  switch (type) {
-    case 'Permiso sin goce':
-      return '#342EEA'
-    case 'Vacaciones':
-      return '#59C62F'
-    case 'Descanso':
-      return '#D640BF'
-    case 'Domingo laborado':
-      return '#78351D'
-    case 'Falta':
-      return '#DB090A'
+function getColor(status) {
+  switch (status) {
+    case 'En proceso':
+      return 'purple'
+    case 'Por expirar':
+      return '#F2C037'
+    case 'Fallido':
+      return '#C10015'
+    case 'Asignado':
+      return 'primary'
+    case 'Atrasado':
+      return '#FF5722'
+    case 'Finalizado':
+      return '#21BA45'
     default:
-      break;
+      return 'dark'
   }
 }
 </script>

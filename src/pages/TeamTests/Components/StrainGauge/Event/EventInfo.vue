@@ -63,6 +63,16 @@
                     <q-input v-model="updated_at" readonly type="text" label="Actualizado a las" />
                 </div>
             </div>
+            <div v-if="status == 'Cancelado'" class="row q-col-gutter-x-sm">
+                <div class="col">
+                    <q-input v-model="finish_comments" readonly type="text" label="Comentarios de cancelación" />
+                </div>
+            </div>
+            <div v-else class="row q-col-gutter-x-sm">
+                <div class="col">
+                    <q-input v-model="updated_comments" readonly type="text" label="Comentarios de cambio" />
+                </div>
+            </div>
         </q-card-section>
     </div>
 
@@ -221,7 +231,10 @@ export default {
                 )
 
                 // this.updated_by = data.UPDATED_BY;
-                this.updated_by = "Isela";
+                this.updated_by = data.UPDATED_BY;
+                if (data.UPDATED_BY != null) {
+                    this.updated_by = "Isela";
+                }
                 this.updated_comments = data.UPDATED_COMMENTS;
                 this.$emit('reload')
             }).catch((error) => {

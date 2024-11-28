@@ -19,6 +19,7 @@
             <q-badge color="primary" class="q-mx-xs" label="Asignado" />
             <q-badge color="deep-orange" class="q-mx-xs" label="Atrasado" />
             <q-badge color="positive" class="q-mx-xs" label="Finalizado" />
+            <q-badge color="dark" text-color="white" label="Cancelado" />
           </div>
         </div>
         <div class="col-auto self-end q-pb-lg">
@@ -107,12 +108,12 @@ export default {
       testers: [],
       fixture_ids: [],
       fixtures: [],
-
       areas: [],
 
       monitos: [
         "Juan Carlos",
         'Miguelito',
+        'Isela',
         'Joss',
         'Raúl'
       ],
@@ -294,14 +295,13 @@ export default {
       api.get('/strain_gauge').then((response) => {
         var data = response.data
         data.forEach(el => {
-          console.log(el.STATUS_SG);
 
           this.calendarOptions.events.push(
             {
               'title': "Tester: " + el.TESTER_SN + ", Fixtura:" + el.FIXTURE_ID,
               'start': el.START_DATE.substring(0, 10),
               'end': el.START_DATE.substring(0, 10),
-              'color': getColor(el.STATUS_SG),
+              'color': getColor(setStatus(el.STATUS_SG, el.START_DATE)),
               'editable': false,
               'calendar_id': el.ID_EVENT
             })
@@ -358,7 +358,37 @@ function getColor(status) {
     case 'Finalizado':
       return '#21BA45'
     default:
-      return 'dark'
+      return 'black'
   }
+}
+
+function setStatus(status, start_date) {
+  switch (status) {
+    case 'En proceso':
+      return 'En proceso'
+    case 'Finalizado':
+      return 'Finalizado'
+    case 'Asignado':
+      var date = new Date(start_date)
+      var today = new Date(new Date().toDateString())
+      var btw = days_between(today, date)
+
+      if (btw < 3 && btw > 0) {
+        return 'Por expirar'
+      } else if (btw <= 0) {
+        return 'Fallido'
+      }
+  }
+}
+
+function days_between(date1, date2) {
+  // The number of milliseconds in one day
+  const ONE_DAY = 1000 * 60 * 60 * 24;
+
+  // Calculate the difference in milliseconds
+  const differenceMs = Math.abs(date1 - date2);
+
+  // Convert back to days and return
+  return Math.round(differenceMs / ONE_DAY);
 }
 </script>

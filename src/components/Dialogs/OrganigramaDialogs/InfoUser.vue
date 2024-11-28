@@ -9,12 +9,15 @@
         <q-card-section>
             <div class="flex row q-pa-sm">
                 <div class="col-4">
-                    <q-avatar size="150px" font-size="52px">
-                        <img src="/public/imgs/GitHub.jpg"/>
+                    <q-avatar size="150px" font-size="52px" v-if="!UserTest.PICTURE == '' || !UserTest.PICTURE == null">
+                        <img :src="'http://localhost:3000/uploads/' + UserTest.PICTURE"/>
+                    </q-avatar>
+                    <q-avatar size="150px" font-size="52px" v-else>
+                        <img src="../../../../public/imgs/Nike.png"/>
                     </q-avatar>
                 </div>
                 <div class="col-3 column">
-                    <span class="text-subtitle1 q-mb-sm q-ml-md">
+                    <span class="text-subtitle1 text-weight-medium q-mb-sm q-ml-md">
                         <q-icon 
                         name="las la-signature" 
                         color="black"
@@ -23,7 +26,7 @@
                     />
                         Nombre:
                     </span>
-                    <span class="text-subtitle1 q-mb-sm q-ml-md">
+                    <span class="text-subtitle1 text-weight-medium q-mb-sm q-ml-md">
                     
                     <q-icon 
                     name="las la-at"
@@ -34,7 +37,7 @@
                 
                     Correo:
                     </span>
-                    <span class="text-subtitle1 q-mb-sm q-ml-md">
+                    <span class="text-subtitle1 text-weight-medium q-mb-sm q-ml-md">
                         
                         <q-icon 
                         name="las la-mobile-alt"
@@ -45,7 +48,7 @@
                     
                         Teléfono:
                     </span>
-                    <span class="text-subtitle1 q-mb-sm q-ml-md">
+                    <span class="text-subtitle1 text-weight-medium q-mb-sm q-ml-md">
                     
                     <q-icon 
                       name="las la-id-card"
@@ -58,16 +61,16 @@
                   </span>
               </div>
               <div class="col-5 column">
-                <span class="text-subtitle1 q-mb-sm q-ml-lg">Edwin David Lopez Carpio</span>
-                <span class="text-subtitle1 q-mb-sm q-ml-lg">Edwin@correo.com</span>
-                <span class="text-subtitle1 q-mb-sm q-ml-lg">3329913903</span>
-                <span class="text-subtitle1 q-mb-sm q-ml-lg">123090</span>
+                <span class="text-subtitle1 q-mb-sm q-ml-lg">{{ UserTest.NAME }} {{ UserTest.LASTNAME }}</span>
+                <span class="text-subtitle1 q-mb-sm q-ml-lg">{{ UserTest.EMAIL }}</span>
+                <span class="text-subtitle1 q-mb-sm q-ml-lg">{{ UserTest.PHONE }}</span>
+                <span class="text-subtitle1 q-mb-sm q-ml-lg">{{ UserTest.NOEMPLOYEE }}</span>
               </div>
           </div>
             
           <div class="flex row justify-between q-ma-lg">
               <div class="col-2">
-                <span class="text-subtitle1">
+                <span class="text-subtitle1 text-weight-medium">
                     
                     <q-icon 
                       name="las la-briefcase"
@@ -80,10 +83,10 @@
                 </span>
               </div>
               <div class="col-4">
-                <span class="text-subtitle1 q-ml-md">Test Manager Engineer</span>
+                <span class="text-subtitle1 q-ml-md">{{ UserTest.WORKSTATION }}</span>
               </div>
               <div class="col-2">
-                <span class="text-subtitle1">
+                <span class="text-subtitle1 text-weight-medium">
                     
                     <q-icon 
                       name="las la-thumbtack"
@@ -96,12 +99,12 @@
                 </span>
               </div>
               <div class="col-4">
-                <span class="text-subtitle1 q-ml-md">Programing</span>
+                <span class="text-subtitle1 q-ml-md">{{ UserTest.AREA }}</span>
               </div>
           </div>
           <div class="flex row justify-between q-ma-lg">
             <div class="col-2">
-              <span class="text-subtitle1">
+              <span class="text-subtitle1 text-weight-medium">
                     
                     <q-icon 
                       name="las la-user-clock"
@@ -114,10 +117,10 @@
                 </span>
             </div>
             <div class="col-4">
-              <span class="text-subtitle1 q-ml-md">Turno 1</span>
+              <span class="text-subtitle1 q-ml-md">{{ UserTest.TURN }}</span>
             </div>
             <div class="col-2">  
-                <span class="text-subtitle1">
+                <span class="text-subtitle1 text-weight-medium">
                     
                     <q-icon 
                       name="las la-birthday-cake"
@@ -130,7 +133,7 @@
                 </span>
             </div>
             <div class="col-4">
-              <span class="text-subtitle1 q-ml-md">15/03/1995</span>
+              <span class="text-subtitle1 q-ml-md">{{ UserTest.BIRTHDAY }}</span>
             </div>
             </div>
         
@@ -146,6 +149,13 @@
 </template>
 
 <script setup>
+
+const props = defineProps({
+  UserTest: {
+    type: Array,
+    required: true
+  }
+})
 
 defineOptions({
     name: 'InfoUser'

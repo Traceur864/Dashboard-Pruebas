@@ -200,6 +200,7 @@
                   color="grey-3" 
                   type="date"
                   label-color="secondary"
+                  :mask="YYYY-MM-DD"
                   lazy-rules
                   :rules="[val => val && val.length > 0 || 'Este campo es requerido']"
                   >
@@ -324,7 +325,7 @@ $q.dialog({
     transitionShow: 'fade',
     dark: false,
     title: 'Confirm',
-    message: 'Validate data first, Are you sure?',
+    message: 'Valida los datos primero, Estas seguro(a)?',
     cancel: true,
     persistent: true
   }).onOk(() => {
@@ -334,7 +335,7 @@ $q.dialog({
     console.log('El usuario canceló.')
     // console.log('>>>> Cancel')
   })
-   
+    
 }
 
 function simulateProgress(number) {    

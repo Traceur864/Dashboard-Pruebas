@@ -1,204 +1,394 @@
 <template>
-    <q-page>
-      <div class="text-h4 text-center q-py-md">
-        Calendario de Strain Gauge
-      </div>
-  
-      <div class="row q-px-sm q-col-gutter-x-sm">
-        <div class="col-7">
-          <FullCalendar :options="calendarOptions"/>
-        </div>
-  
-        <div class="col column justify-center">
-          <div class="col-auto self-end q-pb-lg">
-            <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Administrar Testers" @click="this.testerForm = true"/>
-            <q-btn class="q-mt-md" color="secondary" label="Administrar Fixturas" @click="showAlert()" />
-          </div>
-          <div class="q-col-gutter-y-md">
-            <div class="row q-col-gutter-x-sm">
-                <div class="col">
-                    <q-select square filled v-model="modelo" label="Modelo" :options="models" />
-                </div>
-                <div class="col">
-                    <q-select square filled v-model="area" label="Area en la que se realiza" :options="areas" />
-                </div>
-            </div>
+  <q-page>
+    <div class="text-h4 text-center q-py-md">
+      Calendario de Strain Gauge
+    </div>
 
-            <q-select square filled v-model="fixture_sn" label="SN del tester" :options="fixture_serialnumbers"/>
-            <q-select square filled v-model="fixture_id" label="ID de la fixtura" :options="fixture_ids"/>
-            <q-input square filled v-model="start_date" :min="current_date" type="date" label="Fecha de inicio" />
-            
-            <div class="row q-col-gutter-x-sm">
-                <div class="col">
-                    <q-select square filled v-model="shift" label="Turno" :options="['Turno 1', 'Turno 2', 'Turno 3']"/>
-                </div>
-                <div class="col">
-                    <q-select square filled v-model="asigned_to" label="Responsable de SG" :options="monitos"/>
-                </div>
-            </div>
-            
-          </div>
-          
-          <div class="col-auto self-end">
-            <q-btn class="q-mt-md" color="positive" label="Agendar mantenimiento nuevo" @click="add_event()" />
-          </div>
-          
-        </div>
+    <div class="row q-px-sm q-col-gutter-x-sm">
+      <div class="col-7">
+        <FullCalendar :options="calendarOptions" />
       </div>
-      <!-- ==================== DIALOGS ==================== -->
-      <InsertTesterForm v-model="testerForm" />
-    </q-page>
-  </template>
-  
-  <script>
-  import FullCalendar from '@fullcalendar/vue3'
-  import dayGridPlugin from '@fullcalendar/daygrid'
-  import interactionPlugin from '@fullcalendar/interaction'
 
-  //Enable Api requests
-  import {api} from 'boot/axios'
-  
-  //Importing components
-  import InsertTesterForm from './Components/StrainGauge/Tester/TesterDialog.vue'
-  
-  export default {
-    components: {
-      FullCalendar, // make the <FullCalendar> tag available
-      InsertTesterForm, 
-    },
-    data() {
-      return {
-        //Calendar options
-        calendarOptions: {
-          plugins: [ dayGridPlugin, interactionPlugin],
-          initialView: 'dayGridMonth',
-          events: [],
-          weekNumbers: true,
-          navLinks: true,
-          height: "auto",
-          contentHeight: "auto",
-          headerToolbar: {
-            left: 'dayGridMonth,today',
-            center: 'title',
-            right: 'prev,next'
-          }
+      <div class="col column justify-center">
+        <div class="col-auto self-end q-pb-lg">
+          <div class="text-h6">Guía de colores</div>
+          <div class="col">
+            <q-badge color="purple" class="q-mx-xs" label="En proceso" />
+            <q-badge color="warning" text-color="black" class="q-mx-xs" label="Por expirar" />
+            <q-badge color="negative" class="q-mx-xs" label="Fallido" />
+            <q-badge color="primary" class="q-mx-xs" label="Asignado" />
+            <q-badge color="deep-orange" class="q-mx-xs" label="Atrasado" />
+            <q-badge color="positive" class="q-mx-xs" label="Finalizado" />
+            <q-badge color="dark" text-color="white" label="Cancelado" />
+          </div>
+        </div>
+        <div class="col-auto self-end q-pb-lg">
+          <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Administrar Testers"
+            @click="this.$refs.testerDialog.openDialog()" />
+          <q-btn class="q-mt-md" color="secondary" label="Administrar Fixturas"
+            @click="this.$refs.fixtureDialog.openDialog()" />
+        </div>
+        <div class="q-col-gutter-y-md">
+
+          <q-select ref="tester_select" square filled v-model="tester_sn" label="SN del tester"
+            :options="tester_serialnumbers" @filter="filterTest" use-input input-debounce="0" />
+
+          <q-select ref="fixture_select" square filled v-model="fixture_id" label="ID de la fixtura"
+            :options="fixture_ids" @filter="filterFix" use-input input-debounce="0" />
+
+          <q-input square filled v-model="start_date" :min="current_date" type="date" label="Fecha de inicio" />
+
+          <div class="row q-col-gutter-x-sm">
+            <div class="col">
+              <q-select square filled v-model="shift" label="Turno" :options="['Turno 1', 'Turno 2', 'Turno 3']" />
+            </div>
+            <div class="col">
+              <q-select square filled v-model="asigned_to" label="Responsable de SG" :options="monitos" />
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-auto self-end">
+          <q-btn class="q-mt-md" color="positive" label="Agendar mantenimiento nuevo" @click="add_event()" />
+        </div>
+
+      </div>
+    </div>
+    <!-- ==================== DIALOGS ==================== -->
+    <TesterDialog ref="testerDialog" @reload="loadData" />
+    <FixtureDialog ref="fixtureDialog" @reload="loadData" />
+    <EventDialog ref="eventDialog" @reload="loadData" />
+  </q-page>
+</template>
+
+<script>
+import FullCalendar from '@fullcalendar/vue3'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from '@fullcalendar/interaction'
+
+//Enable Api requests
+import { api } from 'boot/axios'
+
+//Importing components
+import TesterDialog from './Components/StrainGauge/Tester/TesterDialog.vue'
+import FixtureDialog from './Components/StrainGauge/Fixture/FixtureDialog.vue'
+import EventDialog from './Components/StrainGauge/Event/EventDialog.vue'
+
+export default {
+  components: {
+    FullCalendar, // make the <FullCalendar> tag available
+    TesterDialog,
+    FixtureDialog,
+    EventDialog,
+  },
+  data() {
+    return {
+      //Calendar options
+      calendarOptions: {
+        plugins: [dayGridPlugin, interactionPlugin],
+        initialView: 'dayGridMonth',
+        events: [],
+        weekNumbers: true,
+        navLinks: true,
+        height: "auto",
+        contentHeight: "auto",
+        headerToolbar: {
+          left: 'dayGridMonth,today',
+          center: 'title',
+          right: 'prev,next'
         },
-  
-        //Global variables
-        fixture_serialnumbers: [
-          'ICT231023-1','ICT231004-2',
-          'ICT231004-3', 'BU3-F13082',
-          'BU3-F13078', 'BU3-F13084',
-        ],
-        
-        fixture_ids:[
-        'PG520-B03-GW01', 'PG520-B03-GW02', 
-        'PG520-B03-GW03', 'P2312-A04-GW01', 
-        'P2312-A04-GW02', 'P2312-A04-GW03',
-        '25612-B00-GB01', '25612-B00-GB03',
-        '25612-B00-GB05'
-        ],
-
-        areas:[
-          'ICT',
-          'MDA',
-          'ISP',
-          'BSI'
-        ],
-
-        monitos: [
-            "Juan Carlos",
-            'Miguelito',
-            'Joss',
-            'Raúl'
-        ],
-
-        current_date : new Date().getFullYear() + "-" +(new Date().getMonth()+1)+ "-" + new Date().getDate(),
-  
-        //Model variables
-        area: null,
-        fixture_sn: null,
-        fixture_id: null,
-        start_date: null,
-        shift: null,
-        modelo: null,
-        asigned_to: null,
-        testerForm: false,
-        models: null,
-      }
-    },
-    //Get functionalities from imported component
-    mixins: [InsertTesterForm],
-    //Functions inside component
-    methods: {
-        add_event() {
-            if (this.area && this.fixture_sn && this.fixture_id && this.fixture_id &&
-                this.start_date && this.shift && this.asigned_to) {
-                let d = new Date(this.end_date)
-                d.setDate(d.getDate() + 2)
-                let end = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate()
-  
-                this.calendarOptions.events.push(
-                {'title': this.area + this.fixture_id,
-                    'start': this.start_date,
-                    'end': this.start_date,
-                    'color': "#433DE3",
-                    'editable': false,
-                    'calendar_id': 'Holi'})
-                    
-                this.clear_fields()
+        eventClick: (event) => {
+          this.$refs.eventDialog.openDialog(event.event.extendedProps.calendar_id);
         }
       },
 
-      loadData() {
-        api.get('/model').then((response) =>{
-          var data = response.data
-          this.models = []
-          for (const ele in data) {
-            var helper = {}
-            helper.value = data[ele].ID_MODEL
-            helper.label = data[ele].MODEL
-            this.models.push(helper)
-          }
-        }).catch((err)=>{
-          console.error(err);
-        })
-      },
+      //Global variables
+      tester_serialnumbers: [],
+      testers: [],
+      fixture_ids: [],
+      fixtures: [],
+      areas: [],
 
-      clear_fields(){
-        this.area = ""
-        this.fixture_sn = ""
-        this.fixture_id = ""
-        this.start_date = ""
-        this.shift = ""
-        this.asigned_to = ""
-      },
-      
+      monitos: [
+        "Juan Carlos",
+        'Miguelito',
+        'Isela',
+        'Joss',
+        'Raúl'
+      ],
+
+      current_date: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate(),
+
+      //Model variables
+      area: null,
+      tester_sn: null,
+      fixture_id: null,
+      start_date: null,
+      shift: null,
+      modelo: null,
+      asigned_to: null,
+      tester_dialog: false,
+      models: null,
+      disable: true,
+    }
+  },
+  //Get functionalities from imported component
+  // mixins: [TesterDialog],
+  //Functions inside component
+  methods: {
+    filterTest(val, update, abort) {
+      if (val === '') {
+        update(() => {
+          this.tester_serialnumbers = this.testers
+        })
+        return
+      }
+      update(() => {
+        const needle = val.toLowerCase()
+        this.tester_serialnumbers = this.tester_serialnumbers.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
+      })
     },
-    setup () {
-      return {
+    filterFix(val, update, abort) {
+      if (val === '') {
+        update(() => {
+          this.fixture_ids = this.fixtures
+        })
+        return
+      }
+      update(() => {
+        const needle = val.toLowerCase()
+        this.fixture_ids = this.fixtures.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    eventInfo(info) {
+      this.$refs.eventDialog.openDialog(info.event.extendedProps.calendar_id);
+    },
+    add_event() {
+      if (this.tester_sn && this.fixture_id && this.start_date && this.shift && this.asigned_to) {
+        const dismiss = this.$q.notify({
+          spinner: true,
+          message: "Por favor, espera...",
+          timeout: 0
+        })
+
+        const params = new URLSearchParams()
+        params.append('tester_id', this.tester_sn.value)
+        params.append('fixture_id', this.fixture_id.value)
+        params.append('start_date', this.start_date)
+        params.append('shift', this.shift)
+        params.append('asigned_to', this.asigned_to)
+
+        const config = {
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+          }
+        }
+
+        api.post('/strain_gauge', params, config).then((response) => {
+          dismiss()
+          this.$q.notify({
+            type: "positive",
+            message: response.data,
+            position: 'top'
+          })
+
+          this.get_events()
+
+        }).catch((error) => {
+
+          var error = err.response.data.error
+          console.error(error);
+
+          error.forEach(err => {
+            this.$q.notify({
+              type: 'negative',
+              message: err.msg,
+              position: "top"
+            })
+          });
+
+          dismiss()
+        })
+        this.clear_fields()
+      } else {
+        this.$q.notify({
+          type: 'negative',
+          message: "Por favor llena todos los campos",
+          position: "right",
+          timeout: 1200
+        })
       }
     },
-    mounted(){
-      this.loadData()
+    loadData() {
+      api.get('/model').then((response) => {
+        var data = response.data
+        this.models = []
+        for (const ele in data) {
+          this.models.push({
+            value: data[ele].ID_MODEL,
+            label: data[ele].MODEL
+          })
+        }
+      }).catch((err) => {
+        console.error(err);
+      })
 
+      api.get('/area').then((response) => {
+        var data = response.data
+        this.areas = []
+        for (const ele in data) {
+          this.areas.push({
+            value: data[ele].ID_AREA,
+            label: data[ele].AREA
+          })
+        }
+      }).catch((err) => {
+        console.error(err);
+      })
+
+      api.get('/tester/active').then((response) => {
+        var data = response.data
+        this.tester_serialnumbers = []
+        this.testers = []
+        data.forEach(ele => {
+          this.tester_serialnumbers.push({
+            value: ele.ID_TESTER,
+            label: ele.TESTER_SN
+          })
+          this.testers.push({
+            value: ele.ID_TESTER,
+            label: ele.TESTER_SN
+          })
+        });
+
+      }).catch((err) => {
+        console.error(err);
+      })
+
+      api.get('/fixture/active').then((response) => {
+        var data = response.data
+        this.fixture_ids = []
+        this.fixtures = []
+        data.forEach(ele => {
+          this.fixture_ids.push({
+            value: ele.ID_FIXTURE,
+            label: ele.FIXTURE_ID
+          })
+          this.fixtures.push({
+            value: ele.ID_FIXTURE,
+            label: ele.FIXTURE_ID
+          })
+        });
+
+      }).catch((err) => {
+        console.error(err);
+      })
+
+      this.get_events()
+    },
+
+    get_events() {
+      this.calendarOptions.events = []
+
+      api.get('/strain_gauge').then((response) => {
+        var data = response.data
+        data.forEach(el => {
+
+          this.calendarOptions.events.push(
+            {
+              'title': "Tester: " + el.TESTER_SN + ", Fixtura:" + el.FIXTURE_ID,
+              'start': el.START_DATE.substring(0, 10),
+              'end': el.START_DATE.substring(0, 10),
+              'color': getColor(setStatus(el.STATUS_SG, el.START_DATE)),
+              'editable': false,
+              'calendar_id': el.ID_EVENT
+            })
+        });
+      }).catch((error) => {
+        console.error(error);
+      })
+    },
+
+    clear_fields() {
+      this.area = ""
+      this.tester_sn = ""
+      this.fixture_id = ""
+      this.start_date = ""
+      this.shift = ""
+      this.asigned_to = ""
+    },
+
+    unlock_select() {
+      console.log(this.modelo, this.area);
+      if (this.modelo && this.area) {
+        this.disable = false
+      }
+    }
+
+  },
+  setup() {
+    return {
+    }
+  },
+  mounted() {
+    let self = this
+    this.loadData()
+  },
+  watch: {
+    modelo: function () {
+      console.log(this.modelo.value);
     }
   }
-  
-  function get_color(type){
-    switch (type) {
-      case 'Permiso sin goce':
-        return '#342EEA'
-      case 'Vacaciones':
-        return '#59C62F'
-      case 'Descanso':
-        return '#D640BF'
-      case 'Domingo laborado':
-        return '#78351D'
-      case 'Falta':
-        return '#DB090A'
-      default:
-        break;
-    }
+}
+
+function getColor(status) {
+  switch (status) {
+    case 'En proceso':
+      return 'purple'
+    case 'Por expirar':
+      return '#F2C037'
+    case 'Fallido':
+      return '#C10015'
+    case 'Asignado':
+      return 'primary'
+    case 'Atrasado':
+      return '#FF5722'
+    case 'Finalizado':
+      return '#21BA45'
+    default:
+      return 'black'
   }
-  </script>
+}
+
+function setStatus(status, start_date) {
+  switch (status) {
+    case 'En proceso':
+      return 'En proceso'
+    case 'Finalizado':
+      return 'Finalizado'
+    case 'Asignado':
+      var date = new Date(start_date)
+      var today = new Date(new Date().toDateString())
+      var btw = days_between(today, date)
+
+      if (btw < 3 && btw > 0) {
+        return 'Por expirar'
+      } else if (btw <= 0) {
+        return 'Fallido'
+      }
+  }
+}
+
+function days_between(date1, date2) {
+  // The number of milliseconds in one day
+  const ONE_DAY = 1000 * 60 * 60 * 24;
+
+  // Calculate the difference in milliseconds
+  const differenceMs = Math.abs(date1 - date2);
+
+  // Convert back to days and return
+  return Math.round(differenceMs / ONE_DAY);
+}
+</script>

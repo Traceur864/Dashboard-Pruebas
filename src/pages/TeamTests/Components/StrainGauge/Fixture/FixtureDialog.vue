@@ -1,5 +1,5 @@
 <template>
-    <q-dialog :model-value="tester_dialog">
+    <q-dialog v-model="fixtureDialog">
         <q-card style="width: 80vw; max-width: 80vw; min-height: 35vh;">
             <q-tabs v-model="tab" class="text-grey" active-color="primary" indicator-color="primary" align="justify"
                 narrow-indicator>
@@ -12,10 +12,10 @@
 
             <q-tab-panels v-model="tab" animated>
                 <q-tab-panel name="administrar">
-                    <ShowTestersForm @reload="reload" />
+                    <ShowFixtureForm @reload="reload" />
                 </q-tab-panel>
                 <q-tab-panel name="insertar">
-                    <InsertTesterForm @reload="reload" />
+                    <InsertFixtureForm @reload="reload" />
                 </q-tab-panel>
             </q-tab-panels>
 
@@ -27,31 +27,31 @@
 </template>
 
 <script>
-import InsertTesterForm from './InsertTesterForm.vue';
-import ShowTestersForm from './ShowTestersForm.vue';
+import InsertFixtureForm from "./InsertFixtureForm.vue"
+import ShowFixtureForm from "./ShowFixtureForm.vue"
 
 export default {
     data() {
         return {
-            tab: 'administrar',
-            tester_dialog: false,
+            fixtureDialog: false,
+            tab: 'administrar'
         }
     },
     components: {
-        InsertTesterForm,
-        ShowTestersForm,
+        InsertFixtureForm,
+        ShowFixtureForm
     },
-    //Import variable as prop so it can be accessed from parent
+    emits: ["reload"],
     methods: {
         reload() {
             this.$emit('reload');
         },
         openDialog() {
-            this.tester_dialog = true;
+            this.fixtureDialog = true;
         }
     },
     mounted() {
-        // this.showAlert()
+
     }
 }
 </script>

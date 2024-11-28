@@ -1,5 +1,5 @@
 <template>
-    <q-dialog :model-value="tester_dialog">
+    <q-dialog :model-value="tester_dialog" persistent>
         <q-card style="width: 80vw; max-width: 80vw; min-height: 35vh;">
             <q-tabs v-model="tab" class="text-grey" active-color="primary" indicator-color="primary" align="justify"
                 narrow-indicator>
@@ -20,7 +20,7 @@
             </q-tab-panels>
 
             <q-card-actions align="right" class="vertical-bottom">
-                <q-btn flat label="Cerrar" color="dark" v-close-popup />
+                <q-btn flat label="Cerrar" color="dark" @click="tester_dialog = false" />
             </q-card-actions>
         </q-card>
     </q-dialog>

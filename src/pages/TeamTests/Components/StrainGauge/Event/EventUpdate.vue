@@ -100,7 +100,28 @@ export default {
     },
     methods: {
         updateEvent() {
+            const dismiss = this.$q.notify({
+                spinner: true,
+                message: "Por favor, espera...",
+                timeout: 0
+            })
 
+            const params = new URLSearchParams()
+            params.append('event_id', this.props.event_id)
+            params.append('comments', this.comments)
+
+            const config = {
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+                }
+            }
+
+            api.put('/strain_gauge/', params, config).then((response) => {
+
+            }).catch((error) => {
+
+            })
         },
         reload() {
             this.$emit('reload')

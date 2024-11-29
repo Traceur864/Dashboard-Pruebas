@@ -26,6 +26,10 @@
                 <q-select v-model="asigned_to" label="Responsable de SG"
                     :options="['Juan Carlos', 'Miguelito', 'Isela', 'Joss', 'Raúl']" />
             </div>
+            <div class="col">
+                <q-input v-model="comments" type="text" label="Comentarios"
+                    hint="Breve explicación de porque se realizó el cambio" />
+            </div>
         </div>
 
         <div class="row q-col-gutter-x-sm">
@@ -108,7 +112,16 @@ export default {
 
             const params = new URLSearchParams()
             params.append('event_id', this.props.event_id)
+            params.append('tester_id', this.tester_sn.value)
+            params.append('fixture_id', this.fixture_id.value)
+            params.append('start_date', this.start_date)
+            params.append('shift', this.shift)
             params.append('comments', this.comments)
+            //UPDATE these lines to take USER_ID from local storage when USER DB is done
+            params.append('updated_by', 1)
+            params.append('asigned_to', 1)
+            // params.append('updated_by', this.updated_by)
+            // params.append('asigned_to', this.asigned_to)
 
             const config = {
                 headers: {
@@ -118,9 +131,34 @@ export default {
             }
 
             api.put('/strain_gauge/', params, config).then((response) => {
-
+                dismiss()
+                this.$q.notify({
+                    type: 'positive',
+                    message: response.data,
+                    position: "top"
+                })
+                this.getData()
+                this.event_dialog = false
+                this.$emit('reload')
             }).catch((error) => {
+                dismiss()
 
+                try {
+                    var errors = error.response.data.error
+                } catch (err) {
+                    console.error(err);
+                    console.error(error);
+                }
+
+                console.error(errors);
+
+                errors.forEach(ele => {
+                    this.$q.notify({
+                        type: 'negative',
+                        message: ele.msg,
+                        position: "top"
+                    })
+                });
             })
         },
         reload() {

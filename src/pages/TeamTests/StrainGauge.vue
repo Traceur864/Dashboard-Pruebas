@@ -13,13 +13,35 @@
         <div class="col-auto self-end q-pb-lg">
           <div class="text-h6">Guía de colores</div>
           <div class="col">
-            <q-badge color="purple" class="q-mx-xs" label="En proceso" />
-            <q-badge color="warning" text-color="black" class="q-mx-xs" label="Por expirar" />
-            <q-badge color="negative" class="q-mx-xs" label="Fallido" />
-            <q-badge color="primary" class="q-mx-xs" label="Asignado" />
-            <q-badge color="deep-orange" class="q-mx-xs" label="Atrasado" />
-            <q-badge color="positive" class="q-mx-xs" label="Finalizado" />
-            <q-badge color="dark" text-color="white" label="Cancelado" />
+            <q-badge color="purple" class="q-mx-xs" label="En proceso">
+              <q-tooltip class="text-caption">El Strain Gauge se encuentra en proceso de realización</q-tooltip>
+            </q-badge>
+
+            <q-badge color="warning" text-color="black" class="q-mx-xs" label="Por expirar">
+              <q-tooltip class="text-caption">El Strain Gauge se encuentra a 3 días o menos de su fecha de
+                realización</q-tooltip>
+            </q-badge>
+
+            <q-badge color="negative" class="q-mx-xs" label="Fallido">
+              <q-tooltip class="text-caption">El Strain Gauge aún no se ha realizado y está en su fecha de
+                realización</q-tooltip>
+            </q-badge>
+
+            <q-badge color="primary" class="q-mx-xs" label="Asignado">
+              <q-tooltip class="text-caption">El Strain Gauge está agendado y aún no hay fecha limite</q-tooltip>
+            </q-badge>
+
+            <q-badge color="deep-orange" class="q-mx-xs" label="Atrasado">
+              <q-tooltip class="text-caption">Ya ha pasado la fecha de realización del Strain Gauge</q-tooltip>
+            </q-badge>
+
+            <q-badge color="positive" class="q-mx-xs" label="Finalizado">
+              <q-tooltip class="text-caption">El Strain Gauge completado extosamente</q-tooltip>
+            </q-badge>
+
+            <q-badge color="dark" text-color="white" label="Cancelado">
+              <q-tooltip class="text-caption">El Strain Gauge se ha cancelado por completo</q-tooltip>
+            </q-badge>
           </div>
         </div>
         <div class="col-auto self-end q-pb-lg">

@@ -57,11 +57,13 @@ export default {
 
             api.put('/strain_gauge/finish', params, config).then((response) => {
                 dismiss()
-                this.$q.notify({
-                    type: 'positive',
-                    message: response.data,
-                    position: "top"
-                })
+                response.data.data.forEach(data => {
+                    this.$q.notify({
+                        type: 'positive',
+                        message: data,
+                        position: "top"
+                    })
+                });
 
                 this.$emit('reload')
                 this.finishDialog = false

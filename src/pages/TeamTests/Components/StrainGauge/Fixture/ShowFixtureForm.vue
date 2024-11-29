@@ -5,6 +5,7 @@
                 <q-btn class="q-ma-xs" color="positive" icon="edit" @click="editFixture(props.row)" />
                 <q-btn v-if="props.row.STATUS" class="q-ma-xs" color="negative" icon="delete"
                     @click="deleteFixture(props.row)" />
+                <q-btn color="primary" icon="info" />
             </q-td>
         </template>
         <template v-slot:body-cell-status="props">

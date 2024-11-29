@@ -45,6 +45,8 @@
           </div>
         </div>
         <div class="col-auto self-end q-pb-lg">
+          <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Historial"
+            @click="this.$refs.showEvents.openDialog()" />
           <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Administrar Testers"
             @click="this.$refs.testerDialog.openDialog()" />
           <q-btn class="q-mt-md" color="secondary" label="Administrar Fixturas"
@@ -81,6 +83,7 @@
     <TesterDialog ref="testerDialog" @reload="loadData" />
     <FixtureDialog ref="fixtureDialog" @reload="loadData" />
     <EventDialog ref="eventDialog" @reload="loadData" />
+    <ShowEvents ref="showEvents" />
   </q-page>
 </template>
 
@@ -96,6 +99,7 @@ import { api } from 'boot/axios'
 import TesterDialog from './Components/StrainGauge/Tester/TesterDialog.vue'
 import FixtureDialog from './Components/StrainGauge/Fixture/FixtureDialog.vue'
 import EventDialog from './Components/StrainGauge/Event/EventDialog.vue'
+import ShowEvents from './Components/StrainGauge/Historic/ShowEvents.vue'
 
 export default {
   components: {
@@ -103,6 +107,7 @@ export default {
     TesterDialog,
     FixtureDialog,
     EventDialog,
+    ShowEvents
   },
   data() {
     return {

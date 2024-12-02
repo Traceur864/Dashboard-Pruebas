@@ -1,5 +1,11 @@
 export const linksList = [
     {
+      title: 'Home',
+      caption: 'Pagina principal',
+      icon: 'las la-home',
+      link: 'home'
+    },
+    {
       title: 'ICT',
       caption: 'Visualizacion de datos ICT',
       icon: 'las la-chart-bar',

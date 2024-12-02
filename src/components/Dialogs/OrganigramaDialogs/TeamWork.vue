@@ -1,71 +1,49 @@
 <template>
 
-    <!-- Dialog -->
-    <q-dialog v-model="editUserTest" transition-show="fade" transition-hide="fade" transition-duration="300">
-      <EditUser @close-dialog-edit="closeDialogEdit"/>
-    </q-dialog>
+  <!-- Dialog -->
+  <q-dialog v-model="editUserTest" transition-show="fade" transition-hide="fade" transition-duration="300">
+    <EditUser :UserTestEdit="selectedUserEdit" @close-dialog-edit="closeDialog" @reloadEdit="fetchUsers" />
+  </q-dialog>
 
-    <q-dialog v-model="infoUserTest" transition-show="fade" transition-hide="fade" transition-duration="300">
-      <InfoUser :UserTest="selectedUser"/>
-    </q-dialog>
+  <q-dialog v-model="infoUserTest" transition-show="fade" transition-hide="fade" transition-duration="300">
+    <InfoUser :UserTest="selectedUser" />
+  </q-dialog>
 
-   
-      <div class="flex row q-pa-sm ">
-        <q-card class="my-card q-ma-sm" v-for="test in testerusers" :key="test.ID_USER">
 
-          <!-- Sección para la imagen -->
-          <q-card-section class="q-pa-lg">
-            <div class="flex items-center justify-center">
-              <q-avatar size="100px" font-size="52px" v-if="!test.PICTURE == null || !test.PICTURE == '' ">
-                <img :src="'http://localhost:3000/uploads/' + test.PICTURE" :alt="test.NAME" />
-              </q-avatar>
-              <q-avatar size="100px" font-size="52px" v-else>
-                <img src="../../../../public/imgs/Nike.png" :alt="test.NAME" />
-              </q-avatar>
-            </div>
-          </q-card-section>
-          <!-- Sección para el texto -->
-          <q-card-section class="text-center">
-            <div class="text-weight-medium text-subtitle1">{{ test.NAME }}{{ test.LASTNAME }}</div>
-            <div class="text-weight-light text-subtitle2">{{ test.WORKSTATION }}</div>
-          </q-card-section>
-          <q-separator></q-separator>
-          <q-card-section>
-            <div class="q-gutter-md">
-              <q-btn
-                push
-                square
-                color="orange-6"
-                glossy text-color="black"
-                icon="las la-pencil-alt"
-                aria-label="Editar"
-                @click="editUserTest = true"
-              />
-              <q-btn
-                push
-                square
-                color="red-14"
-                glossy text-color="black"
-                icon="las la-trash-alt"
-                aria-label="Borrar"
-                @click="deletes"
-              />
-              <q-btn
-              id="js"
-                push
-                square
-                color="light-blue-6"
-                glossy text-color="black"
-                icon="las la-info-circle"
-                aria-label="Info"
-                @click="showUserInfo(test)"
-              />
-            </div>
-          </q-card-section>
+  <div class="flex row q-pa-sm ">
+    <q-card class="my-card q-ma-sm" v-for="test in testerusers" :key="test.ID_USER">
 
-        </q-card>
-      </div>
-      
+      <!-- Sección para la imagen -->
+      <q-card-section class="q-pa-lg">
+        <div class="flex items-center justify-center">
+          <q-avatar size="100px" font-size="52px" v-if="!test.PICTURE == null || !test.PICTURE == ''">
+            <img :src="'http://localhost:3000/uploads/' + test.PICTURE" :alt="test.NAME" />
+          </q-avatar>
+          <q-avatar size="100px" font-size="52px" v-else>
+            <img src="../../../../public/imgs/Nike.png" :alt="test.NAME" />
+          </q-avatar>
+        </div>
+      </q-card-section>
+      <!-- Sección para el texto -->
+      <q-card-section class="text-center">
+        <div class="text-weight-medium text-subtitle1">{{ test.NAME }} {{ test.LASTNAME }}</div>
+        <div class="text-weight-light text-subtitle2">{{ test.WORKSTATION }}</div>
+      </q-card-section>
+      <q-separator></q-separator>
+      <q-card-section>
+        <div class="flex justify-between q-gutter-md">
+          <q-btn push square color="orange-6" glossy text-color="black" icon="las la-pencil-alt" aria-label="Editar"
+            @click="showUserEdit(test)" />
+          <q-btn push square color="red-14" glossy text-color="black" icon="las la-trash-alt" aria-label="Borrar"
+            @click="deletes" />
+          <q-btn id="js" push square color="light-blue-6" glossy text-color="black" icon="las la-info-circle"
+            aria-label="Info" @click="showUserInfo(test)" />
+        </div>
+      </q-card-section>
+
+    </q-card>
+  </div>
+
 </template>
 <script setup>
 import axios from 'axios'
@@ -75,10 +53,11 @@ import EditUser from '../OrganigramaDialogs/EditUser.vue'
 import InfoUser from '../OrganigramaDialogs/InfoUser.vue'
 
 const $q = useQuasar()
-const testerusers = ref([]); 
+const testerusers = ref([]);
 const editUserTest = ref(false)
 const infoUserTest = ref(false)
 const selectedUser = ref(false)
+const selectedUserEdit = ref(false)
 
 const fetchUsers = async () => {
   try {
@@ -86,7 +65,7 @@ const fetchUsers = async () => {
     testerusers.value = response.data // Almacenar los datos recibidos
 
     console.log(response.data);
-    
+
   } catch (error) {
 
     console.error('Error fetching users:', error)
@@ -105,20 +84,20 @@ onMounted(() => {
 
 function showUserInfo(UserTest) {
   selectedUser.value = UserTest  // Asignamos el usuario seleccionado
-  infoUserTest.value = true  // Abrimos el diálogo
-
+  infoUserTest.value = true  // Abrimos el diálogo // Abrimos el dialogo editar
   console.log(UserTest);
-  
 }
 
-function closeDialogEdit() {
-  editUserTest.value = false;
+function showUserEdit(UserTestEdit) {
+  selectedUserEdit.value = UserTestEdit  // Asignamos el usuario seleccionado
+  editUserTest.value = true  // Abrimos el diálogo // Abrimos el dialogo editar
+  console.log(UserTestEdit);
 }
 
-function deletes () {
+function deletes() {
   $q.dialog({
-    title: 'Confirm',
-    message: 'Are you sure to erase this user?',
+    title: 'Confirmar',
+    message: 'Dar de baja al usuario',
     cancel: true,
     transitionShow: 'fade',
     transitionHide: 'fade',
@@ -131,14 +110,14 @@ function deletes () {
 
     $q.notify({
       color: 'positive',
-      message: 'User erase was successful',
+      message: 'Peticion satisfactoria',
       icon: 'check'
     })
     // console.log('>>>> second OK catcher')
   }).onCancel(() => {
 
     console.log('cancelled');
-    
+
     // console.log('>>>> Cancel')
   }).onDismiss(() => {
 
@@ -146,11 +125,13 @@ function deletes () {
   })
 }
 
+function closeDialog() {
+  editUserTest.value = false;
+}
+
 defineOptions({
-    name: 'TeamWork'
+  name: 'TeamWork'
 });
 
 </script>
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

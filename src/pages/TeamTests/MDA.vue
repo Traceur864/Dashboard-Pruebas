@@ -1,11 +1,11 @@
 <template>
-    <q-page class="flex q-pa-md">
-        <span class="text-h1">MDA</span>
+    <q-page class="q-pa-md">
+        <span class="flex justify-center text-h4">MDA</span>
     </q-page>
 </template>
 
 <script setup>
-    defineOptions({
-        name: 'MDA'
-    });
+defineOptions({
+    name: 'MDA'
+});
 </script>

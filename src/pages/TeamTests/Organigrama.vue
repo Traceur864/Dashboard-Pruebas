@@ -4,22 +4,16 @@
     <div class="flex row q-pa-md">
       <span class="text-h5 q-mr-sm">Testers</span>
       <div class="col-4">
-      <q-btn 
-        push
-        flat
-        label="Registrar" 
-        color="black"
-        @click="openDialog"
-      />
+        <q-btn push flat label="Registrar" color="black" @click="openDialog" />
       </div>
     </div>
 
     <q-dialog v-model="fixed" transition-show="fade" transition-hide="fade" transition-duration="300">
-      <RegisterUser @close-dialog="closeDialog"/>
+      <RegisterUser @close-dialog="closeDialog" />
     </q-dialog>
-    
-    <TeamWork/>
-      
+
+    <TeamWork />
+
 
   </q-page>
 </template>
@@ -41,6 +35,6 @@ function closeDialog() {
 }
 
 defineOptions({
-    name: 'OrganigramaPage'
+  name: 'OrganigramaPage'
 });
 </script>

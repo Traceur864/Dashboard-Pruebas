@@ -17,11 +17,6 @@
               <q-tooltip class="text-caption">El Strain Gauge se encuentra en proceso de realización</q-tooltip>
             </q-badge>
 
-            <q-badge color="warning" text-color="black" class="q-mx-xs" label="Por expirar">
-              <q-tooltip class="text-caption">El Strain Gauge se encuentra a 3 días o menos de su fecha de
-                realización</q-tooltip>
-            </q-badge>
-
             <q-badge color="negative" class="q-mx-xs" label="Fallido">
               <q-tooltip class="text-caption">El Strain Gauge aún no se ha realizado y está en su fecha de
                 realización</q-tooltip>
@@ -32,7 +27,8 @@
             </q-badge>
 
             <q-badge color="deep-orange" class="q-mx-xs" label="Atrasado">
-              <q-tooltip class="text-caption">Ya ha pasado la fecha de realización del Strain Gauge</q-tooltip>
+              <q-tooltip class="text-caption">El Strain Gauge se encuentra a 3 días o menos de su fecha de
+                realización</q-tooltip>
             </q-badge>
 
             <q-badge color="positive" class="q-mx-xs" label="Finalizado">
@@ -67,7 +63,8 @@
               <q-select square filled v-model="shift" label="Turno" :options="['Turno 1', 'Turno 2', 'Turno 3']" />
             </div>
             <div class="col">
-              <q-select square filled v-model="asigned_to" label="Responsable de SG" :options="monitos" />
+              <q-select square filled v-model="asigned_to" label="Responsable de SG" :options="usuarios"
+                @filter="filterUser" use-input input-debounce="0" />
             </div>
           </div>
 
@@ -136,15 +133,8 @@ export default {
       fixture_ids: [],
       fixtures: [],
       areas: [],
-
-      monitos: [
-        "Juan Carlos",
-        'Miguelito',
-        'Isela',
-        'Joss',
-        'Raúl'
-      ],
-
+      usuarios: [],
+      users: [],
       current_date: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate(),
 
       //Model variables
@@ -164,6 +154,18 @@ export default {
   // mixins: [TesterDialog],
   //Functions inside component
   methods: {
+    filterUser(val, update, abort) {
+      if (val === '') {
+        update(() => {
+          this.usuarios = this.users
+        })
+        return
+      }
+      update(() => {
+        const needle = val.toLowerCase()
+        this.usuarios = this.usuarios.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
     filterTest(val, update, abort) {
       if (val === '') {
         update(() => {
@@ -207,7 +209,7 @@ export default {
         params.append('fixture_id', this.fixture_id.value)
         params.append('start_date', this.start_date)
         params.append('shift', this.shift)
-        params.append('asigned_to', this.asigned_to)
+        params.append('asigned_to', this.asigned_to.value)
 
         const config = {
           headers: {
@@ -316,6 +318,20 @@ export default {
         console.error(err);
       })
 
+      api.get('/users/testusers').then((response) => {
+        var data = response.data
+        this.usuarios = []
+        data.forEach(dat => {
+          this.usuarios.push({
+            value: dat.ID_USER,
+            label: dat.NAME + " " + dat.LASTNAME
+          })
+        });
+        this.users = this.usuarios
+      }).catch((err) => {
+        console.error(err);
+      })
+
       this.get_events()
     },
 
@@ -404,9 +420,11 @@ function setStatus(status, start_date) {
       var btw = days_between(today, date)
 
       if (btw < 3 && btw > 0) {
-        return 'Por expirar'
+        return 'Atrasado'
       } else if (btw <= 0) {
         return 'Fallido'
+      } else {
+        return 'Asignado'
       }
   }
 }
@@ -414,11 +432,16 @@ function setStatus(status, start_date) {
 function days_between(date1, date2) {
   // The number of milliseconds in one day
   const ONE_DAY = 1000 * 60 * 60 * 24;
-
   // Calculate the difference in milliseconds
   const differenceMs = Math.abs(date1 - date2);
 
   // Convert back to days and return
-  return Math.round(differenceMs / ONE_DAY);
+  var days = Math.round(differenceMs / ONE_DAY)
+
+  if (date1 > date2) {
+    days = days * -1;
+  }
+
+  return days;
 }
 </script>

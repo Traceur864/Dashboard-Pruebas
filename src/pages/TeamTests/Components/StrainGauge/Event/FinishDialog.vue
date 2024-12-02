@@ -13,7 +13,8 @@
                 </div>
                 <div class="row q-pt-md q-col-gutter-x-sm">
                     <div class="col">
-                        <q-select v-model="asigned_to" :options="monitos" label="Responsable SG" square filled />
+                        <q-select square filled v-model="asigned_to" label="Responsable de SG" :options="usuarios"
+                            @filter="filterUser" use-input input-debounce="0" />
                     </div>
                     <div class="col">
                         <q-select v-model="shift" :options="['Turno 1', 'Turno 2', 'Turno 3']" label="Turno" square
@@ -44,13 +45,8 @@ export default {
         return {
             finishDialog: false,
             comments: '',
-            monitos: [
-                "Juan Carlos",
-                'Miguelito',
-                'Isela',
-                'Joss',
-                'Raúl'
-            ],
+            usuarios: [],
+            users: [],
             asigned_to: '',
             shift: '',
         }
@@ -58,6 +54,34 @@ export default {
     methods: {
         openDialog() {
             this.finishDialog = true;
+            this.getData()
+        },
+        getData() {
+            api.get('/users/testusers').then((response) => {
+                var data = response.data
+                this.usuarios = []
+                data.forEach(dat => {
+                    this.usuarios.push({
+                        value: dat.ID_USER,
+                        label: dat.NAME + " " + dat.LASTNAME
+                    })
+                });
+                this.users = this.usuarios
+            }).catch((err) => {
+                console.error(err);
+            })
+        },
+        filterUser(val, update, abort) {
+            if (val === '') {
+                update(() => {
+                    this.usuarios = this.users
+                })
+                return
+            }
+            update(() => {
+                const needle = val.toLowerCase()
+                this.usuarios = this.usuarios.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
+            })
         },
         finishStrainGauge() {
             const dismiss = this.$q.notify({
@@ -70,7 +94,7 @@ export default {
             params.append('event_id', this.props.event_id)
             params.append('comments', this.comments)
             params.append('shift', this.shift)
-            params.append('asigned_to', this.asigned_to)
+            params.append('asigned_to', this.asigned_to.value)
 
             const config = {
                 headers: {

@@ -23,8 +23,8 @@
 
         <div class="row q-col-gutter-x-sm">
             <div class="col-3">
-                <q-select v-model="asigned_to" label="Responsable de SG"
-                    :options="['Juan Carlos', 'Miguelito', 'Isela', 'Joss', 'Raúl']" />
+                <q-select flat v-model="asigned_to" label="Responsable de SG" :options="usuarios" @filter="filterUser"
+                    use-input input-debounce="0" />
             </div>
             <div class="col">
                 <q-input v-model="comments" type="text" label="Comentarios"
@@ -92,6 +92,8 @@ export default {
             tester_sn: '',
             updated_comments: '',
 
+            usuarios: [],
+            users: [],
             fixture_ids: [],
             fixtures: [],
             testers: [],
@@ -119,9 +121,8 @@ export default {
             params.append('comments', this.comments)
             //UPDATE these lines to take USER_ID from local storage when USER DB is done
             params.append('updated_by', 1)
-            params.append('asigned_to', 1)
             // params.append('updated_by', this.updated_by)
-            // params.append('asigned_to', this.asigned_to)
+            params.append('asigned_to', this.asigned_to.value)
 
             const config = {
                 headers: {
@@ -187,6 +188,18 @@ export default {
                 this.fixture_ids = this.fixtures.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
             })
         },
+        filterUser(val, update, abort) {
+            if (val === '') {
+                update(() => {
+                    this.usuarios = this.users
+                })
+                return
+            }
+            update(() => {
+                const needle = val.toLowerCase()
+                this.usuarios = this.usuarios.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
+            })
+        },
         loadData() {
             api.get('/tester/active').then((response) => {
                 var data = response.data
@@ -225,13 +238,29 @@ export default {
             }).catch((err) => {
                 console.error(err);
             })
+
+            api.get('/users/testusers').then((response) => {
+                var data = response.data
+                this.usuarios = []
+                data.forEach(dat => {
+                    this.usuarios.push({
+                        value: dat.ID_USER,
+                        label: dat.NAME + " " + dat.LASTNAME
+                    })
+                });
+                this.users = this.usuarios
+            }).catch((err) => {
+                console.error(err);
+            })
         },
         getData() {
             api.get('/strain_gauge/' + this.event_id).then((response) => {
                 var data = response.data[0];
-                this.area = data.AREA;
-                // this.asigned_to = data.ASIGNED_TO;
-                this.asigned_to = "Isela"
+                this.area = data.AREA_SG;
+                this.asigned_to = this.usuarios.find(
+                    (i) => i.value == data.ASIGNED_TO
+                )
+
                 this.created_at = data.CREATED_AT.substring(0, 10);
                 this.created_by = data.CREATED_BY;
                 this.finish_comments = data.FINISH_COMMENTS;

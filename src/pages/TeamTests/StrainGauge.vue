@@ -80,10 +80,10 @@
       </div>
     </div>
     <!-- ==================== DIALOGS ==================== -->
-    <TesterDialog ref="testerDialog" @reload="loadData" />
-    <FixtureDialog ref="fixtureDialog" @reload="loadData" />
-    <EventDialog ref="eventDialog" @reload="loadData" />
-    <ShowEvents ref="showEvents" />
+    <TesterDialog ref="testerDialog" @reload="reload" />
+    <FixtureDialog ref="fixtureDialog" @reload="reload" />
+    <EventDialog ref="eventDialog" @reload="reload" />
+    <ShowEvents ref="showEvents" @reload="reload" />
   </q-page>
 </template>
 
@@ -190,6 +190,9 @@ export default {
     },
     eventInfo(info) {
       this.$refs.eventDialog.openDialog(info.event.extendedProps.calendar_id);
+    },
+    reload() {
+      this.loadData()
     },
     add_event() {
       if (this.tester_sn && this.fixture_id && this.start_date && this.shift && this.asigned_to) {

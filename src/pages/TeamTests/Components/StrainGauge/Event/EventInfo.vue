@@ -100,8 +100,8 @@
             @click="this.$refs.finishDialog.openDialog()" />
     </q-card-section>
 
-    <StartDialog :event_id="event_id" ref="startDialog" @reload="getData()" />
-    <FinishDialog :event_id="event_id" ref="finishDialog" @reload="getData()" />
+    <StartDialog :event_id="event_id" ref="startDialog" @reload="reload" />
+    <FinishDialog :event_id="event_id" ref="finishDialog" @reload="reload" />
 
 </template>
 
@@ -153,6 +153,10 @@ export default {
         }
     },
     methods: {
+        reload() {
+            this.getData()
+            this.$emit('reload')
+        },
         loadData() {
             api.get('/tester/active').then((response) => {
                 var data = response.data
@@ -236,7 +240,6 @@ export default {
                     this.updated_by = "Isela";
                 }
                 this.updated_comments = data.UPDATED_COMMENTS;
-                this.$emit('reload')
             }).catch((error) => {
                 console.error(error);
             })

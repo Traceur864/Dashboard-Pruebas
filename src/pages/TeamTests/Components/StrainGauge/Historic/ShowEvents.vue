@@ -30,9 +30,7 @@
                                 {{ props.row.START_DATE.substring(0, 10) }}
                             </q-td>
                             <q-td>
-                                <div v-if="props.row.FINISH_DATE != null" align="center">{{
-                                    props.row.FINISH_DATE.substring(0, 10) }}</div>
-                                <div v-else align="center"> N/A </div>
+                                {{ props.row.FINISH_DATE }}
                             </q-td>
                             <q-td>
                                 <q-badge :color="getColor(setStatus(props.row.STATUS_SG))"
@@ -50,11 +48,10 @@
             </q-card-actions>
         </q-card>
     </q-dialog>
-    <EventDialog ref="eventDialog" />
+    <EventDialog ref="eventDialog" @reload="reload" />
 </template>
 
 <script>
-import { data } from 'autoprefixer';
 import { api } from 'boot/axios'
 import EventDialog from '../Event/EventDialog.vue';
 
@@ -65,6 +62,7 @@ export default {
     components: {
         EventDialog
     },
+    emits: ['reload'],
     data() {
         return {
             showEvents: false,
@@ -90,11 +88,32 @@ export default {
         openEvent(id) {
             this.$refs.eventDialog.openDialog(id)
         },
+        reload() {
+            this.getData()
+            this.$emit('reload')
+        },
         getData() {
             this.data = []
 
             api.get('/strain_gauge').then((response) => {
-                this.data = response.data;
+                response.data.forEach(dat => {
+                    if (dat.FINISH_DATE != null) {
+                        dat.FINISH_DATE = dat.FINISH_DATE.substring(0, 10)
+                    } else {
+                        dat.FINISH_DATE = 'N/A'
+                    }
+                    this.data.push({
+                        ID_EVENT: dat.ID_EVENT,
+                        FIXTURE_ID: dat.FIXTURE_ID,
+                        TESTER_SN: dat.TESTER_SN,
+                        MODEL: dat.MODEL,
+                        AREA: dat.AREA,
+                        START_DATE: dat.START_DATE,
+                        FINISH_DATE: dat.FINISH_DATE,
+                        STATUS_SG: dat.STATUS_SG,
+                        btn: ''
+                    })
+                });
             }).catch((error) => {
                 console.error(error);
             })

@@ -5,7 +5,6 @@
                 <q-btn class="q-ma-xs" color="positive" icon="edit" @click="editFixture(props.row)" />
                 <q-btn v-if="props.row.STATUS" class="q-ma-xs" color="negative" icon="delete"
                     @click="deleteFixture(props.row)" />
-                <q-btn color="primary" icon="info" />
             </q-td>
         </template>
         <template v-slot:body-cell-status="props">
@@ -19,8 +18,8 @@
             </q-td>
         </template>
     </q-table>
-    <EditFixtureForm ref="editFixture" @reload="loadData" />
-    <DeleteFixtureDialog ref="deleteFixture" @reload="loadData" />
+    <EditFixtureForm ref="editFixture" @reload="reload" />
+    <DeleteFixtureDialog ref="deleteFixture" @reload="reload" />
 </template>
 
 <script>
@@ -51,6 +50,10 @@ export default {
     },
     emits: ["reload"],
     methods: {
+        reload() {
+            this.loadData()
+            this.$emit("reload")
+        },
         loadData() {
             api.get('/fixture').then((response) => {
                 this.rows = response.data

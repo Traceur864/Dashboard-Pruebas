@@ -139,7 +139,6 @@ export default {
                 })
                 this.getData()
                 this.event_dialog = false
-                this.$emit('reload')
             }).catch((error) => {
                 dismiss()
 
@@ -264,7 +263,6 @@ export default {
                     (i) => i.value == data.ID_TESTER
                 )
 
-                this.$emit('reload')
             }).catch((error) => {
                 console.error(error);
             })

@@ -1,6 +1,6 @@
 <template>
     <q-dialog :model-value="event_dialog" persistent>
-        <q-card style="width: 80vw; max-width: 80vw; max-height: 80vh;">
+        <q-card style="width: 80vw; max-width: 80vw; max-height: 80vh; ">
             <q-tabs v-model="tab" class="text-grey" active-color="primary" indicator-color="primary" align="justify"
                 narrow-indicator>
                 <q-tab :ripple="false" name="info" label="Información" />

@@ -56,6 +56,10 @@ export default {
     mixins: [EditTesterForm],
     props: ['id_tester'],
     methods: {
+        reload() {
+            this.getTesters()
+            this.$emit('reload')
+        },
         getTesters() {
             this.rows = []  // Clear array
             api.get('/tester').then((response) => {
@@ -66,7 +70,6 @@ export default {
             }).catch((error) => {
                 console.error(error);
             })
-            this.$emit('reload')
         },
         editTester(row) {
             this.$refs.editForm.open_dialog()

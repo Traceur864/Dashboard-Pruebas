@@ -14,17 +14,17 @@
           <div class="col-auto self-end q-pb-lg">
             <div class="text-h6">Guía de colores</div>
             <div class="col">
-              <q-badge style="background-color: #342EEA;" class="q-mx-xs" label="Permiso sin goce"></q-badge>
-              <q-badge style="background-color: #59C62F;" class="q-mx-xs" label="Vacaciones"></q-badge>
-              <q-badge style="background-color: #D640BF;" class="q-mx-xs" label="Descanso"></q-badge>
-              <q-badge style="background-color: #78351D;" class="q-mx-xs" label="Domingo laborado"></q-badge>
-              <q-badge style="background-color: #DB090A;" class="q-mx-xs" label="Falta"></q-badge>
-              <q-badge style="background-color: #000000;" text-color="white" label="4ta Falta"></q-badge>
+              <q-badge color="primary" class="q-mx-xs" label="Permiso sin goce"></q-badge>
+              <q-badge color="positive" class="q-mx-xs" label="Vacaciones"></q-badge>
+              <q-badge color="accent" class="q-mx-xs" label="Descanso"></q-badge>
+              <q-badge color="teal" class="q-mx-xs" label="Domingo laborado"></q-badge>
+              <q-badge color="negative" class="q-mx-xs" label="Falta"></q-badge>
+              <q-badge color="black" text-color="white" label="4ta Falta"></q-badge>
             </div>
           </div>
         </div>
         <div class="row q-pb-md">
-          <div class="col" />
+          <div class="col"></div>
           <div class="col-6">
             <q-select v-model="shift" :options="['Todos', 'Turno 1', 'Turno 2', 'Turno 3', 'Administrativo']"
               label="Turno" hint="Filtrar vacaciones por turno" square flat />
@@ -43,11 +43,15 @@
           </div>
         </div>
         <div class="col-auto self-end">
-          <q-btn class="q-mt-md" color="positive" label="Agendar" @click="add_event()" />
+          <q-btn class="q-mt-md q-mx-sm" color="primary" label="Historial de personal"
+            @click="this.$refs.eventHistory.openDialog()" />
+          <q-btn class="q-mt-md " color="positive" label="Agendar" @click="add_event()" />
         </div>
 
       </div>
     </div>
+    <EventHistory ref="eventHistory" />
+    <EventInfo @reload="getEvents" ref="eventInfo" />
   </q-page>
 </template>
 
@@ -57,10 +61,14 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 //Enable Api requests
 import { api } from 'boot/axios'
+import EventHistory from './components/eventHistory.vue'
+import EventInfo from './components/eventInfo.vue'
 
 export default {
   components: {
-    FullCalendar // make the <FullCalendar> tag available
+    FullCalendar, // make the <FullCalendar> tag available
+    EventHistory,
+    EventInfo,
   },
   data() {
     return {
@@ -76,6 +84,9 @@ export default {
           center: 'title',
           right: 'prev,next'
         },
+        eventClick: (event) => {
+          this.$refs.eventInfo.openDialog(event.event.extendedProps.calendar_id);
+        }
       },
 
       //Global variables
@@ -213,13 +224,14 @@ export default {
       })
     },
     getEvents() {
-      api.get('/vacation_calendar/').then((response) => {
+      api.get('/vacation_calendar/active').then((response) => {
         var data = response.data
         this.calendarOptions.events = []
         data.forEach(dat => {
           let d = new Date(dat.FINISH_DATE.substring(0, 10))
           d.setDate(d.getDate() + 2)
-          let end = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate()
+          let end = new Date(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate())
+            .toISOString().substring(0, 10)
 
           this.calendarOptions.events.push({
             'title': dat.NAME + " " + dat.LASTNAME,
@@ -290,15 +302,17 @@ export default {
 function get_color(type) {
   switch (type) {
     case 'Permiso sin goce':
-      return '#342EEA'
+      return '#1976D2'
     case 'Vacaciones':
-      return '#59C62F'
+      return '#21BA45'
     case 'Descanso':
-      return '#D640BF'
+      return '#9C27B0'
     case 'Domingo laborado':
-      return '#78351D'
+      return '#009688'
     case 'Falta':
-      return '#DB090A'
+      return '#C10015'
+    case '4ta Falta':
+      return '#000000'
     default:
       break;
   }

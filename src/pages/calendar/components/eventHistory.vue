@@ -31,7 +31,7 @@
                             </q-td>
                             <q-td align="center">
                                 <q-btn class="q-mx-sm" color="primary" icon="info"
-                                    @click="openEvent(props.row.ID_EVENT)" />
+                                    @click="$refs.eventInfo.openDialog(props.row.ID_VACATION)" />
                             </q-td>
                         </q-tr>
                     </template>
@@ -42,12 +42,14 @@
             </q-card-actions>
         </q-card>
     </q-dialog>
+    <EventInfo ref="eventInfo" @reload="reload" />
 </template>
 
 <script>
 import { data } from 'autoprefixer';
 //Enable Api requests
 import { api } from 'boot/axios'
+import EventInfo from './eventInfo.vue';
 
 export default {
     data() {
@@ -65,17 +67,20 @@ export default {
             ]
         }
     },
+    components: {
+        EventInfo
+    },
+    emits: ['reload'],
     methods: {
         openDialog() {
             this.history_dialog = true;
+            this.getData()
         },
         getData() {
             api.get('/vacation_calendar/').then((response) => {
                 var info = response.data
                 this.data = []
                 info.forEach(dat => {
-                    console.log();
-
                     this.data.push({
                         ID_VACATION: dat.ID_VACATION,
                         EMPLOYEE_NAME: dat.NAME + ' ' + dat.LASTNAME,
@@ -89,6 +94,10 @@ export default {
             }).catch((error) => {
                 console.error(error);
             })
+        },
+        reload() {
+            this.getData()
+            this.$emit('reload')
         },
         get_color(type) {
             switch (type) {
@@ -115,7 +124,7 @@ export default {
 
     },
     mounted() {
-        this.getData();
+
     }
 }
 </script>

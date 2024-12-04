@@ -39,6 +39,7 @@
               <q-input square filled v-model="start_date" :min="current_date" type="date" label="Fecha de inicio" />
               <q-input square filled v-model="end_date" :disable="enable_finish" :min="start_date" type="date"
                 label="Fecha de fin" />
+              <q-input v-model="comments" square filled type="textarea" maxlength="255" rows="2" label="Comentarios" />
             </div>
           </div>
         </div>
@@ -50,7 +51,7 @@
 
       </div>
     </div>
-    <EventHistory ref="eventHistory" />
+    <EventHistory ref="eventHistory" @reload="getEvents" />
     <EventInfo @reload="getEvents" ref="eventInfo" />
   </q-page>
 </template>
@@ -107,6 +108,7 @@ export default {
       employee_name: null,
       start_date: null,
       shift: null,
+      comments: null,
     }
   },
   methods: {
@@ -123,6 +125,7 @@ export default {
         params.append('event_type', this.event_type)
         params.append('start_date', this.start_date)
         params.append('finish_date', this.end_date)
+        params.append('comments', this.comments)
         params.append('created_by', 4)
         //  TODO: GET ID FROM LOGGED USER
         // params.append('created_by', this.created_by)
@@ -183,7 +186,8 @@ export default {
         data.forEach(dat => {
           let d = new Date(dat.FINISH_DATE.substring(0, 10))
           d.setDate(d.getDate() + 2)
-          let end = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate()
+          let end = new Date(d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate()).toISOString()
+            .substring(0, 10)
 
           this.calendarOptions.events.push({
             'title': dat.NAME + " " + dat.LASTNAME,
@@ -264,6 +268,7 @@ export default {
       this.start_date = ''
       this.end_date = ''
       this.shift = ''
+      this.comments = ''
     }
 
   },

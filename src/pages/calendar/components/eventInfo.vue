@@ -4,28 +4,34 @@
 
             <q-card-section>
                 <div class="row text-h6">
-                    Información general
+                    Información general <q-badge class="q-mx-md" :color="get_color(event_type)" :label="event_type" />
                 </div>
                 <div class="row q-col-gutter-x-sm">
                     <div class="col">
                         <q-select square v-model="employee_name" label="Empleado" :options="usuarios"
-                            @filter="filterUser" use-input input-debounce="0" />
+                            @filter="filterUser" use-input input-debounce="0" :readonly="disabled" />
                     </div>
                     <div class="col">
-                        <q-select square v-model="event_type" :options="types" label="Tipo de evento" />
+                        <q-select square v-model="event_type" :readonly="disabled" :options="types"
+                            label="Tipo de evento" />
                     </div>
                     <div class="col">
-                        <q-input v-model="start_date" type="date" label="Fecha de inicio" />
+                        <q-input v-model="start_date" :readonly="disabled" type="date" label="Fecha de inicio" />
                     </div>
                     <div class="col">
-                        <q-input v-model="end_date" type="date" label="Fecha de fin" />
+                        <q-input v-model="end_date" :readonly="disabled" type="date" label="Fecha de fin" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <q-input v-model="comments" :readonly="disabled" type="textarea" rows="1" label="Comentarios" />
                     </div>
                 </div>
             </q-card-section>
 
             <q-card-actions align="right" class="vertical-bottom">
-                <q-btn color="negative" label="Cancelar" @click="confirmCancel" />
-                <q-btn color="positive" label="Modificar" @click="confirmUpdate" />
+                <q-btn color="negative" label="Cancelar" @click="confirmCancel" :disable="disabled" />
+                <q-btn color="positive" label="Modificar" @click="confirmUpdate" :disable="disabled" />
                 <q-btn flat label="Cerrar" color="dark" @click="event_dialog = false" />
             </q-card-actions>
         </q-card>
@@ -60,6 +66,8 @@ export default {
             end_date: null,
             employee_name: null,
             start_date: null,
+            disabled: true,
+            comments: null,
         }
     },
     emits: ['reload'],
@@ -77,6 +85,7 @@ export default {
             params.append('event_type', this.event_type)
             params.append('start_date', this.start_date)
             params.append('finish_date', this.end_date)
+            params.append('comments', this.comments)
             //  TODO: GET ID FROM LOGGED USER
             // params.append('created_by', this.created_by)
 
@@ -125,6 +134,7 @@ export default {
 
             const params = new URLSearchParams()
             params.append('id_vacation', this.vacation_id)
+            params.append('employee_id', this.employee_name.value)
 
             const config = {
                 headers: {
@@ -205,6 +215,7 @@ export default {
         openDialog(id) {
             this.event_dialog = true;
             this.vacation_id = id
+            this.loadData()
             this.getData(id)
         },
         getData(id) {
@@ -213,10 +224,15 @@ export default {
                 this.event_type = data.EVENT_TYPE
                 this.end_date = data.FINISH_DATE.substring(0, 10)
                 this.start_date = data.START_DATE.substring(0, 10)
-
+                this.comments = data.COMMENTS
                 this.employee_name = this.users.find(
                     (i) => i.value == data.ID_EMPLOYEE
                 )
+                if (this.event_type == "Cancelado") {
+                    this.disabled = true
+                } else {
+                    this.disabled = false
+                }
             }).catch((error) => {
                 console.error(error);
                 var errors = error.response.data.error
@@ -258,11 +274,30 @@ export default {
                 const needle = val.toLowerCase()
                 this.usuarios = this.usuarios.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
             })
+        },
+        get_color(type) {
+            switch (type) {
+                case 'Permiso sin goce':
+                    return 'primary'
+                case 'Vacaciones':
+                    return 'positive'
+                case 'Descanso':
+                    return 'accent'
+                case 'Domingo laborado':
+                    return 'teal'
+                case 'Falta':
+                    return 'negative'
+                case '4ta Falta':
+                    return 'black'
+                case 'Cancelado':
+                    return 'blue-grey'
+                default:
+                    break;
+            }
         }
     },
     props: ['calendar_id'],
     mounted() {
-        this.loadData()
     }
 }
 </script>

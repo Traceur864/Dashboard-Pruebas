@@ -106,7 +106,7 @@
           </div>
           <div class="col-md-5">
             <q-file dense square filled v-model="userFormEdit.picture" label="Foto" color="grey-3"
-              label-color="secondary" counter accept="image/*">
+              label-color="secondary" counter accept="image/*" @added="onImageSelected">
               <template v-slot:prepend>
                 <q-icon name="lar la-image" color="secondary" />
               </template>
@@ -118,11 +118,9 @@
 
           </div>
           <div class="flex justify-center col-md-5">
-            <q-avatar size="50px" font-size="52px" v-if="!userFormEdit.picture == ''">
-              <img :src="'http://localhost:3000/uploads/' + userFormEdit.picture" />
-            </q-avatar>
-            <q-avatar size="150px" font-size="52px" v-else>
-              <img src="../../../../public/imgs/Nike.png" />
+            <q-avatar size="50px" font-size="52px">
+              <!-- Show the selected image or the default image -->
+              <img :src="imagePreviewUrl" />
             </q-avatar>
           </div>
         </div>
@@ -140,7 +138,7 @@
 
 <script setup>
 import { api } from 'boot/axios'
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, watch } from 'vue'
 import { useQuasar } from 'quasar'
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -148,6 +146,7 @@ const emit = defineEmits()
 const loadingEdit = ref([false])
 const loginFormEdit = ref(null)
 const $q = useQuasar()
+const imagePreviewUrl = ref('');
 
 const props = defineProps({
   UserTestEdit: {
@@ -280,6 +279,30 @@ function cancel() {
   // Aquí emitimos el evento 'close-dialog' al componente padre
   emit('close-dialog-Edit');
 }
+// FUnciones de evento 'Imagen'-----
+watch(() => userFormEdit.value.picture, (newVal) => {
+  // Update image preview when user selects a new image
+  if (newVal) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      imagePreviewUrl.value = reader.result;
+    };
+    reader.readAsDataURL(newVal);
+  } else {
+    // Set default image if no picture is selected
+    imagePreviewUrl.value = "../../../../public/imgs/Nike.png";
+  }
+});
+
+if (userFormEdit.value.picture) {
+  imagePreviewUrl.value = `http://localhost:3000/uploads/${userFormEdit.value.picture}`;
+}
+
+function onImageSelected(file) {
+  // Update the image preview when a file is added
+  imagePreviewUrl.value = URL.createObjectURL(file);
+}
+// ----------------------------------------------------------------
 
 const optionsJob = [
   'Test Manager Engineer',

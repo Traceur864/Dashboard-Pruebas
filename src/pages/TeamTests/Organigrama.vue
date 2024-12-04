@@ -9,11 +9,10 @@
     </div>
 
     <q-dialog v-model="fixed" transition-show="fade" transition-hide="fade" transition-duration="300">
-      <RegisterUser @close-dialog="closeDialog" />
+      <RegisterUser @close-dialog="closeDialog" @reloadUsers="reloadUsers" />
     </q-dialog>
 
-    <TeamWork />
-
+    <TeamWork :reload="reload" />
 
   </q-page>
 </template>
@@ -24,7 +23,9 @@ import { ref } from 'vue'
 import RegisterUser from '../../components/Dialogs/OrganigramaDialogs/RegisterUser.vue'
 import TeamWork from '../../components/Dialogs/OrganigramaDialogs/TeamWork.vue'
 
+
 const fixed = ref(false)
+const reload = ref(false)
 
 function openDialog() {
   fixed.value = true;
@@ -34,6 +35,9 @@ function closeDialog() {
   fixed.value = false;
 }
 
+function reloadUsers() {
+  reload.value = !reload.value;
+}
 defineOptions({
   name: 'OrganigramaPage'
 });

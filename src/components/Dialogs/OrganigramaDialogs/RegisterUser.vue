@@ -126,8 +126,9 @@
 <script setup>
 
 import { ref } from 'vue'
+
 import { useQuasar } from 'quasar'
-import axios from 'axios';
+import { api } from 'boot/axios'
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits()
 const loading = ref([false]);
@@ -235,16 +236,19 @@ function simulateProgress(number) {
 
   console.log(userForm.value.picture);
 
-  axios.post('http://127.0.0.1:3000/api/testers', formData, {
+  api.post('/api/testers', formData, {
 
     headers: {
       'Content-Type': 'multipart/form-data' // Importante para indicar que estamos enviando datos de formulario con archivos
     }
 
   }).then(response => {
+
     console.log(response.data);
     loading.value[number] = false
-    emit('reloadRegister')
+
+    emit('reloadUsers')
+
     $q.notify({
       color: 'positive',
       message: 'Registro completado con éxito.',
@@ -263,11 +267,6 @@ function simulateProgress(number) {
       icon: 'error'
     })
   })
-}
-
-// Función para manejar la carga de la imagen
-function handleFileUpload(event) {
-  userForm.value.picture = event.target.files[0] // Asignar el archivo a userForm
 }
 
 defineOptions({

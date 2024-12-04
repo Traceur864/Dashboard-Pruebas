@@ -1,5 +1,3 @@
-import organigrama from 'pages/TeamTests/Organigrama.vue'
-
 const routes = [
   {
     path: '/',

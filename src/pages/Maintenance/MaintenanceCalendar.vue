@@ -53,8 +53,19 @@
                 </div>
                 <div class="q-col-gutter-y-md">
 
-                    <q-select ref="tester_select" square filled v-model="tester_sn" label="SN del tester"
-                        :options="tester_serialnumbers" @filter="filterTest" use-input input-debounce="0" />
+                    <q-select square filled v-model="tester_sn" label="SN Tester" :options="tester_serialnumbers"
+                        @filter="filterTest" use-input input-debounce="0" />
+
+                    <div class="row q-col-gutter-x-sm">
+                        <div class="col">
+                            <q-select square filled v-model="fixture_id" label="ID Fixtura" :options="fixtures_sns"
+                                @filter="filterFix" use-input input-debounce="0" />
+                        </div>
+                        <div class="col">
+                            <q-select square filled v-model="atm_sn" label="SN ATM" :options="atm_sns"
+                                @filter="filterATM" use-input input-debounce="0" />
+                        </div>
+                    </div>
 
                     <q-input square filled v-model="start_date" type="date" label="Fecha de inicio" />
 
@@ -71,6 +82,8 @@
         <TesterDialog ref="testerDialog" @reload="reload" />
         <FixtureDialog ref="fixtureDialog" @reload="reload" />
         <AtmDialog ref="atmDialog" @reload="reload" />
+        <MaintenanceDialog ref="maintenanceDialog" @reload="reload" />
+
     </q-page>
 </template>
 
@@ -84,6 +97,7 @@ import { api } from 'boot/axios'
 import TesterDialog from '../TeamTests/Components/StrainGauge/Tester/TesterDialog.vue'
 import FixtureDialog from '../TeamTests/Components/StrainGauge/Fixture/FixtureDialog.vue'
 import AtmDialog from '../TeamTests/Components/StrainGauge/Atm/AtmDialog.vue'
+import MaintenanceDialog from './components/maintenanceDialog.vue'
 
 //Importing components
 export default {
@@ -92,6 +106,7 @@ export default {
         TesterDialog,
         FixtureDialog,
         AtmDialog,
+        MaintenanceDialog,
     },
     data() {
         return {
@@ -110,25 +125,28 @@ export default {
                     right: 'prev,next'
                 },
                 eventClick: (event) => {
-                    this.$refs.eventDialog.openDialog(event.event.extendedProps.calendar_id);
+                    this.$refs.maintenanceDialog.openDialog(event.event.extendedProps.calendar_id);
                 }
             },
 
             //Global variables
             tester_serialnumbers: [],
             testers: [],
-            event_tps: ['Calibración', 'Mantenimiento', 'Cambio de tarjeta'],
+            atm_sns: [],
+            atms: [],
+            fixtures_sns: [],
+            fixtures: [],
+            event_tps: ['Calibración', 'Mantenimiento'],
             current_date: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate(),
 
             //Model variables
             tester_sn: null,
             start_date: null,
             event_type: null,
+            fixture_id: null,
+            atm_sn: null,
         }
     },
-    //Get functionalities from imported component
-    // mixins: [TesterDialog],
-    //Functions inside component
     methods: {
         filterUser(val, update, abort) {
             if (val === '') {
@@ -157,13 +175,25 @@ export default {
         filterFix(val, update, abort) {
             if (val === '') {
                 update(() => {
-                    this.fixture_ids = this.fixtures
+                    this.fixtures_sns = this.fixtures
                 })
                 return
             }
             update(() => {
                 const needle = val.toLowerCase()
-                this.fixture_ids = this.fixtures.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
+                this.fixtures_sns = this.fixtures.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
+            })
+        },
+        filterATM(val, update, abort) {
+            if (val === '') {
+                update(() => {
+                    this.atm_sns = this.atms
+                })
+                return
+            }
+            update(() => {
+                const needle = val.toLowerCase()
+                this.atm_sns = this.atm_sns.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
             })
         },
         eventInfo(info) {
@@ -171,64 +201,95 @@ export default {
         },
         reload() {
             this.loadData()
+            this.get_events()
         },
         add_event() {
-            if (this.tester_sn && this.start_date && this.event_type) {
-                const dismiss = this.$q.notify({
-                    spinner: true,
-                    message: "Por favor, espera...",
-                    timeout: 0
-                })
+            if (this.tester_sn || this.fixture_id || this.atm_sn) {
+                if (this.tester_sn && this.event_type == "Calibración") {
 
-                const params = new URLSearchParams()
-                params.append('tester_id', this.tester_sn.value)
-                params.append('fixture_id', this.fixture_id.value)
-                params.append('start_date', this.start_date)
-                params.append('shift', this.shift)
-                //TODO: GET USER ID FROM LOCAL STORAGE
-                //
-
-                const config = {
-                    headers: {
-                        'content-type': 'application/x-www-form-urlencoded',
-                        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
-                    }
-                }
-
-                api.post('/strain_gauge', params, config).then((response) => {
-                    dismiss()
+                } else if (this.fixture_id && this.event_type == "Calibración") {
                     this.$q.notify({
-                        type: "positive",
-                        message: response.data,
-                        position: 'top'
+                        type: 'negative',
+                        message: "No se realizan calibraciones a Fixturas",
+                        position: "right",
+                        timeout: 1200
                     })
-
-                    this.get_events()
-
-                }).catch((error) => {
-
-                    var error = err.response.data.error
-                    console.error(error);
-
-                    error.forEach(err => {
-                        this.$q.notify({
-                            type: 'negative',
-                            message: err.msg,
-                            position: "top"
-                        })
-                    });
-
-                    dismiss()
-                })
-                this.clear_fields()
+                } else {
+                    this.submitEvent()
+                }
             } else {
                 this.$q.notify({
                     type: 'negative',
-                    message: "Por favor llena todos los campos",
+                    message: "Selecciona el equipo al que se le hará el mantenimiento / calibración",
                     position: "right",
                     timeout: 1200
                 })
             }
+        },
+        submitEvent() {
+            const dismiss = this.$q.notify({
+                spinner: true,
+                message: "Por favor, espera...",
+                timeout: 0
+            })
+
+            const params = new URLSearchParams()
+
+            if (this.atm_sn != null) {
+                params.append('atm_sn', this.atm_sn.value)
+            } else {
+                params.append('atm_sn', null)
+            }
+
+            if (this.fixture_id != null) {
+                params.append('fixture_id', this.fixture_id.value)
+            } else {
+                params.append('fixture_id', null)
+            }
+
+            if (this.tester_sn != null) {
+                params.append('tester_sn', this.tester_sn.value)
+            } else {
+                params.append('tester_sn', null)
+            }
+
+            params.append('start_date', this.start_date)
+            params.append('event_type', this.event_type)
+            params.append('created_by', 4)
+            //TODO: GET USER ID FROM LOCAL STORAGE
+
+            const config = {
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+                }
+            }
+
+            api.post('/maintenance', params, config).then((response) => {
+                dismiss()
+                this.$q.notify({
+                    type: "positive",
+                    message: response.data,
+                    position: 'top'
+                })
+
+            }).catch((error) => {
+
+                var errors = error.response.data.error
+                console.error(errors);
+
+                errors.forEach(err => {
+                    this.$q.notify({
+                        type: 'negative',
+                        message: err.msg,
+                        position: "top"
+                    })
+                });
+
+                dismiss()
+            })
+
+            this.clear_fields()
         },
         loadData() {
             api.get('/tester/active').then((response) => {
@@ -250,6 +311,34 @@ export default {
                 console.error(err);
             })
 
+            api.get('/atm/active').then((response) => {
+                var data = response.data
+                this.atm_sns = []
+                data.forEach(ele => {
+                    this.atm_sns.push({
+                        value: ele.ID_ATM,
+                        label: ele.ATM_SN
+                    })
+                });
+                this.atms = this.atm_sns
+            }).catch((err) => {
+                console.error(err);
+            })
+
+            api.get('/fixture/active').then((response) => {
+                var data = response.data
+                this.fixtures_sns = []
+                data.forEach(ele => {
+                    this.fixtures_sns.push({
+                        value: ele.ID_FIXTURE,
+                        label: ele.FIXTURE_ID
+                    })
+                });
+                this.fixtures = this.fixtures_sns
+            }).catch((err) => {
+                console.error(err);
+            })
+
             api.get('/users/testusers').then((response) => {
                 var data = response.data
                 this.usuarios = []
@@ -263,29 +352,48 @@ export default {
             }).catch((err) => {
                 console.error(err);
             })
-
-            this.get_events()
         },
 
         get_events() {
+            this.calendarOptions.events = []
 
+            api.get('/maintenance').then((response) => {
+                var data = response.data
+                data.forEach(el => {
+                    var name = ""
+
+                    if (el.FIXTURE_ID != null) {
+                        name = el.FIXTURE_ID
+                    } else if (el.TESTER_SN != null) {
+                        name = el.TESTER_SN
+                    } else if (el.ATM_SN != null) {
+                        name = el.ATM_SN
+                    }
+
+                    this.calendarOptions.events.push(
+                        {
+                            'title': el.EVENT_TYPE + ", Fixtura:" + name,
+                            'start': el.PLAN_DATE.substring(0, 10),
+                            'end': el.PLAN_DATE.substring(0, 10),
+                            'color': getColor(setStatus(el.STATUS_M, el.EVENT_TYPE, el.PLAN_DATE)),
+                            'editable': false,
+                            'calendar_id': el.ID_MAINTENANCE
+                        })
+                });
+            }).catch((error) => {
+                console.error(error);
+            })
         },
 
         clear_fields() {
             this.area = ""
             this.tester_sn = ""
             this.fixture_id = ""
+            this.atm_sn = ""
             this.start_date = ""
             this.shift = ""
             this.asigned_to = ""
         },
-
-        unlock_select() {
-            console.log(this.modelo, this.area);
-            if (this.modelo && this.area) {
-                this.disable = false
-            }
-        }
 
     },
     setup() {
@@ -295,10 +403,26 @@ export default {
     mounted() {
         let self = this
         this.loadData()
+        this.get_events()
     },
     watch: {
-        modelo: function () {
-            console.log(this.modelo.value);
+        tester_sn: function () {
+            if (this.tester_sn != null) {
+                this.fixture_id = null
+                this.atm_sn = null
+            }
+        },
+        fixture_id: function () {
+            if (this.fixture_id != null) {
+                this.tester_sn = null
+                this.atm_sn = null
+            }
+        },
+        atm_sn: function () {
+            if (this.atm_sn != null) {
+                this.fixture_id = null
+                this.tester_sn = null
+            }
         }
     }
 }
@@ -306,40 +430,61 @@ export default {
 function getColor(status) {
     switch (status) {
         case 'En proceso':
-            return 'purple'
+            return '#9C27B0'
         case 'Por expirar':
             return '#F2C037'
         case 'Fallido':
             return '#C10015'
         case 'Asignado':
-            return 'primary'
+            return '#1976D2'
         case 'Atrasado':
             return '#FF5722'
         case 'Finalizado':
             return '#21BA45'
         default:
-            return 'black'
+            return '#000000'
     }
 }
 
-function setStatus(status, start_date) {
-    switch (status) {
-        case 'En proceso':
-            return 'En proceso'
-        case 'Finalizado':
-            return 'Finalizado'
-        case 'Asignado':
-            var date = new Date(start_date)
-            var today = new Date(new Date().toDateString())
-            var btw = days_between(today, date)
+function setStatus(status, event_type, plan_date) {
+    if (event_type == 'Mantenimiento') {
+        switch (status) {
+            case 'En proceso':
+                return 'En proceso'
+            case 'Finalizado':
+                return 'Finalizado'
+            case 'Asignado':
+                var date = new Date(plan_date)
+                var today = new Date(new Date().toDateString())
+                var btw = days_between(today, date)
 
-            if (btw < 3 && btw > 0) {
-                return 'Atrasado'
-            } else if (btw <= 0) {
-                return 'Fallido'
-            } else {
-                return 'Asignado'
-            }
+                if (btw < 8 && btw > 0) {
+                    return 'Atrasado'
+                } else if (btw <= 0) {
+                    return 'Fallido'
+                } else {
+                    return 'Asignado'
+                }
+        }
+    } else {
+        switch (status) {
+            case 'En proceso':
+                return 'En proceso'
+            case 'Finalizado':
+                return 'Finalizado'
+            case 'Asignado':
+                var date = new Date(plan_date)
+                var today = new Date(new Date().toDateString())
+                var btw = days_between(today, date)
+
+                if (btw < 46 && btw > 0) {
+                    return 'Atrasado'
+                } else if (btw <= 0) {
+                    return 'Fallido'
+                } else {
+                    return 'Asignado'
+                }
+        }
     }
 }
 

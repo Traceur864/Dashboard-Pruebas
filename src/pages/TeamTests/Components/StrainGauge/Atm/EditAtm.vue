@@ -18,7 +18,7 @@
                     </div>
                     <div class="row q-col-gutter-x-sm">
                         <div class="col-6">
-                            <q-select square filled v-model="location" label="Estado" :options="status" />
+                            <q-select square filled v-model="status_atm" label="Estado" :options="status" />
                         </div>
                     </div>
                 </div>
@@ -54,6 +54,7 @@ export default {
             edit_atm: false,
             atm_sn: '',
             location: '',
+            status_atm: '',
             testers: [],
             tester_serialnumbers: [],
             id_atm: null,
@@ -61,24 +62,6 @@ export default {
     },
     methods: {
         loadData() {
-            api.get('/model').then((response) => {
-                var data = response.data
-                this.models = []
-                data.forEach(element => {
-                    this.models.push({
-                        value: element.ID_MODEL,
-                        label: element.MODEL
-                    })
-                });
-            }).catch((err) => {
-                this.$q.notify({
-                    type: 'negative',
-                    message: 'Hubo un error al cargar los datos',
-                    position: 'top'
-                })
-                console.error(err);
-            })
-
             api.get('/tester/active').then((response) => {
                 var data = response.data
                 this.tester_serialnumbers = []
@@ -105,8 +88,18 @@ export default {
             api.get('/atm/' + this.id_atm).then((response) => {
                 var data = response.data[0]
                 this.atm_sn = data.ATM_SN
-                this.location = data.LOCATION
-                console.log(data);
+
+                if (data.LOCATION == 'ICT_LAB') {
+                    this.location = data.LOCATION
+                } else {
+                    this.location = this.testers.find(
+                        (i) => i.value == data.LOCATION
+                    )
+                }
+
+                this.status_atm = this.status.find(
+                    (i) => i.value == data.STATUS_ATM
+                )
 
             }).catch((err) => {
                 console.error(err);
@@ -138,10 +131,10 @@ export default {
             })
 
             const params = new URLSearchParams()
-            params.append('model_id', this.fixture_model.value)
-            params.append('fixture_name', this.fixture_name)
-            params.append('status', this.fixture_status.value)
-            params.append('fixture_id', this.fixture_id)
+            params.append('id_atm', this.id_atm)
+            params.append('atm_sn', this.atm_sn)
+            params.append('location', this.location.value)
+            params.append('status_atm', this.status_atm.value)
 
             const config = {
                 headers: {
@@ -150,7 +143,7 @@ export default {
                 }
             }
 
-            api.put('/fixture', params, config).then((response) => {
+            api.put('/atm', params, config).then((response) => {
                 dismiss()
 
                 this.$q.notify({
@@ -161,12 +154,11 @@ export default {
 
                 this.$emit('reload')
 
-                this.fixture_name = ''
-                this.fixture_model = ''
-                this.fixture_status = ''
-                this.fixture_id = ''
+                this.atm_sn = ''
+                this.location = ''
+                this.status_atm = ''
 
-                this.edit_fixture_dialog = false
+                this.edit_atm = false
 
             }).catch((error) => {
                 dismiss()

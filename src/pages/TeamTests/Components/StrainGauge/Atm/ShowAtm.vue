@@ -15,7 +15,7 @@
                 <q-btn class="q-ma-xs" color="positive" icon="edit"
                     @click="this.$refs.editAtm.openDialog(props.row.ID_ATM)" />
                 <q-btn v-if="props.row.STATUS_ATM" class="q-ma-xs" color="negative" icon="delete"
-                    @click="deleteFixture(props.row)" />
+                    @click="this.$refs.deleteAtm.openDialog(props.row.ID_ATM)" />
             </q-td>
         </template>
         <template v-slot:body-cell-status="props">
@@ -29,13 +29,15 @@
             </q-td>
         </template>
     </q-table>
-    <EditAtm ref="editAtm" />
+    <EditAtm ref="editAtm" @reload="reload" />
+    <DeleteAtm ref="deleteAtm" @reload="reload" />
 </template>
 
 <script>
 import { api } from 'boot/axios'
 import { useQuasar } from 'quasar';
 import EditAtm from './EditAtm.vue';
+import DeleteAtm from './DeleteAtm.vue';
 
 export default {
     setup() {
@@ -55,6 +57,7 @@ export default {
     },
     components: {
         EditAtm,
+        DeleteAtm,
     },
     emits: ["reload"],
     methods: {

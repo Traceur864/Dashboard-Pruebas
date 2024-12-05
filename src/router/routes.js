@@ -17,6 +17,7 @@ const routes = [
       { path: 'ict', name:'ict', component: () => import('pages/TeamTests/ICT.vue')},
       { path: 'organigrama', name:'organigrama', component: () => import('pages/TeamTests/Organigrama.vue')},
       { path: 'labelCenter', name:'label-center', component: () => import('pages/TeamTests/LabelCenter.vue')},
+      { path:'maintenance', name:'maintenance', component: () => import('pages/Maintenance/MaintenanceCalendar.vue')},
       { path: 'straingauge', name:'strain-gauge', component: () => import('pages/TeamTests/StrainGauge.vue')},
 
       //Calendar routes

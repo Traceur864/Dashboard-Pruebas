@@ -18,8 +18,8 @@
             </q-td>
         </template>
     </q-table>
-    <EditFixtureForm ref="editFixture" @reload="loadData" />
-    <DeleteFixtureDialog ref="deleteFixture" @reload="loadData" />
+    <EditFixtureForm ref="editFixture" @reload="reload" />
+    <DeleteFixtureDialog ref="deleteFixture" @reload="reload" />
 </template>
 
 <script>
@@ -50,6 +50,10 @@ export default {
     },
     emits: ["reload"],
     methods: {
+        reload() {
+            this.loadData()
+            this.$emit("reload")
+        },
         loadData() {
             api.get('/fixture').then((response) => {
                 this.rows = response.data

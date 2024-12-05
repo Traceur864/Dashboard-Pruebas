@@ -1,5 +1,5 @@
 <template>
-    <q-dialog :model-value="tester_dialog" persistent>
+    <q-dialog v-model="atmDialog" persistent>
         <q-card style="width: 80vw; max-width: 80vw; min-height: 35vh;">
             <q-tabs v-model="tab" class="text-grey" active-color="primary" indicator-color="primary" align="justify"
                 narrow-indicator>
@@ -12,46 +12,47 @@
 
             <q-tab-panels v-model="tab" animated>
                 <q-tab-panel name="administrar">
-                    <ShowTestersForm @reload="reload" />
+                    <ShowAtm @reload="reload" />
                 </q-tab-panel>
                 <q-tab-panel name="insertar">
-                    <InsertTesterForm @reload="reload" />
+                    <InsertAtm @reload="reload" />
                 </q-tab-panel>
             </q-tab-panels>
 
             <q-card-actions align="right" class="vertical-bottom">
-                <q-btn flat label="Cerrar" color="dark" @click="tester_dialog = false" />
+                <q-btn flat label="Cerrar" color="dark" @click="atmDialog = false" />
             </q-card-actions>
         </q-card>
     </q-dialog>
+
 </template>
 
 <script>
-import InsertTesterForm from './InsertTesterForm.vue';
-import ShowTestersForm from './ShowTestersForm.vue';
+import InsertAtm from './InsertAtm.vue';
+import ShowAtm from './ShowAtm.vue';
 
 export default {
     data() {
         return {
-            tab: 'administrar',
-            tester_dialog: false,
+            atmDialog: false,
+            tab: 'administrar'
         }
     },
     components: {
-        InsertTesterForm,
-        ShowTestersForm,
+        InsertAtm,
+        ShowAtm
     },
-    //Import variable as prop so it can be accessed from parent
+    emits: ["reload"],
     methods: {
         reload() {
             this.$emit('reload');
         },
         openDialog() {
-            this.tester_dialog = true;
+            this.atmDialog = true;
         }
     },
     mounted() {
-        // this.showAlert()
+
     }
 }
 </script>

@@ -36,6 +36,12 @@ export const linksList = [
       link: 'vacation_calendar'
     },
     {
+      title: 'Mantenimientos',
+      caption: 'Mantenimientos y calibraciones',
+      icon: 'engineering',
+      link: 'maintenance'
+    },
+    {
       title: 'Label Center',
       caption: 'Control de Etiquetas',
       icon: 'las la-ticket-alt',

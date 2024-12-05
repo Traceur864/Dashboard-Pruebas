@@ -100,8 +100,8 @@
             @click="this.$refs.finishDialog.openDialog()" />
     </q-card-section>
 
-    <StartDialog :event_id="event_id" ref="startDialog" @reload="getData()" />
-    <FinishDialog :event_id="event_id" ref="finishDialog" @reload="getData()" />
+    <StartDialog :event_id="event_id" ref="startDialog" @reload="reload" />
+    <FinishDialog :event_id="event_id" ref="finishDialog" @reload="reload" />
 
 </template>
 
@@ -153,6 +153,10 @@ export default {
         }
     },
     methods: {
+        reload() {
+            this.getData()
+            this.$emit('reload')
+        },
         loadData() {
             api.get('/tester/active').then((response) => {
                 var data = response.data
@@ -195,12 +199,12 @@ export default {
         getData() {
             api.get('/strain_gauge/' + this.event_id).then((response) => {
                 var data = response.data[0];
-                this.area = data.AREA;
-                // this.asigned_to = data.ASIGNED_TO;
-                this.asigned_to = "Isela"
+                this.area = data.AREA_SG;
+                this.asigned_to = data.ASIGNED_TO
                 this.created_at = data.CREATED_AT.substring(0, 10);
                 this.created_by = data.CREATED_BY;
                 this.finish_comments = data.FINISH_COMMENTS;
+                this.asigned_to = data.ASIGNED_NAME + " " + data.ASIGNED_LASTNAME
 
                 if (data.FINISH_DATE != null) {
                     this.finish_date = data.FINISH_DATE.substring(0, 10);
@@ -236,7 +240,6 @@ export default {
                     this.updated_by = "Isela";
                 }
                 this.updated_comments = data.UPDATED_COMMENTS;
-                this.$emit('reload')
             }).catch((error) => {
                 console.error(error);
             })
@@ -252,8 +255,6 @@ function getColor(status) {
     switch (status) {
         case 'En proceso':
             return 'purple'
-        case 'Por expirar':
-            return 'warning'
         case 'Fallido':
             return 'negative'
         case 'Asignado':
@@ -275,7 +276,7 @@ function setStatus(status, start_date) {
             var btw = days_between(today, date)
 
             if (btw < 3 && btw > 0) {
-                return 'Por expirar'
+                return 'Atrasado'
             } else if (btw <= 0) {
                 return 'Fallido'
             }
@@ -292,6 +293,12 @@ function days_between(date1, date2) {
     const differenceMs = Math.abs(date1 - date2);
 
     // Convert back to days and return
-    return Math.round(differenceMs / ONE_DAY);
+    var days = Math.round(differenceMs / ONE_DAY)
+
+    if (date1 > date2) {
+        days = days * -1;
+    }
+
+    return days;
 }
 </script>

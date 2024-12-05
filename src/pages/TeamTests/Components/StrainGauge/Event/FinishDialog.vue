@@ -5,8 +5,22 @@
                 <span class="text-h5">¿Finalizar Strain Gauge?</span>
             </q-card-section>
             <q-card-section>
-                <q-input v-model="comments" square filled type="textarea" label="Comentarios"
-                    hint='En caso de no haber comentarios coloca "N/A"' maxlength="255" />
+                <div class="row">
+                    <div class="col">
+                        <q-input v-model="comments" square filled type="textarea" label="Comentarios"
+                            hint='En caso de no haber comentarios coloca "N/A"' maxlength="255" />
+                    </div>
+                </div>
+                <div class="row q-pt-md q-col-gutter-x-sm">
+                    <div class="col">
+                        <q-select square filled v-model="asigned_to" label="Responsable de SG" :options="usuarios"
+                            @filter="filterUser" use-input input-debounce="0" />
+                    </div>
+                    <div class="col">
+                        <q-select v-model="shift" :options="['Turno 1', 'Turno 2', 'Turno 3']" label="Turno" square
+                            filled />
+                    </div>
+                </div>
             </q-card-section>
             <q-card-actions align="right">
                 <q-btn label="Finalizar" color="positive" @click="finishStrainGauge" />
@@ -31,11 +45,43 @@ export default {
         return {
             finishDialog: false,
             comments: '',
+            usuarios: [],
+            users: [],
+            asigned_to: '',
+            shift: '',
         }
     },
     methods: {
         openDialog() {
             this.finishDialog = true;
+            this.getData()
+        },
+        getData() {
+            api.get('/users/testusers').then((response) => {
+                var data = response.data
+                this.usuarios = []
+                data.forEach(dat => {
+                    this.usuarios.push({
+                        value: dat.ID_USER,
+                        label: dat.NAME + " " + dat.LASTNAME
+                    })
+                });
+                this.users = this.usuarios
+            }).catch((err) => {
+                console.error(err);
+            })
+        },
+        filterUser(val, update, abort) {
+            if (val === '') {
+                update(() => {
+                    this.usuarios = this.users
+                })
+                return
+            }
+            update(() => {
+                const needle = val.toLowerCase()
+                this.usuarios = this.usuarios.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
+            })
         },
         finishStrainGauge() {
             const dismiss = this.$q.notify({
@@ -47,6 +93,8 @@ export default {
             const params = new URLSearchParams()
             params.append('event_id', this.props.event_id)
             params.append('comments', this.comments)
+            params.append('shift', this.shift)
+            params.append('asigned_to', this.asigned_to.value)
 
             const config = {
                 headers: {
@@ -57,11 +105,14 @@ export default {
 
             api.put('/strain_gauge/finish', params, config).then((response) => {
                 dismiss()
-                this.$q.notify({
-                    type: 'positive',
-                    message: response.data,
-                    position: "top"
-                })
+                response.data.data.forEach(data => {
+                    this.$q.notify({
+                        type: 'positive',
+                        message: data,
+                        position: "top",
+                        timeout: 5000
+                    })
+                });
 
                 this.$emit('reload')
                 this.finishDialog = false

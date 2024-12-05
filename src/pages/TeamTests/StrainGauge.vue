@@ -13,16 +13,36 @@
         <div class="col-auto self-end q-pb-lg">
           <div class="text-h6">Guía de colores</div>
           <div class="col">
-            <q-badge color="purple" class="q-mx-xs" label="En proceso" />
-            <q-badge color="warning" text-color="black" class="q-mx-xs" label="Por expirar" />
-            <q-badge color="negative" class="q-mx-xs" label="Fallido" />
-            <q-badge color="primary" class="q-mx-xs" label="Asignado" />
-            <q-badge color="deep-orange" class="q-mx-xs" label="Atrasado" />
-            <q-badge color="positive" class="q-mx-xs" label="Finalizado" />
-            <q-badge color="dark" text-color="white" label="Cancelado" />
+            <q-badge color="purple" class="q-mx-xs" label="En proceso">
+              <q-tooltip class="text-caption">El Strain Gauge se encuentra en proceso de realización</q-tooltip>
+            </q-badge>
+
+            <q-badge color="negative" class="q-mx-xs" label="Fallido">
+              <q-tooltip class="text-caption">El Strain Gauge aún no se ha realizado y está en su fecha de
+                realización</q-tooltip>
+            </q-badge>
+
+            <q-badge color="primary" class="q-mx-xs" label="Asignado">
+              <q-tooltip class="text-caption">El Strain Gauge está agendado y aún no hay fecha limite</q-tooltip>
+            </q-badge>
+
+            <q-badge color="deep-orange" class="q-mx-xs" label="Atrasado">
+              <q-tooltip class="text-caption">El Strain Gauge se encuentra a 3 días o menos de su fecha de
+                realización</q-tooltip>
+            </q-badge>
+
+            <q-badge color="positive" class="q-mx-xs" label="Finalizado">
+              <q-tooltip class="text-caption">El Strain Gauge completado extosamente</q-tooltip>
+            </q-badge>
+
+            <q-badge color="dark" text-color="white" label="Cancelado">
+              <q-tooltip class="text-caption">El Strain Gauge se ha cancelado por completo</q-tooltip>
+            </q-badge>
           </div>
         </div>
         <div class="col-auto self-end q-pb-lg">
+          <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Historial"
+            @click="this.$refs.showEvents.openDialog()" />
           <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Administrar Testers"
             @click="this.$refs.testerDialog.openDialog()" />
           <q-btn class="q-mt-md" color="secondary" label="Administrar Fixturas"
@@ -43,7 +63,8 @@
               <q-select square filled v-model="shift" label="Turno" :options="['Turno 1', 'Turno 2', 'Turno 3']" />
             </div>
             <div class="col">
-              <q-select square filled v-model="asigned_to" label="Responsable de SG" :options="monitos" />
+              <q-select square filled v-model="asigned_to" label="Responsable de SG" :options="usuarios"
+                @filter="filterUser" use-input input-debounce="0" />
             </div>
           </div>
 
@@ -56,9 +77,10 @@
       </div>
     </div>
     <!-- ==================== DIALOGS ==================== -->
-    <TesterDialog ref="testerDialog" @reload="loadData" />
-    <FixtureDialog ref="fixtureDialog" @reload="loadData" />
-    <EventDialog ref="eventDialog" @reload="loadData" />
+    <TesterDialog ref="testerDialog" @reload="reload" />
+    <FixtureDialog ref="fixtureDialog" @reload="reload" />
+    <EventDialog ref="eventDialog" @reload="reload" />
+    <ShowEvents ref="showEvents" @reload="reload" />
   </q-page>
 </template>
 
@@ -74,6 +96,7 @@ import { api } from 'boot/axios'
 import TesterDialog from './Components/StrainGauge/Tester/TesterDialog.vue'
 import FixtureDialog from './Components/StrainGauge/Fixture/FixtureDialog.vue'
 import EventDialog from './Components/StrainGauge/Event/EventDialog.vue'
+import ShowEvents from './Components/StrainGauge/Historic/ShowEvents.vue'
 
 export default {
   components: {
@@ -81,6 +104,7 @@ export default {
     TesterDialog,
     FixtureDialog,
     EventDialog,
+    ShowEvents
   },
   data() {
     return {
@@ -109,15 +133,8 @@ export default {
       fixture_ids: [],
       fixtures: [],
       areas: [],
-
-      monitos: [
-        "Juan Carlos",
-        'Miguelito',
-        'Isela',
-        'Joss',
-        'Raúl'
-      ],
-
+      usuarios: [],
+      users: [],
       current_date: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate(),
 
       //Model variables
@@ -137,6 +154,18 @@ export default {
   // mixins: [TesterDialog],
   //Functions inside component
   methods: {
+    filterUser(val, update, abort) {
+      if (val === '') {
+        update(() => {
+          this.usuarios = this.users
+        })
+        return
+      }
+      update(() => {
+        const needle = val.toLowerCase()
+        this.usuarios = this.usuarios.filter((v) => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
     filterTest(val, update, abort) {
       if (val === '') {
         update(() => {
@@ -164,6 +193,9 @@ export default {
     eventInfo(info) {
       this.$refs.eventDialog.openDialog(info.event.extendedProps.calendar_id);
     },
+    reload() {
+      this.loadData()
+    },
     add_event() {
       if (this.tester_sn && this.fixture_id && this.start_date && this.shift && this.asigned_to) {
         const dismiss = this.$q.notify({
@@ -177,7 +209,7 @@ export default {
         params.append('fixture_id', this.fixture_id.value)
         params.append('start_date', this.start_date)
         params.append('shift', this.shift)
-        params.append('asigned_to', this.asigned_to)
+        params.append('asigned_to', this.asigned_to.value)
 
         const config = {
           headers: {
@@ -286,6 +318,20 @@ export default {
         console.error(err);
       })
 
+      api.get('/users/testusers').then((response) => {
+        var data = response.data
+        this.usuarios = []
+        data.forEach(dat => {
+          this.usuarios.push({
+            value: dat.ID_USER,
+            label: dat.NAME + " " + dat.LASTNAME
+          })
+        });
+        this.users = this.usuarios
+      }).catch((err) => {
+        console.error(err);
+      })
+
       this.get_events()
     },
 
@@ -374,9 +420,11 @@ function setStatus(status, start_date) {
       var btw = days_between(today, date)
 
       if (btw < 3 && btw > 0) {
-        return 'Por expirar'
+        return 'Atrasado'
       } else if (btw <= 0) {
         return 'Fallido'
+      } else {
+        return 'Asignado'
       }
   }
 }
@@ -384,11 +432,16 @@ function setStatus(status, start_date) {
 function days_between(date1, date2) {
   // The number of milliseconds in one day
   const ONE_DAY = 1000 * 60 * 60 * 24;
-
   // Calculate the difference in milliseconds
   const differenceMs = Math.abs(date1 - date2);
 
   // Convert back to days and return
-  return Math.round(differenceMs / ONE_DAY);
+  var days = Math.round(differenceMs / ONE_DAY)
+
+  if (date1 > date2) {
+    days = days * -1;
+  }
+
+  return days;
 }
 </script>

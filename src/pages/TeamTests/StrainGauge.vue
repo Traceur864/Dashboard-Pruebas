@@ -228,9 +228,9 @@ export default {
 
           this.get_events()
 
-        }).catch((error) => {
+        }).catch((errors) => {
 
-          var error = err.response.data.error
+          var error = errors.response.data.error
           console.error(error);
 
           error.forEach(err => {

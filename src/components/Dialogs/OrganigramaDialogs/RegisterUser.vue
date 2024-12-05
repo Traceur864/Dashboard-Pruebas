@@ -171,9 +171,19 @@ const userForm = ref({
 
 })
 
-function cancel() {
-  // Aquí emitimos el evento 'close-dialog' al componente padre
-  emit('close-dialog');
+function onReset() {
+
+  nombre.value = '',
+    apellido.value = '',
+    email.value = '',
+    phone.value = false,
+    puesto.value = '',
+    area.value = '',
+    turno.value = '',
+    empleado.value = false,
+    birthday.value = false,
+    picture.value = null
+
 }
 
 async function HandleRegister() {
@@ -254,8 +264,7 @@ function simulateProgress(number) {
       message: 'Registro completado con éxito.',
       icon: 'check'
     })
-    cancel() // Cerrar el formulario
-
+    onReset()
   }).catch(error => {
 
     loading.value[number] = false

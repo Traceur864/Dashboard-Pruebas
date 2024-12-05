@@ -61,7 +61,6 @@ const $q = useQuasar()
 const testerusers = ref([])
 const editUserTest = ref(false)
 const infoUserTest = ref(false)
-const users = ref([])
 
 const selectedUser = ref(false)
 const selectedUserEdit = ref(false)

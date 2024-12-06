@@ -83,6 +83,7 @@
         <FixtureDialog ref="fixtureDialog" @reload="reload" />
         <AtmDialog ref="atmDialog" @reload="reload" />
         <MaintenanceDialog ref="maintenanceDialog" @reload="reload" />
+        <MaintenanceFinish ref="maintenanceFinishDialog" />
 
     </q-page>
 </template>
@@ -97,7 +98,7 @@ import { api } from 'boot/axios'
 import TesterDialog from '../TeamTests/Components/StrainGauge/Tester/TesterDialog.vue'
 import FixtureDialog from '../TeamTests/Components/StrainGauge/Fixture/FixtureDialog.vue'
 import AtmDialog from '../TeamTests/Components/StrainGauge/Atm/AtmDialog.vue'
-import MaintenanceDialog from './components/maintenanceDialog.vue'
+import MaintenanceDialog from './components/maintenance/maintenanceDialog.vue'
 
 //Importing components
 export default {
@@ -145,6 +146,7 @@ export default {
             event_type: null,
             fixture_id: null,
             atm_sn: null,
+            calendar_id: null,
         }
     },
     methods: {
@@ -272,7 +274,7 @@ export default {
                     message: response.data,
                     position: 'top'
                 })
-
+                this.get_events()
             }).catch((error) => {
 
                 var errors = error.response.data.error

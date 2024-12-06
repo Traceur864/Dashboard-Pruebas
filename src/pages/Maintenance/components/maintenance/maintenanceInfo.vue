@@ -33,6 +33,7 @@ export default {
     components: {
 
     },
+    props: ['id_maintenance'],
     data() {
         return {
             //Global variables
@@ -47,7 +48,6 @@ export default {
             tab: 'Modificar',
 
             //Model variables
-            id_maintenance: null,
             tester_sn: null,
             fixture_sn: null,
             atm_sn: null,
@@ -57,12 +57,6 @@ export default {
     },
     emits: ['reload'],
     methods: {
-        openDialog(id) {
-            this.id_maintenance = id
-            this.dialogInfo = true
-            this.loadData()
-            this.getData()
-        },
         loadData() {
 
         },
@@ -74,9 +68,9 @@ export default {
 
             })
         },
-        setup() {
-
-        }
+    },
+    mounted() {
+        console.log(this.id_maintenance);
     }
 }
 </script>

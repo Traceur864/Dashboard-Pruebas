@@ -13,7 +13,7 @@
 
             <q-tab-panels v-model="tab" animated>
                 <q-tab-panel name="modificar">
-                    <MaintenanceUpdate @reload="reload" />
+                    <MaintenanceUpdate :id_maintenance="id_maintenance" @reload="reload" />
                 </q-tab-panel>
                 <q-tab-panel name="info">
 
@@ -48,40 +48,22 @@ export default {
             tab: 'modificar',
 
             //Model variables
-            id_maintenance: null,
             tester_sn: null,
             fixture_sn: null,
             atm_sn: null,
             event_type: null,
             start_date: null,
+            id_maintenance: null,
         }
     },
     emits: ['reload'],
     methods: {
         reload() {
             this.$emit('reload')
-            this.loadData()
-            this.getData()
         },
         openDialog(id) {
             this.id_maintenance = id
             this.dialogInfo = true
-            this.loadData()
-            this.getData()
-        },
-        loadData() {
-
-        },
-        getData() {
-            api.get('/maintenance/' + this.id_maintenance).then((response) => {
-                var data = response.data[0]
-                console.log(data)
-            }).catch((error) => {
-
-            })
-        },
-        setup() {
-
         }
     }
 }

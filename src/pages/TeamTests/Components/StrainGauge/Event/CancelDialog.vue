@@ -65,8 +65,8 @@ export default {
                     position: 'top',
                 })
 
-                this.$emit('reload')
                 this.$emit('move')
+                this.$emit('reload')
                 this.cancelDialog = false
 
             }).catch((error) => {

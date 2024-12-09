@@ -1,7 +1,7 @@
 <template>
     <q-card-section>
         <div class="text-h6 q-pb-md">
-            Información del mantenimiento <span style="text-decoration: underline;">#235</span>
+            Información del mantenimiento <span style="text-decoration: underline;">#{{ id_maintenance }}</span>
             <q-badge class="q-ml-md" :color="getColor(status)" :label="status" />
         </div>
 
@@ -26,7 +26,8 @@
                     :readonly="disabled" />
             </div>
             <div class="col">
-                <q-input v-model="start_date" type="date" label="Fecha de inicio" square :readonly="disabled" />
+                <q-input v-model="start_date" type="date" :max="limit_date" label="Fecha de inicio" square
+                    :readonly="disabled" />
             </div>
         </div>
 
@@ -50,6 +51,28 @@
                 </div>
             </div>
         </div>
+
+        <div v-if="status == 'Cancelado'">
+            <div class="text-h6 q-py-sm">
+                Comentarios de cancelación
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <q-input readonly v-model="comments" type="textarea" rows="2" label="Comentarios de cancelación" />
+                </div>
+            </div>
+
+            <div class="row q-col-gutter-x-sm">
+                <div class="col">
+                    <q-input readonly v-model="finished_by" type="text" label="Cancelado por" />
+                </div>
+                <div class="col">
+                    <q-input readonly v-model="finish_date" type="text" label="Fecha de cancelación" />
+                </div>
+            </div>
+        </div>
+
     </q-card-section>
 
     <q-card-section v-if="updated_by != null">
@@ -72,10 +95,10 @@
         </div>
     </q-card-section>
 
-    <q-card-section class="q-pb-lg">
+    <q-card-section class="q-pb-lg" v-if="status != 'Cancelado'">
         <div class="float-right">
-            <q-btn v-if="status != 'cancelado' && status != 'En proceso' && status != 'Finalizado'" color="purple"
-                label="Comenzar" @click="startMaintenance" />
+            <q-btn v-if="status != 'En proceso' && status != 'Finalizado'" color="purple" label="Comenzar"
+                @click="startMaintenance" />
             <q-btn v-if="status == 'En proceso'" color="positive" label="Finalizar"
                 @click="this.$refs.finishDialog.openDialog()" />
         </div>
@@ -83,22 +106,25 @@
 
     <q-card-section class="q-pt-lg">
         <div class="float-right" v-if="status != 'Finalizado' && status != 'Cancelado'">
-            <q-btn color="negative" icon="delete" label="Cancelar" class="q-mx-sm" />
-            <q-btn color="positive" icon="edit" label="Modificar" />
+            <q-btn color="negative" icon="delete" label="Cancelar" class="q-mx-sm" @click="cancelConfirmation()" />
+            <q-btn color="positive" icon="edit" label="Modificar" @click="sendInfo()" />
         </div>
     </q-card-section>
 
     <MaintenanceFinish ref="finishDialog" :id_maintenance="id_maintenance" @reload="reload" />
+    <UpdateDialog ref="updateDialog" @reload="reload" />
 
 </template>
 
 <script>
 import { api } from 'boot/axios'
 import MaintenanceFinish from './maintenanceFinish.vue'
+import UpdateDialog from '../updateDialog.vue'
 
 export default {
     components: {
         MaintenanceFinish,
+        UpdateDialog
     },
     data() {
         return {
@@ -113,6 +139,7 @@ export default {
             event_tps: ['Calibración', 'Mantenimiento'],
             tab: 'Modificar',
             disabled: false,
+            limit_date: '',
 
             //Model variables
             tester_sn: null,
@@ -139,6 +166,135 @@ export default {
         reload() {
             this.$emit('reload')
             this.getData()
+        },
+        sendInfo() {
+
+            if (this.event_type == 'Calibración' && this.fixture_sn != null) {
+                this.$q.notify({
+                    type: 'negative',
+                    message: 'No se realizan calibraciones a Fixturas',
+                    position: "center",
+                    timeout: 1200
+                })
+
+                return
+            }
+
+
+            var data = {
+                id_maintenance: this.id_maintenance,
+                tester_sn: this.tester_sn,
+                fixture_sn: this.fixture_sn,
+                atm_sn: this.atm_sn,
+                event_type: this.event_type,
+                start_date: this.start_date
+            }
+
+            this.$refs.updateDialog.openDialog(data)
+        },
+        startMaintenance() {
+            const dismiss = this.$q.notify({
+                spinner: true,
+                message: "Por favor, espera...",
+                timeout: 0
+            })
+
+            const params = new URLSearchParams()
+
+            params.append('id_maintenance', this.id_maintenance)
+            //TODO: GET USER ID FROM LOCAL STORAGE
+
+            const config = {
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+                }
+            }
+
+            api.put('/maintenance/start', params, config).then((response) => {
+                dismiss()
+                this.$q.notify({
+                    type: 'positive',
+                    message: response.data,
+                    position: "top"
+                })
+                this.getData()
+                this.$emit('reload')
+            }).catch((error) => {
+                var errors = error.response.data.error
+                console.error(errors);
+
+                errors.forEach(err => {
+                    this.$q.notify({
+                        type: 'negative',
+                        message: err.msg,
+                        position: "top"
+                    })
+                });
+
+                dismiss()
+            })
+        },
+        cancelConfirmation() {
+            this.$q.dialog({
+                title: 'Confirmación',
+                message: '¿Realmente quieres cancelar el mantenimiento?',
+                ok: {
+                    label: 'Cancealr',
+                    color: 'negative',
+                },
+                cancel: {
+                    label: 'Cerrar',
+                    color: 'black',
+                    flat: true,
+                },
+            }).onOk(() => {
+                this.cancelMaintenance()
+            })
+        },
+        cancelMaintenance() {
+            const dismiss = this.$q.notify({
+                spinner: true,
+                message: "Por favor, espera...",
+                timeout: 0
+            })
+
+            const params = new URLSearchParams()
+            params.append('id_maintenance', this.id_maintenance)
+            params.append('made_by', 1)
+            // TODO: GET USER_ID FROM LOCAL STORAGE
+
+            const config = {
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+                }
+            }
+
+            api.put('/maintenance/cancel', params, config).then((response) => {
+                dismiss()
+                this.$q.notify({
+                    type: 'positive',
+                    message: response.data,
+                    position: "top"
+                })
+                this.getData()
+                this.$emit('reload')
+
+            }).catch((error) => {
+                var errors = error.response.data.error
+                console.error(errors);
+
+                errors.forEach(err => {
+                    this.$q.notify({
+                        type: 'negative',
+                        message: err.msg,
+                        position: "top"
+                    })
+                });
+
+                dismiss()
+            })
         },
         getData() {
             api.get('/maintenance/' + this.id_maintenance).then((response) => {
@@ -178,7 +334,7 @@ export default {
 
                 this.event_type = data.EVENT_TYPE
                 this.start_date = data.PLAN_DATE.substring(0, 10)
-
+                this.limit_date = data.PLAN_DATE.substring(0, 10)
                 //Finished info
                 if (data.FINISH_DATE != null) {
                     this.comments = data.COMMENTS
@@ -194,7 +350,7 @@ export default {
                 if (data.UPDATED_BY != null) {
                     this.updated_comments = data.UPDATED_COMMENTS
                     this.updated_by = data.UPDATED_BY
-                    this.updated_at = data.UPDATED_AT
+                    console.log(data);
                 } else {
                     this.updated_comments = null
                     this.updated_by = null
@@ -259,49 +415,6 @@ export default {
                 console.error(err);
             })
         },
-        startMaintenance() {
-            const dismiss = this.$q.notify({
-                spinner: true,
-                message: "Por favor, espera...",
-                timeout: 0
-            })
-
-            const params = new URLSearchParams()
-
-            params.append('id_maintenance', this.id_maintenance)
-            //TODO: GET USER ID FROM LOCAL STORAGE
-
-            const config = {
-                headers: {
-                    'content-type': 'application/x-www-form-urlencoded',
-                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
-                }
-            }
-
-            api.put('/maintenance/start', params, config).then((response) => {
-                dismiss()
-                this.$q.notify({
-                    type: 'positive',
-                    message: response.data,
-                    position: "top"
-                })
-                this.getData()
-                this.$emit('reload')
-            }).catch((error) => {
-                var errors = error.response.data.error
-                console.error(errors);
-
-                errors.forEach(err => {
-                    this.$q.notify({
-                        type: 'negative',
-                        message: err.msg,
-                        position: "top"
-                    })
-                });
-
-                dismiss()
-            })
-        },
         filterTest(val, update, abort) {
             if (val === '') {
                 update(() => {
@@ -350,6 +463,8 @@ export default {
                     return 'deep-orange'
                 case 'Finalizado':
                     return 'positive'
+                case 'Cancelado':
+                    return 'black'
                 default:
                     return 'black'
             }
@@ -388,6 +503,8 @@ function setStatus(status, event_type, plan_date) {
                 return 'En proceso'
             case 'Finalizado':
                 return 'Finalizado'
+            case 'Cancelado':
+                return 'Cancelado'
             case 'Asignado':
                 var date = new Date(plan_date)
                 var today = new Date(new Date().toDateString())
@@ -400,6 +517,8 @@ function setStatus(status, event_type, plan_date) {
                 } else {
                     return 'Asignado'
                 }
+            default:
+                return status
         }
     } else {
         switch (status) {
@@ -407,18 +526,22 @@ function setStatus(status, event_type, plan_date) {
                 return 'En proceso'
             case 'Finalizado':
                 return 'Finalizado'
+            case 'Cancelado':
+                return 'Cancelado'
             case 'Asignado':
                 var date = new Date(plan_date)
                 var today = new Date(new Date().toDateString())
                 var btw = days_between(today, date)
 
-                if (btw < 46 && btw > 0) {
+                if (btw < 46 && btw > 7) {
                     return 'Atrasado'
-                } else if (btw <= 0) {
+                } else if (btw <= 6) {
                     return 'Fallido'
                 } else {
                     return 'Asignado'
                 }
+            default:
+                return status
         }
     }
 }

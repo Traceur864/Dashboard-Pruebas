@@ -348,9 +348,9 @@ export default {
 
                 //Updated info
                 if (data.UPDATED_BY != null) {
+                    this.updated_at = data.UPDATED_AT.substring(0, 10) + " a las " + new Date(data.UPDATED_AT).toLocaleTimeString()
                     this.updated_comments = data.UPDATED_COMMENTS
                     this.updated_by = data.UPDATED_BY
-                    console.log(data);
                 } else {
                     this.updated_comments = null
                     this.updated_by = null

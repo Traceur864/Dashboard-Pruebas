@@ -16,7 +16,7 @@
                     <MaintenanceUpdate :id_maintenance="id_maintenance" @reload="reload" />
                 </q-tab-panel>
                 <q-tab-panel name="info">
-
+                    <MaintenanceInfo :id_maintenance="id_maintenance" @reload="reload" />
                 </q-tab-panel>
             </q-tab-panels>
 
@@ -29,10 +29,12 @@
 <script>
 import { api } from 'boot/axios'
 import MaintenanceUpdate from './maintenanceUpdate.vue';
+import MaintenanceInfo from './maintenanceInfo.vue';
 
 export default {
     components: {
-        MaintenanceUpdate
+        MaintenanceUpdate,
+        MaintenanceInfo
     },
     data() {
         return {

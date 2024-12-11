@@ -45,6 +45,7 @@ export default {
         return {
             finishDialog: false,
             comments: '',
+            event_type: '',
             // usuarios: [],
             // users: [],
             // asigned_to: '',
@@ -52,7 +53,8 @@ export default {
         }
     },
     methods: {
-        openDialog() {
+        openDialog(data) {
+            this.event_type = data
             this.finishDialog = true;
             // this.getData()
         },
@@ -105,7 +107,15 @@ export default {
                 }
             }
 
-            api.put('/maintenance/finish', params, config).then((response) => {
+            var route = ''
+
+            if (this.event_type == 'Calibración') {
+                route = '/calibration/finish'
+            } else if (this.event_type == 'Mantenimiento') {
+                route = '/maintenance/finish'
+            }
+
+            api.put(route, params, config).then((response) => {
                 dismiss()
                 response.data.data.forEach(data => {
                     this.$q.notify({

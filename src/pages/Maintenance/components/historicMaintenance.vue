@@ -31,7 +31,8 @@
                                     :label="setStatus(props.row.STATUS_M, props.row.EVENT_TYPE, props.row.START_DATE)" />
                             </q-td>
                             <q-td>
-                                <q-btn color="primary" icon="info" @click="openEvent(props.row.ID_EVENT)" />
+                                <q-btn color="primary" icon="info"
+                                    @click="this.$refs.dialog.openDialog(props.row.ID_MAINTENANCE)" />
                             </q-td>
                         </q-tr>
                     </template>
@@ -42,15 +43,18 @@
             </q-card-actions>
         </q-card>
     </q-dialog>
+    <MaintenanceDialog ref="dialog" />
 </template>
 
 <script>
 import { api } from 'boot/axios'
+import MaintenanceDialog from './maintenance/maintenanceDialog.vue';
 
 export default {
     setup() {
     },
     components: {
+        MaintenanceDialog
     },
     emits: ['reload'],
     data() {

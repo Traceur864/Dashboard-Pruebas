@@ -106,7 +106,7 @@
 
     <q-card-section class="q-pt-lg">
         <div class="float-right" v-if="status != 'Finalizado' && status != 'Cancelado'">
-            <q-btn color="negative" icon="delete" label="Cancelar" class="q-mx-sm" @click="cancelConfirmation()" />
+            <!--<q-btn color="negative" icon="delete" label="Cancelar" class="q-mx-sm" @click="cancelConfirmation()" />-->
             <q-btn color="positive" icon="edit" label="Modificar" @click="sendInfo()" />
         </div>
     </q-card-section>

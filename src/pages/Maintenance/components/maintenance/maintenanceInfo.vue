@@ -34,8 +34,12 @@
                             {{ props.row.STATUS_M }}
                         </q-td>
                         <q-td align="center">
-                            <q-btn color="primary" icon="info"
-                                @click="this.$refs.dialog.openDialog(props.row.ID_MAINTENANCE)" />
+                            <q-btn color="warning" class="q-mx-xs" icon="edit"
+                                @click="this.$refs.updateDialog.openDialog(props.row.ID_MAINTENANCE_INFO)" />
+                            <q-btn color="positive" class="q-mx-xs" icon="check"
+                                @click="this.$refs.updateDialog.openDialog(props.row.ID_MAINTENANCE_INFO)" />
+                            <q-btn color="primary" icon="info" class="q-mx-xs"
+                                @click="this.$refs.dialog.openDialog(props.row.ID_MAINTENANCE_INFO)" />
                         </q-td>
                     </q-tr>
                 </template>
@@ -44,14 +48,18 @@
 
     </q-card-section>
     <InsertInfo ref="insertDialog" @reload="reload" />
+    <UpdateInfo ref="updateDialog" @reload="reload" />
+
 </template>
 <script>
 import { api } from 'boot/axios'
 import InsertInfo from '../calibration/insertInfo.vue';
+import UpdateInfo from '../calibration/updateInfo.vue';
 
 export default {
     components: {
         InsertInfo,
+        UpdateInfo,
     },
     props: ['id_maintenance'],
     data() {
@@ -96,13 +104,14 @@ export default {
                             PLAN_DATE: dat.PLAN_DATE,
                             REAL_DATE: dat.REAL_DATE,
                             STATUS_M: dat.STATUS_MAIN,
+                            ID_MAINTENANCE_INFO: dat.ID_MAIN_INFO,
                             btn: ''
                         }
                     )
                     counter++
                 });
             }).catch((error) => {
-
+                console.error(error);
             })
         },
         getData() {

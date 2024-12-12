@@ -26,5 +26,18 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
 
+  Router.beforeEach((to, from, next) => {
+    const isLoggedIn = localStorage.getItem('authToken') !== null;
+
+    // Verificar si la ruta requiere autenticación
+    if (to.meta.requiresAuth && !isLoggedIn) {
+      // Si no está autenticado, redirigir al login
+      next({ name: 'login' });
+    } else {
+      // Si está autenticado o la ruta no requiere autenticación, permitir la navegación
+      next();
+    }
+  });
+
   return Router
 })

@@ -1,19 +1,16 @@
 <template>
   <q-page class="q-pa-lg column items-center justify-start">
 
-
-
-
     <div class="flex flex-center q-pa-lg">
       <q-card class="create-account-card" style="width: 400px">
 
         <q-card-section>
-          <span class="text-h4 text-weight-regular"
+          <span class="text-h5 text-weight-regular"
             style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Iniciar Sesión</span>
         </q-card-section>
         <q-card-section>
           <q-form @submit="handleLogin" ref="loginForm">
-            <q-input v-model="userForm.email" label="Correo electrónico" type="email"
+            <q-input v-model="userForm.email" label="Nombre de Usuario o correo" type="text"
               :rules="[val => val && val.length > 0 || 'Este campo es requerido']" outlined dense />
             <q-input v-model="userForm.password" label="Contraseña" :type="isPwd ? 'password' : 'text'" :rules="[
               val => val && val.length > 0 || 'Este campo es requerido',
@@ -25,7 +22,8 @@
               </template>
             </q-input>
 
-            <div class="flex justify-end q-mt-md">
+            <div class="flex justify-between q-mt-md">
+              <q-btn label="Registrar" flat @click="goToRegister" />
               <q-btn label="Iniciar sesión" icon-right="las la-sign-in-alt" color="secondary" type="submit" push no-caps
                 :align="between" :loading="loading[0]" />
             </div>
@@ -39,6 +37,12 @@
 
 <script setup>
 import { ref } from 'vue'
+import { api } from 'boot/axios'
+import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const $q = useQuasar()
 
 const userForm = ref({
   email: '',
@@ -63,15 +67,51 @@ function simulateProgress(number) {
   // Activamos el estado de carga
   loading.value[number] = true;
 
-  // Simulamos un retraso para simular un inicio de sesión
-  setTimeout(() => {
-    // Después de 3 segundos, desactivamos el estado de carga
-    loading.value[number] = false;
-    // Aquí puedes manejar lo que sucede después de intentar iniciar sesión, 
-    // como redirigir a otra página o mostrar un mensaje de error
-  }, 3000);
+  // Hacer la solicitud de login al backend
+  api.post('/auth/login', userForm.value)
+    .then(response => {
+      // Si el login es exitoso, guardar el token en el localStorage
+      const token = response.data.token;
+      const userLogin = response.data.user;
 
+      localStorage.setItem('authToken', token); // Guardar el token en localStorage
+      localStorage.setItem('userLogin', JSON.stringify(userLogin)); // Guardar el user en localStorage
 
+      // Opcional: Redirigir al usuario a otra página
+      router.push({ name: 'home' }).then(() => {
+        location.reload()
+      })
+
+    })
+    .catch(error => {
+
+      console.error('Error en el inicio de sesión:', error);
+
+      // Verificar si el error tiene respuesta
+      if (error.response && error.response.data) {
+        // Mostrar el mensaje de error del servidor
+        $q.notify({
+          color: 'negative',
+          message: error.response.data.msg || 'Error desconocido',
+          icon: 'warning',
+        });
+        loading.value[number] = false;
+      } else {
+        // En caso de que no haya respuesta, mostrar un mensaje genérico
+        $q.notify({
+          color: 'negative',
+          message: 'No se pudo conectar con el servidor',
+          icon: 'warning',
+        });
+
+        loading.value[number] = false;
+      }
+    });
+
+}
+
+const goToRegister = () => {
+  router.push({ name: 'register' })
 }
 
 defineOptions({

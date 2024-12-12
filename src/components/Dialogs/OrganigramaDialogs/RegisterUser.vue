@@ -173,17 +173,16 @@ const userForm = ref({
 
 function onReset() {
 
-  nombre.value = '',
-    apellido.value = '',
-    email.value = '',
-    phone.value = false,
-    puesto.value = '',
-    area.value = '',
-    turno.value = '',
-    empleado.value = false,
-    birthday.value = false,
-    picture.value = null
-
+  userForm.value.nombre = ''
+  userForm.value.apellido = ''
+  userForm.value.email = ''
+  userForm.value.phone = false
+  userForm.value.puesto = ''
+  userForm.value.area = ''
+  userForm.value.turno = ''
+  userForm.value.empleado = false
+  userForm.value.birthday = false
+  userForm.value.picture = null
 }
 
 async function HandleRegister() {

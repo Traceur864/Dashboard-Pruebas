@@ -120,7 +120,8 @@
           <div class="flex justify-center col-md-5">
             <q-avatar size="50px" font-size="52px">
               <!-- Show the selected image or the default image -->
-              <img :src="imagePreviewUrl" />
+              <img src="../../../../public/imgs/NoIMgae.png" v-if="!imagePreviewUrl" />
+              <img :src="imagePreviewUrl" v-else />
             </q-avatar>
           </div>
         </div>
@@ -192,21 +193,16 @@ function confirm() {
   $q.dialog({
     transitionShow: 'fade',
     dark: false,
-    title: 'Confirm',
-    message: 'Validate data first, Are you sure?',
+    title: 'Confirmar',
+    message: 'Valida los datos primero, Seguro(a)?',
     cancel: true,
     persistent: true
   }).onOk(() => {
     simulateProgress(0)
   }).onOk(() => {
-    console.log('simulateProgress');
-    // console.log('>>>> second OK catcher')
+    console.log('simulateProgress')
   }).onCancel(() => {
-    console.log('The user cancelled');
-    // console.log('>>>> Cancel')
-  }).onDismiss(() => {
-    console.log('I am triggered on dismiss')
-    // console.log('I am triggered on both OK and Cancel')
+    console.log('The user cancelled')
   })
 
 }
@@ -290,7 +286,7 @@ watch(() => userFormEdit.value.picture, (newVal) => {
     reader.readAsDataURL(newVal);
   } else {
     // Set default image if no picture is selected
-    imagePreviewUrl.value = "../../../../public/imgs/Nike.png";
+    imagePreviewUrl.value = "../../../../public/imgs/NoIMgae.png";
   }
 });
 

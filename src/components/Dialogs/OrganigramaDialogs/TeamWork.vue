@@ -24,7 +24,7 @@
             <img :src="'http://localhost:3000/uploads/' + test.PICTURE" :alt="test.NAME" />
           </q-avatar>
           <q-avatar size="100px" font-size="52px" v-else>
-            <img src="../../../../public/imgs/Nike.png" :alt="test.NAME" />
+            <img src="../../../../public/imgs/NoIMgae.png" :alt="test.NAME" />
           </q-avatar>
         </div>
       </q-card-section>
@@ -162,7 +162,6 @@ function deletes() {
 
     console.log('cancelled');
 
-    // console.log('>>>> Cancel')
   })
 }
 

@@ -8,28 +8,27 @@
 
                 <div class="row q-col-gutter-sm">
                     <div class="col-8">
-                        <q-input v-model="event_title" filled type="text" label="Título del evento" />
+                        <q-input readonly v-model="event_title" filled type="text" label="Título del evento" />
                     </div>
                     <div class="col-4">
-                        <q-input v-model="plan_date" filled type="date" label="Fecha compromiso" />
+                        <q-input readonly v-model="plan_date" filled type="date" label="Fecha compromiso" />
                     </div>
                 </div>
                 <div class="row q-pt-sm">
                     <div class="col">
-                        <q-input v-model="event_description" type="textarea" rows="2" label="Descripción"
+                        <q-input readonly v-model="event_description" type="textarea" rows="2" label="Descripción"
                             hint="Breve explicación de lo que se planea" filled />
                     </div>
                 </div>
                 <q-separator class="q-my-lg" />
                 <div class="row">
                     <div class="col">
-                        <q-input rows="2" v-model="comments" type="textarea" label="Comentarios" filled />
+                        <q-input readonly rows="2" v-model="comments" type="textarea" label="Comentarios" filled />
                     </div>
                 </div>
             </q-card-section>
 
             <q-card-actions align="right">
-                <q-btn label="Modificar" color="positive" @click="onSubmit" />
                 <q-btn flat label="Cerrar" color="black" @click="infoDialog = false" />
             </q-card-actions>
         </q-card>
@@ -38,7 +37,6 @@
 
 <script>
 import { api } from 'boot/axios'
-import { comment } from 'postcss';
 
 export default {
     setup() {

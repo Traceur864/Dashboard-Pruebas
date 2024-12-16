@@ -3,15 +3,18 @@
         <q-card style="width: 70vw; max-width: 70vw; max-height: 70vh; ">
             <q-card-section class="items-center">
                 <div class="text-h6 q-pb-sm">
-                    Actualizar evento
+                    Información de evento <q-badge color="primary" :label="status" />
                 </div>
 
                 <div class="row q-col-gutter-sm">
-                    <div class="col-8">
+                    <div class="col-6">
                         <q-input readonly v-model="event_title" filled type="text" label="Título del evento" />
                     </div>
-                    <div class="col-4">
+                    <div class="col">
                         <q-input readonly v-model="plan_date" filled type="date" label="Fecha compromiso" />
+                    </div>
+                    <div class="col" v-if="real_date != null">
+                        <q-input readonly v-model="real_date" filled type="date" label="Fecha de finalización" />
                     </div>
                 </div>
                 <div class="row q-pt-sm">
@@ -21,9 +24,17 @@
                     </div>
                 </div>
                 <q-separator class="q-my-lg" />
-                <div class="row">
+                <div class="row q-mb-sm">
                     <div class="col">
                         <q-input readonly rows="2" v-model="comments" type="textarea" label="Comentarios" filled />
+                    </div>
+                </div>
+                <div class="row q-col-gutter-sm">
+                    <div class="col">
+                        <q-input readonly v-model="created_by" type="text" label="Creado por" filled />
+                    </div>
+                    <div class="col">
+                        <q-input readonly v-model="created_at" type="text" label="Creado a las" filled />
                     </div>
                 </div>
             </q-card-section>
@@ -52,8 +63,13 @@ export default {
             id_maintenance: '',
             event_title: '',
             event_description: '',
+            created_by: null,
+            created_at: null,
+            real_date: null,
             plan_date: null,
             comments: null,
+            status: null,
+            color: null,
         }
     },
     mounted() {
@@ -67,83 +83,33 @@ export default {
         getData() {
             api.get('/maintenance_info/' + this.id_maintenance).then((response) => {
                 var data = response.data[0]
+                this.status = data.STATUS_MAIN
                 this.event_title = data.EVENT_TITLE
                 this.event_description = data.EVENT_DESCRIPTION
-                this.plan_date = data.PLAN_DATE.substring(0, 10)
+
+                this.plan_date = data.PLAN_DATE
+                if (this.plan_date != null) {
+                    this.plan_date = this.plan_date.substring(0, 10)
+                }
+
+                this.comments = data.COMMENTS
+                this.created_by = data.CREATED_NAME
+                this.created_at = data.CREATED_AT.substring(0, 10) + " a las " + data.CREATED_AT.substring(11, 19)
+                this.real_date = data.REAL_DATE
+
+                if (this.real_date != null) {
+                    this.real_date = this.real_date.substring(0, 10)
+                }
             }).catch((error) => {
                 this.$q.notify({
                     type: 'negative',
                     message: "Error al recuperar la información",
                     position: "top",
                 })
+                console.log(error);
                 this.infoDialog = false
             })
         },
-        confirmDialog() {
-
-        },
-        onSubmit() {
-            const dismiss = this.$q.notify({
-                spinner: true,
-                message: "Por favor, espera...",
-                timeout: 0
-            })
-
-            const params = new URLSearchParams()
-            params.append('id_main_info', this.id_maintenance)
-            params.append('title', this.event_title)
-            params.append('description', this.event_description)
-            params.append('comments', this.comments)
-            params.append('plan_date', this.plan_date)
-            // TODO: GET USER ID FROM LOCAL STORAGE
-            // params.append('created_by', this.current_user.id)
-
-            const config = {
-                headers: {
-                    'content-type': 'application/x-www-form-urlencoded',
-                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
-                }
-            }
-
-            api.put('/maintenance_info/', params, config).then((response) => {
-                dismiss()
-
-                this.$q.notify({
-                    type: 'positive',
-                    message: response.data,
-                    position: "top",
-                })
-
-                this.$emit('reload')
-                this.clearFields()
-                this.infoDialog = false
-
-            }).catch((error) => {
-
-                dismiss()
-                try {
-                    var errors = error.response.data.error
-                } catch (err) {
-                    console.error(err);
-                    console.error(error);
-                }
-                console.error(errors);
-                errors.forEach(ele => {
-                    this.$q.notify({
-                        type: 'negative',
-                        message: ele.msg,
-                        position: "top"
-                    })
-                });
-
-            })
-        },
-        clearFields() {
-            this.event_title = ''
-            this.event_description = ''
-            this.comments = null
-            this.plan_date = null
-        }
     }
 }
 </script>

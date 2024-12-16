@@ -29,6 +29,7 @@
             </q-card-section>
 
             <q-card-actions align="right">
+                <q-btn label="Cancelar" color="negative" @click="confirmDialog" />
                 <q-btn label="Modificar" color="positive" @click="onSubmit" />
                 <q-btn flat label="Cerrar" color="black" @click="infoDialog = false" />
             </q-card-actions>
@@ -38,7 +39,6 @@
 
 <script>
 import { api } from 'boot/axios'
-import { comment } from 'postcss';
 
 export default {
     setup() {
@@ -55,7 +55,8 @@ export default {
             event_title: '',
             event_description: '',
             plan_date: null,
-            comments: null,
+            comments: '',
+            test: null,
         }
     },
     mounted() {
@@ -71,18 +72,98 @@ export default {
                 var data = response.data[0]
                 this.event_title = data.EVENT_TITLE
                 this.event_description = data.EVENT_DESCRIPTION
-                this.plan_date = data.PLAN_DATE.substring(0, 10)
+                this.plan_date = data.PLAN_DATE
+                if (data.PLAN_DATE != null) {
+                    this.plan_date = data.PLAN_DATE.substring(0, 10)
+                }
+                this.comments = data.COMMENTS
             }).catch((error) => {
                 this.$q.notify({
                     type: 'negative',
                     message: "Error al recuperar la información",
                     position: "top",
                 })
+                console.error(error);
                 this.infoDialog = false
             })
         },
         confirmDialog() {
+            this.$q.dialog({
+                title: '¿Cancelar mantenimiento?',
+                prompt: {
+                    model: '',
+                    type: 'textarea',
+                    label: 'Comentarios',
+                    filled: true,
+                    rows: 4,
+                    hint: 'Explica el motivo de cancelación del mantenimiento',
+                },
+                ok: {
+                    label: 'Cancelar',
+                    color: 'negative',
+                },
+                cancel: {
+                    label: 'Cerrar',
+                    color: 'black',
+                    flat: true,
+                },
+            }).onOk((data) => {
+                this.comments = data
+                this.cancelEvent()
+            })
+        },
+        cancelEvent() {
+            const dismiss = this.$q.notify({
+                spinner: true,
+                message: "Por favor, espera...",
+                timeout: 0
+            })
 
+            const params = new URLSearchParams()
+            params.append('id_main_info', this.id_maintenance)
+            params.append('comments', this.comments)
+            // TODO: GET USER ID FROM LOCAL STORAGE
+            // params.append('created_by', this.current_user.id)
+
+            const config = {
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+                }
+            }
+
+            api.put('/maintenance_info/cancel/', params, config).then((response) => {
+                dismiss()
+
+                this.$q.notify({
+                    type: 'positive',
+                    message: response.data,
+                    position: "top",
+                })
+
+                this.$emit('reload')
+                this.clearFields()
+                this.infoDialog = false
+
+            }).catch((error) => {
+
+                dismiss()
+                try {
+                    var errors = error.response.data.error
+                } catch (err) {
+                    console.error(err);
+                    console.error(error);
+                }
+                console.error(errors);
+                errors.forEach(ele => {
+                    this.$q.notify({
+                        type: 'negative',
+                        message: ele.msg,
+                        position: "top"
+                    })
+                });
+
+            })
         },
         onSubmit() {
             const dismiss = this.$q.notify({

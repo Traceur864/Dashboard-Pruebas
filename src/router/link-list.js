@@ -9,43 +9,50 @@ export const linksList = [
       title: 'ICT',
       caption: 'Visualizacion de datos ICT',
       icon: 'las la-chart-bar',
-      link: 'ict'
+      link: 'ict',
+      meta: {rol:['Administrador', 'Junior']}
     },
     {
       title: 'MDA',
       caption: 'Visualizacion de datos MDA',
       icon: 'las la-project-diagram',
-      link: 'mda'
+      link: 'mda',
+      meta: {rol:['Administrador', 'Junior']}
     },
     {
       title: 'Organigrama',
       caption: 'Informacion de equipo de trabajo',
       icon: 'las la-users',
-      link: 'organigrama'
+      link: 'organigrama',
+      meta: {rol:['Administrador']}
     },
     {
       title: 'Strain Gauge',
       caption: 'Mantenimiento de equipos',
       icon: 'las la-calendar-check',
-      link: 'strain-gauge'
+      link: 'strain-gauge',
+      meta: {rol:['Administrador']}
     },
     {
       title: 'Vacation Planner',
       caption: 'RH',
       icon: 'lar la-calendar',
-      link: 'vacation_calendar'
+      link: 'vacation_calendar',
+      meta: {rol:['Administrador']}
     },
     {
       title: 'Mantenimientos',
       caption: 'Mantenimientos y calibraciones',
       icon: 'engineering',
-      link: 'maintenance'
+      link: 'maintenance',
+      meta: {rol:['Administrador']}
     },
     {
       title: 'Label Center',
       caption: 'Control de Etiquetas',
       icon: 'las la-ticket-alt',
-      link: 'label-center'
+      link: 'label-center',
+      meta: {rol:['Administrador']}
     },
     {
       title: 'Docs',

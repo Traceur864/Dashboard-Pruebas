@@ -1,6 +1,8 @@
 import { route } from 'quasar/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
+import { useQuasar } from 'quasar'
+const $q = useQuasar()
 
 /*
  * If not building with SSR mode, you can
@@ -28,13 +30,18 @@ export default route(function (/* { store, ssrContext } */) {
 
   Router.beforeEach((to, from, next) => {
     const isLoggedIn = localStorage.getItem('authToken') !== null;
+    const userRoles = isLoggedIn ? JSON.parse(localStorage.getItem('userLogin')).rol : []
 
     // Verificar si la ruta requiere autenticación
     if (to.meta.requiresAuth && !isLoggedIn) {
       // Si no está autenticado, redirigir al login
       next({ name: 'login' });
+    } else if (to.meta.rol && !to.meta.rol.some(role => userRoles.includes(role))) {
+      // Si el usuario no tiene el rol adecuado, redirige a una página de acceso denegado o a la página de inicio
+      next({ name: 'home' })
+
     } else {
-      // Si está autenticado o la ruta no requiere autenticación, permitir la navegación
+      // Si está autenticado o la ruta no requiere autenticación, permite la navegación
       next();
     }
   });

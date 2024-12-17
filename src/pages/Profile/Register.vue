@@ -10,10 +10,10 @@
                 </q-card-section>
                 <q-card-section>
                     <q-form @submit="handleRegister" ref="registerForm">
-                        <q-input v-model="userFormRegister.user" label="Usuario" type="text"
+                        <q-input v-model="userFormRegister.name" label="Nombre" type="text"
                             :rules="[val => val && val.length > 0 || 'Este campo es requerido']" outlined dense />
                         <q-input v-model="userFormRegister.email" label="Correo" type="email" outlined dense
-                            class="q-mb-md" />
+                            class="q-mb-md" hint="Este campo es Opcional" />
                         <q-input v-model="userFormRegister.password" label="Contraseña"
                             :type="isPwd ? 'password' : 'text'" :rules="[
                                 val => val && val.length > 0 || 'Este campo es requerido',
@@ -50,7 +50,7 @@ const router = useRouter()
 const $q = useQuasar()
 
 const userFormRegister = ref({
-    user: '',
+    name: '',
     email: '',
     password: ''
 })
@@ -72,15 +72,16 @@ function handleRegister() {
 function simulateProgress(number) {
     // Activamos el estado de carga
     loading.value[number] = true;
-    console.log([userFormRegister.value.user,
-    userFormRegister.value.email,
-    userFormRegister.value.password
+    console.log([
+        userFormRegister.value.name,
+        userFormRegister.value.email,
+        userFormRegister.value.password
     ]);
 
 
     const formData = new FormData()
 
-    formData.append('user', userFormRegister.value.user)
+    formData.append('name', userFormRegister.value.name)
     formData.append('email', userFormRegister.value.email)
     formData.append('password', userFormRegister.value.password)
 

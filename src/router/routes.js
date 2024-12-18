@@ -14,7 +14,7 @@ const routes = [
 
       // Routes for ICT
       { path: 'mda', name:'mda', component: () => import('pages/TeamTests/MDA.vue')},
-      { path: 'ict', name:'ict', component: () => import('src/pages/ict/ict_index.vue')},
+      { path: 'ict', name:'ict', component: () => import('pages/ict/ICTIndex.vue')},
       { path: 'organigrama', name:'organigrama', component: () => import('pages/TeamTests/Organigrama.vue')},
       { path: 'labelCenter', name:'label-center', component: () => import('pages/TeamTests/LabelCenter.vue')},
       { path:'maintenance', name:'maintenance', component: () => import('pages/Maintenance/MaintenanceCalendar.vue')},

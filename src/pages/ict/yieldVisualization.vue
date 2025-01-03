@@ -19,7 +19,12 @@
                 </q-select>
             </div>
             <div class="col-3">
-                <q-select v-model="model" :options="options" label="Modelo" filled />
+                <q-select v-model="model" :options="['PG520', '25612', 'P2312']" label="Modelo" filled>
+                    <template v-slot:append>
+                        <q-icon v-if="model !== null" class="cursor-pointer" name="clear"
+                            @click.stop.prevent="model = null" />
+                    </template>
+                </q-select>
             </div>
         </div>
 
@@ -47,7 +52,7 @@ export default {
             fixtures: [],
             shift: null,
             machine: '',
-            model: '',
+            model: null,
             date: '',
             options: [],
         }
@@ -66,6 +71,7 @@ export default {
         },
         filterData() {
             api.get('/ict_data/errors/bb/yield/' + this.date + '/' + this.shift).then(response => {
+                this.data = []
                 this.data = response.data[0];
                 // this.drawChart();
             }).catch(err => {

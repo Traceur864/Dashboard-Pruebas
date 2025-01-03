@@ -91,15 +91,16 @@ export default {
     watch: {
         data: {
             handler() {
-                console.log(this.data);
-                this.helper.data.setIndex(0, {
+                this.helper.data.clear()
+
+                this.helper.data.setAll([{
                     category: "Pases",
                     value: this.data.PASS,
                 },
-                    {
-                        category: "Fallas",
-                        value: this.data.FAIL,
-                    },)
+                {
+                    category: "Fallas",
+                    value: this.data.FAIL,
+                }])
 
             }
         }

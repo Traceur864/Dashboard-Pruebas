@@ -43,7 +43,7 @@
                 </div>
                 <div class="col-auto self-end q-pb-lg">
                     <q-btn class="q-mt-md q-mx-xs" color="secondary" label="Historial"
-                        @click="this.$refs.showEvents.openDialog()" />
+                        @click="this.$refs.historicMaintenance.openDialog()" />
                     <q-btn class="q-mt-md q-mx-xs" color="secondary" label="Testers"
                         @click="this.$refs.testerDialog.openDialog()" />
                     <q-btn class="q-mt-md q-mx-xs" color="secondary" label="Fixturas"
@@ -67,7 +67,7 @@
                         </div>
                     </div>
 
-                    <q-input square filled v-model="start_date" type="date" label="Fecha de inicio" />
+                    <q-input square filled v-model="start_date" type="date" label="Fecha limite" />
 
                     <q-select v-model="event_type" :options="event_tps" label="Tipo de evento" square filled />
                 </div>
@@ -83,6 +83,8 @@
         <FixtureDialog ref="fixtureDialog" @reload="reload" />
         <AtmDialog ref="atmDialog" @reload="reload" />
         <MaintenanceDialog ref="maintenanceDialog" @reload="reload" />
+        <MaintenanceFinish ref="maintenanceFinishDialog" />
+        <HistoricMaintenance ref="historicMaintenance" />
 
     </q-page>
 </template>
@@ -97,7 +99,9 @@ import { api } from 'boot/axios'
 import TesterDialog from '../TeamTests/Components/StrainGauge/Tester/TesterDialog.vue'
 import FixtureDialog from '../TeamTests/Components/StrainGauge/Fixture/FixtureDialog.vue'
 import AtmDialog from '../TeamTests/Components/StrainGauge/Atm/AtmDialog.vue'
-import MaintenanceDialog from './components/maintenanceDialog.vue'
+import MaintenanceDialog from './components/maintenance/maintenanceDialog.vue'
+import MaintenanceFinish from './components/maintenance/maintenanceFinish.vue'
+import HistoricMaintenance from './components/historicMaintenance.vue'
 
 //Importing components
 export default {
@@ -107,6 +111,8 @@ export default {
         FixtureDialog,
         AtmDialog,
         MaintenanceDialog,
+        MaintenanceFinish,
+        HistoricMaintenance,
     },
     data() {
         return {
@@ -145,6 +151,7 @@ export default {
             event_type: null,
             fixture_id: null,
             atm_sn: null,
+            calendar_id: null,
         }
     },
     methods: {
@@ -205,17 +212,30 @@ export default {
         },
         add_event() {
             if (this.tester_sn || this.fixture_id || this.atm_sn) {
-                if (this.tester_sn && this.event_type == "Calibración") {
+                if (this.event_type == "Calibración") {
+                    //Send notification that fixtures can not be calibrated
+                    if (this.fixture_id != null) {
+                        this.$q.notify({
+                            type: 'negative',
+                            message: "No se realizan calibraciones a Fixturas",
+                            position: "right",
+                            timeout: 1200
+                        })
+                        return
+                    }
 
-                } else if (this.fixture_id && this.event_type == "Calibración") {
-                    this.$q.notify({
-                        type: 'negative',
-                        message: "No se realizan calibraciones a Fixturas",
-                        position: "right",
-                        timeout: 1200
-                    })
+                    //Show notification with TESTER
+                    if (this.tester_sn != null) {
+                        this.atmConfirmation()
+                        return
+                    }
+
+                    //Submit calibration with ATM ID
+                    this.submitCalibration()
+
                 } else {
-                    this.submitEvent()
+                    //Submit maintenance
+                    this.submitMaintenance()
                 }
             } else {
                 this.$q.notify({
@@ -226,7 +246,7 @@ export default {
                 })
             }
         },
-        submitEvent() {
+        submitMaintenance() {
             const dismiss = this.$q.notify({
                 spinner: true,
                 message: "Por favor, espera...",
@@ -255,7 +275,7 @@ export default {
 
             params.append('start_date', this.start_date)
             params.append('event_type', this.event_type)
-            params.append('created_by', 4)
+            params.append('created_by', 1)
             //TODO: GET USER ID FROM LOCAL STORAGE
 
             const config = {
@@ -267,11 +287,15 @@ export default {
 
             api.post('/maintenance', params, config).then((response) => {
                 dismiss()
+
                 this.$q.notify({
                     type: "positive",
                     message: response.data,
                     position: 'top'
                 })
+
+                this.clear_fields()
+                this.get_events()
 
             }).catch((error) => {
 
@@ -288,8 +312,101 @@ export default {
 
                 dismiss()
             })
+        },
+        submitCalibration() {
+            const dismiss = this.$q.notify({
+                spinner: true,
+                message: "Por favor, espera...",
+                timeout: 0
+            })
 
-            this.clear_fields()
+            const params = new URLSearchParams()
+
+            if (this.atm_sn != null) {
+                params.append('id_atm', this.atm_sn.value)
+            } else {
+                params.append('id_atm', null)
+            }
+
+            if (this.tester_sn != null) {
+                params.append('id_tester', this.tester_sn.value)
+            } else {
+                params.append('id_tester', null)
+            }
+
+            params.append('start_date', this.start_date)
+            params.append('event_type', this.event_type)
+            params.append('created_by', 1)
+            //TODO: GET USER ID FROM LOCAL STORAGE
+
+            const config = {
+                headers: {
+                    'content-type': 'application/x-www-form-urlencoded',
+                    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+                }
+            }
+
+            api.post('/calibration/', params, config).then((response) => {
+                dismiss()
+                console.log(response.data);
+
+                this.$q.notify({
+                    type: "positive",
+                    message: response.data,
+                    position: 'top'
+                })
+                this.clear_fields()
+                this.get_events()
+            }).catch((error) => {
+
+                var errors = error.response.data.error
+                console.error(error);
+
+                errors.forEach(err => {
+                    this.$q.notify({
+                        type: 'negative',
+                        message: err.msg,
+                        position: "top"
+                    })
+                });
+
+                dismiss()
+            })
+        },
+        atmConfirmation() {
+
+            api.get('/atm/tester/' + this.tester_sn.value).then((response) => {
+                var data = response.data[0]
+
+                this.$q.dialog({
+                    title: 'Confirmación',
+                    message: 'El ATM a calibrar es: ' + data.ATM_SN,
+                    ok: {
+                        label: 'Confirmar',
+                        color: 'positive',
+                    },
+                    cancel: {
+                        label: 'Cancelar',
+                        color: 'negative',
+                    },
+                }).onOk(() => {
+                    this.submitCalibration()
+                })
+
+            }).catch((err) => {
+                var errors = err.response.data.error
+                console.error(err);
+
+                errors.forEach(erro => {
+                    this.$q.notify({
+                        type: 'negative',
+                        message: erro.msg,
+                        position: "right",
+                        timeout: 1200,
+                    })
+                });
+            })
+
         },
         loadData() {
             api.get('/tester/active').then((response) => {
@@ -393,6 +510,7 @@ export default {
             this.start_date = ""
             this.shift = ""
             this.asigned_to = ""
+            this.event_type = ""
         },
 
     },
@@ -477,9 +595,9 @@ function setStatus(status, event_type, plan_date) {
                 var today = new Date(new Date().toDateString())
                 var btw = days_between(today, date)
 
-                if (btw < 46 && btw > 0) {
+                if (btw < 46 && btw > 7) {
                     return 'Atrasado'
-                } else if (btw <= 0) {
+                } else if (btw <= 6) {
                     return 'Fallido'
                 } else {
                     return 'Asignado'

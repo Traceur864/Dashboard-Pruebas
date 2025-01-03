@@ -13,7 +13,7 @@
                     <EventInfo :event_id="event_id" @reload="reload" />
                 </q-tab-panel>
                 <q-tab-panel name="update">
-                    <EventUpdate :event_id="event_id" @move="tab = 'info'" @reload="reload" />
+                    <EventUpdate :event_id="event_id" @move="move" @reload="reload" />
                 </q-tab-panel>
             </q-tab-panels>
 
@@ -54,6 +54,11 @@ export default {
         },
         reload() {
             // this.tab = 'info'
+            this.getData()
+            this.$emit('reload')
+        },
+        move() {
+            this.tab = 'info'
             this.getData()
             this.$emit('reload')
         },

@@ -13,10 +13,10 @@
 
             <q-tab-panels v-model="tab" animated>
                 <q-tab-panel name="modificar">
-
+                    <MaintenanceUpdate :id_maintenance="id_maintenance" @reload="reload" />
                 </q-tab-panel>
                 <q-tab-panel name="info">
-
+                    <MaintenanceInfo :id_maintenance="id_maintenance" @reload="reload" />
                 </q-tab-panel>
             </q-tab-panels>
 
@@ -28,10 +28,13 @@
 </template>
 <script>
 import { api } from 'boot/axios'
+import MaintenanceUpdate from './maintenanceUpdate.vue';
+import MaintenanceInfo from './maintenanceInfo.vue';
 
 export default {
     components: {
-
+        MaintenanceUpdate,
+        MaintenanceInfo
     },
     data() {
         return {
@@ -44,38 +47,25 @@ export default {
             fixtures_sns: [],
             fixtures: [],
             event_tps: ['Calibración', 'Mantenimiento'],
-            tab: 'Modificar',
+            tab: 'modificar',
 
             //Model variables
-            id_maintenance: null,
             tester_sn: null,
             fixture_sn: null,
             atm_sn: null,
             event_type: null,
             start_date: null,
+            id_maintenance: null,
         }
     },
     emits: ['reload'],
     methods: {
+        reload() {
+            this.$emit('reload')
+        },
         openDialog(id) {
             this.id_maintenance = id
             this.dialogInfo = true
-            this.loadData()
-            this.getData()
-        },
-        loadData() {
-
-        },
-        getData() {
-            api.get('/maintenance/' + this.id_maintenance).then((response) => {
-                var data = response.data[0]
-                console.log(data)
-            }).catch((error) => {
-
-            })
-        },
-        setup() {
-
         }
     }
 }

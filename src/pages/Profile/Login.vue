@@ -10,7 +10,7 @@
         </q-card-section>
         <q-card-section>
           <q-form @submit="handleLogin" ref="loginForm">
-            <q-input v-model="userForm.email" label="Nombre de Usuario o correo" type="text"
+            <q-input v-model="userForm.email" label="Nombre completo o correo" type="text"
               :rules="[val => val && val.length > 0 || 'Este campo es requerido']" outlined dense />
             <q-input v-model="userForm.password" label="Contraseña" :type="isPwd ? 'password' : 'text'" :rules="[
               val => val && val.length > 0 || 'Este campo es requerido',
@@ -22,8 +22,7 @@
               </template>
             </q-input>
 
-            <div class="flex justify-between q-mt-md">
-              <q-btn label="Registrar" flat @click="goToRegister" />
+            <div class="flex justify-end q-mt-md">
               <q-btn label="Iniciar sesión" icon-right="las la-sign-in-alt" color="secondary" type="submit" push no-caps
                 :align="between" :loading="loading[0]" />
             </div>
@@ -108,10 +107,6 @@ function simulateProgress(number) {
       }
     });
 
-}
-
-const goToRegister = () => {
-  router.push({ name: 'register' })
 }
 
 defineOptions({

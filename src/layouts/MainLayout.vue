@@ -46,7 +46,7 @@
                   </q-avatar>
                 </div>
                 <div class="flex justify-center">
-                  <span class="text-weight-small text-subtitle2">{{ userLogin.name }}</span>
+                  <span class="text-weight-small text-subtitle2 q-mr-xs">{{ userLogin.name }}</span>
                   <span class="text-weight-small text-subtitle2">{{ userLogin.lastname }}</span>
                 </div>
 
@@ -54,6 +54,7 @@
                 <div class="flex justify-center">
                   <q-btn class="q-mt-md" color="primary" label="Logout" push size="sm" @click="logout" v-close-popup />
                 </div>
+
               </div>
             </div>
           </q-menu>

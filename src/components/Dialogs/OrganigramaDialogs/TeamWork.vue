@@ -13,39 +13,47 @@
     <p>No hay usuarios disponibles.</p>
   </div>
 
-  <div class="flex row q-pa-sm ">
-
-    <q-card class="my-card q-ma-sm" v-for="test in testerusers" :key="test.ID_USER">
-
-      <!-- Sección para la imagen -->
-      <q-card-section class="q-pa-lg">
-        <div class="flex items-center justify-center">
-          <q-avatar size="100px" font-size="52px" v-if="!test.PICTURE == null || !test.PICTURE == ''">
-            <img :src="'http://localhost:3000/uploads/' + test.PICTURE" :alt="test.NAME" />
-          </q-avatar>
-          <q-avatar size="100px" font-size="52px" v-else>
-            <img src="../../../../public/imgs/NoIMgae.png" :alt="test.NAME" />
-          </q-avatar>
-        </div>
-      </q-card-section>
-      <!-- Sección para el texto -->
-      <q-card-section class="text-center">
-        <div class="text-weight-medium text-subtitle1">{{ test.NAME }} {{ test.LASTNAME }}</div>
-        <div class="text-weight-light text-subtitle2">{{ test.WORKSTATION }}</div>
-      </q-card-section>
-      <q-separator></q-separator>
-      <q-card-section>
-        <div class="flex justify-between q-gutter-md">
-          <q-btn push square color="orange-6" glossy text-color="black" icon="las la-pencil-alt" aria-label="Editar"
-            @click="showUserEdit(test)" />
-          <q-btn push square color="red-14" glossy text-color="black" icon="las la-trash-alt" aria-label="Borrar"
-            @click="showUserDelete(test)" />
-          <q-btn id="js" push square color="light-blue-6" glossy text-color="black" icon="las la-info-circle"
-            aria-label="Info" @click="showUserInfo(test)" />
-        </div>
-      </q-card-section>
-
-    </q-card>
+  <div class="q-pa-md">
+    <q-table flat bordered title="Usuarios" :rows="testerusers" :columns="columns" row-key="ID_USER" binary-state-sort>
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td key="picture" :props="props">
+            <q-avatar size="40px" font-size="22px" v-if="props.row.PICTURE">
+              <img :src="'http://localhost:3000/uploads/' + props.row.PICTURE" :alt="props.row.NAME" />
+            </q-avatar>
+            <q-avatar size="40px" font-size="22px" v-else>
+              <img src="../../../../public/imgs/NoIMgae.png" :alt="props.row.NAME" />
+            </q-avatar>
+          </q-td>
+          <q-td key="name" :props="props">
+            <div class="text-weight-regular text-subtitle2">{{ props.row.NAME }} {{ props.row.LASTNAME }}</div>
+          </q-td>
+          <q-td key="email" :props="props">
+            <div v-if="props.row.EMAIL !== ''">{{ props.row.EMAIL }}</div>
+            <div v-else>Correo no asignado</div>
+          </q-td>
+          <q-td key="workstation" :props="props">
+            <div class="text-weight-regular text-subtitle2">{{ props.row.WORKSTATION }}</div>
+          </q-td>
+          <q-td key="area" :props="props">
+            <div class="text-weight-regular text-subtitle2">{{ props.row.AREA }}</div>
+          </q-td>
+          <q-td key="turn" :props="props">
+            <div class="text-weight-regular text-subtitle2">{{ props.row.TURN }}</div>
+          </q-td>
+          <q-td key="acciones" :props="props">
+            <div class="q-gutter-xs">
+              <q-btn push color="orange-6" text-color="black" icon="las la-pencil-alt" aria-label="Editar"
+                @click="showUserEdit(props.row)" />
+              <q-btn push color="red-14" text-color="black" icon="las la-trash-alt" aria-label="Borrar"
+                @click="showUserDelete(props.row)" />
+              <q-btn id="js" push color="light-blue-6" text-color="black" icon="las la-info-circle" aria-label="Info"
+                @click="showUserInfo(props.row)" />
+            </div>
+          </q-td>
+        </q-tr>
+      </template>
+    </q-table>
   </div>
 
 </template>
@@ -85,16 +93,15 @@ const fetchUsers = async () => {
   }
 };
 
-const props = defineProps({
+const Ut = defineProps({
   reload: Boolean
 })
 
 onMounted(() => {
   fetchUsers()
 })
-
 // Usamos un watcher para reaccionar al cambio en la propiedad 'reload'
-watch(() => props.reload, async () => {
+watch(() => Ut.reload, async () => {
   // Cuando 'reload' cambie, obtenemos la lista actualizada de usuarios
   try {
     fetchUsers()
@@ -125,7 +132,7 @@ function deletes() {
   $q.dialog({
 
     title: 'Confirmar',
-    message: 'Dar de baja al usuario',
+    message: '¿Dar de baja al usuario?',
     cancel: true,
     transitionShow: 'fade',
     transitionHide: 'fade',
@@ -168,6 +175,15 @@ function deletes() {
 function closeDialog() {
   editUserTest.value = false;
 }
+
+const columns = ref([
+  { name: 'picture', label: 'Foto', align: 'center', field: row => row.PICTURE, sortable: false },
+  { name: 'name', label: 'Nombre', align: 'left', field: row => `${row.NAME} ${row.LASTNAME}`, sortable: true },
+  { name: 'workstation', label: 'Puesto de trabajo', align: 'left', field: row => row.WORKSTATION, sortable: true },
+  { name: 'area', label: 'Area', align: 'left', field: row => row.AREA, sortable: true },
+  { name: 'turn', label: 'Turno', align: 'left', field: row => row.TURN, sortable: true },
+  { name: 'acciones', label: 'Acciones', align: 'center', field: row => row.ID_USER, sortable: false }
+]);
 
 defineOptions({
   name: 'TeamWork'

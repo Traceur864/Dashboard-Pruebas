@@ -1,63 +1,114 @@
 <template>
-    <q-page class="q-pa-md">
 
-        <div class="flex flex-center q-pa-lg">
-            <q-card class="create-account-card" style="width: 400px">
+    <q-card style="width: 500px; max-width: 80vw;">
 
-                <q-card-section>
-                    <span class="text-h5 text-weight-regular"
-                        style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Registro</span>
-                </q-card-section>
-                <q-card-section>
-                    <q-form @submit="handleRegister" ref="registerForm">
-                        <q-input v-model="userFormRegister.name" label="Nombre" type="text"
-                            :rules="[val => val && val.length > 0 || 'Este campo es requerido']" outlined dense />
-                        <q-input v-model="userFormRegister.email" label="Correo" type="email" outlined dense
-                            class="q-mb-md" hint="Este campo es Opcional" />
-                        <q-input v-model="userFormRegister.password" label="Contraseña"
-                            :type="isPwd ? 'password' : 'text'" :rules="[
-                                val => val && val.length > 0 || 'Este campo es requerido',
-                                val => val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
-                                val => val.length <= 12 || 'La contraseña debe tener un maximo de 12 caracteres',
-                            ]" outlined dense counter>
-                            <template v-slot:append>
-                                <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
-                                    @click="isPwd = !isPwd" />
-                            </template>
-                        </q-input>
+        <q-card-section>
+            <span class="text-h5 text-weight-regular"
+                style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Acceso a Dashborad</span>
+        </q-card-section>
 
-                        <div class="flex justify-between q-mt-md">
-                            <q-btn label="Iniciar sesión" flat push no-caps @click="goToLogin" />
-                            <q-btn label="Registrar" icon-right="las la-sign-in-alt" color="secondary" type="submit"
-                                push no-caps :align="between" :loading="loading[0]" />
-                        </div>
-                    </q-form>
-                </q-card-section>
-            </q-card>
-        </div>
+        <q-separator />
 
-    </q-page>
+        <q-card-section>
+            <q-form @submit="handleRegister" ref="registerForm">
+                <q-select v-model="selectedArea" label="Area" :options="areas" outlined dense class="q-mb-md"
+                    @update:model-value="fetchUsersByArea" />
+                <q-select v-model="userFormRegister.name" label="Usuario" :options="filteredUsers" outlined dense
+                    class="q-mb-md" @update:model-value="onUserSelect" />
+                <q-select v-model="userFormRegister.rol" label="Roles" :options="optionsRol"
+                    :rules="[val => val && val.length > 0 || 'Este campo es requerido']" outlined dense>
+                </q-select>
+                <q-input v-model="userFormRegister.email" label="Correo" type="email" suffix="@fii-na.com" outlined
+                    dense class="q-mb-md" :rules="[val => val && val.length > 0 || 'Este campo es requerido']" />
+                <q-input v-model="userFormRegister.password" label="Contraseña" :type="isPwd ? 'password' : 'text'"
+                    :rules="[
+                        val => val && val.length > 0 || 'Este campo es requerido',
+                        val => val.length >= 8 || 'La contraseña debe tener al menos 8 caracteres',
+                        val => val.length <= 12 || 'La contraseña debe tener un maximo de 12 caracteres',
+                    ]" outlined dense counter>
+                    <template v-slot:append>
+                        <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                            @click="isPwd = !isPwd" />
+                    </template>
+                </q-input>
+
+                <q-separator class="q-mt-sm" />
+
+                <div class="flex justify-end q-mt-md">
+                    <q-btn flat label="Cancelar" color="primary" v-close-popup />
+                    <q-btn flat label="Registrar" color="primary" type="submit" :loading="loading[0]" />
+                </div>
+            </q-form>
+        </q-card-section>
+    </q-card>
+
 </template>
 
 <script setup>
 
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
+const emit = defineEmits(['close-dialog-Access']);
 
 const router = useRouter()
 const $q = useQuasar()
+const filteredUsers = ref([])
+const selectedArea = ref(null)
 
 const userFormRegister = ref({
+    id: '',
     name: '',
     email: '',
-    password: ''
+    password: '',
+    rol: ''
 })
+
+const areas = [
+    'ICT',
+    'MDA',
+    'ISP',
+    'BSI',
+    'Programming',
+    'Software Development'
+]
 
 const loading = ref([false])
 const registerForm = ref(null)
 const isPwd = ref(true)
+
+
+const optionsRol = [
+    'Administrador',
+    'Full Programming',
+    'Full ICT',
+    'Full MDA',
+    'Full ISP',
+    'Full BSI',
+    'Jr Programming',
+    'Jr ICT',
+    'Jr MDA',
+    'Jr ISP',
+    'Jr BSI'
+]
+
+const onUserSelect = (selectedUser) => {
+    if (selectedUser) {
+        // Aquí seleccionamos el ID y el nombre del usuario seleccionado
+        userFormRegister.value.id = selectedUser.value;  // El value es el ID del usuario
+        console.log(userFormRegister.value.id);
+
+        userFormRegister.value.name = selectedUser.label; // El label es el nombre completo
+        console.log(userFormRegister.value.name);
+
+    } else {
+        // Si no se selecciona ningún usuario, limpiamos los valores
+        userFormRegister.value.id = '';
+        userFormRegister.value.name = '';
+    }
+};
+
 
 function handleRegister() {
     // Validar si el formulario es válido antes de iniciar el proceso de carga
@@ -69,55 +120,109 @@ function handleRegister() {
     }
 }
 
-function simulateProgress(number) {
+async function simulateProgress(number) {
     // Activamos el estado de carga
     loading.value[number] = true;
-    console.log([
-        userFormRegister.value.name,
-        userFormRegister.value.email,
-        userFormRegister.value.password
-    ]);
 
 
-    const formData = new FormData()
 
-    formData.append('name', userFormRegister.value.name)
-    formData.append('email', userFormRegister.value.email)
-    formData.append('password', userFormRegister.value.password)
+    const userId = userFormRegister.value.id;
+    console.log('id del usuario:' + userId);
 
-    api.post('/auth/register', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    }).then(response => {
-
-        console.log(response.data);
-        loading.value[number] = false
-
-        $q.notify({
-            color: 'positive',
-            message: 'Registro completado con éxito.',
-            icon: 'check'
-        })
-
-        router.push({ name: 'login' })
-
-    }).catch(error => {
-
-        loading.value[number] = false
-
-        console.error(error)
+    if (!userId) {
         $q.notify({
             color: 'negative',
-            message: 'Hubo un error al registrar al usuario.',
+            message: 'ID de usuario no encontrado.',
             icon: 'error'
-        })
-    })
-    // Hacer la solicitud de login al backend
+        });
+        return;
+    }
+
+    console.log([
+        userFormRegister.value.id,
+        userFormRegister.value.name,
+        userFormRegister.value.email,
+        userFormRegister.value.password,
+        userFormRegister.value.rol
+    ]);
+
+    try {
+        const formData = new FormData()
+
+        formData.append('id', userFormRegister.value.id)
+        formData.append('email', userFormRegister.value.email)
+        formData.append('password', userFormRegister.value.password)
+        formData.append('rol', userFormRegister.value.rol)
+
+        const response = await api.put(`auth/register/${userId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        });
+
+        if (response.status === 200) {
+            // Si la actualización fue exitosa
+
+            $q.notify({
+                color: 'positive',
+                message: 'Accesso correctamente.',
+                icon: 'check',
+            });
+            // Aquí puedes emitir un evento de cierre o redirigir a otro lugar si es necesario
+            cancel()
+        }
+
+    } catch (error) {
+        // Si ocurrió un error
+        $q.notify({
+            color: 'negative',
+            message: 'Hubo un error al otorgar acceso el usuario.',
+            icon: 'error',
+        });
+        console.error('Error al actualizar el usuario:', error);
+    } finally {
+        // Detener el estado de carga
+        loading.value[number] = false;
+    }
 }
 
-const goToLogin = () => {
-    router.push({ name: 'login' })
+function cancel() {
+    // Aquí emitimos el evento 'close-dialog' al componente padre
+    emit('close-dialog-Access')
+}
+
+onMounted(() => {
+    fetchUsersByArea(selectedArea.value); // Si ya tienes un área seleccionada al montar, puedes cargar los usuarios.
+});
+
+// Función para obtener usuarios según el área seleccionada
+const fetchUsersByArea = async (area) => {
+    if (area) {
+        try {
+            const response = await api.get(`/api/testusers/${area}`);
+            filteredUsers.value = response.data.map(user => ({
+                label: user.NAME + " " + user.LASTNAME, value: user.ID_USER
+            }));
+            clear()
+            console.log(filteredUsers.value);
+
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            $q.notify({
+                color: 'warning',
+                message: 'No se pudieron cargar los usuarios de esta área.',
+                icon: 'warning',
+            });
+            clear()
+        }
+    } else {
+        filteredUsers.value = [];
+    }
+};
+
+function clear() {
+    //userForm.value.nombre = ''
+    userFormRegister.value.name = ''
 }
 
 defineOptions({

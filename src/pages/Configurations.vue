@@ -1,12 +1,21 @@
 <template>
-  <q-page class="flex q-pa-md">
-    <span class="text-h1">Configurations</span>
-  </q-page>
+  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
+    <div>
+      <div style="font-size: 30vh">
+        404
+      </div>
+
+      <div class="text-h2" style="opacity:.4">
+        Oops. Pagina en Desarrollo...
+      </div>
+
+      <q-btn class="q-mt-xl" color="white" text-color="blue" unelevated to="/" label="Go Home" no-caps />
+    </div>
+  </div>
 </template>
-  
+
 <script setup>
-  defineOptions({
-    name: 'ConfigurationPage'
-  });
+defineOptions({
+  name: 'ConfigurationPage'
+});
 </script>
-  

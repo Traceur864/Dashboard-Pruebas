@@ -29,7 +29,7 @@
         <div class="row justify-between q-mb-sm">
           <div class="col-md-5">
             <q-input dense square filled v-model="userForm.email" label="Correo electrónico" color="grey-3" type="email"
-              label-color="secondary" lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
+              label-color="secondary">
               <template v-slot:prepend>
                 <q-icon name="las la-at" color="secondary" />
               </template>
@@ -104,11 +104,22 @@
           </div>
           <div class="col-md-5">
             <q-file dense square filled v-model="userForm.picture" label="Foto" color="grey-3" label-color="secondary"
-              counter accept="image/*" @change="handleFileUpload">
+              counter accept="image/*" @added="onImageSelected">
               <template v-slot:prepend>
                 <q-icon name="lar la-image" color="secondary" />
               </template>
             </q-file>
+          </div>
+        </div>
+        <div class="row justify-between q-mb-md">
+          <div class="col-md-5">
+
+          </div>
+          <div class="flex justify-center col-md-5">
+            <q-avatar size="50px" font-size="52px" v-if="imageUrl">
+              <img src="../../../../public/imgs/NoIMgae.png" v-if="!imageUrl" />
+              <img :src="imageUrl" v-else />
+            </q-avatar>
           </div>
         </div>
 
@@ -125,15 +136,16 @@
 
 <script setup>
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits()
-const loading = ref([false]);
-const loginForm = ref(null);
+const loading = ref([false])
+const loginForm = ref(null)
 const $q = useQuasar()
+const imageUrl = ref('')
 
 const optionsJob = [
   'Test Manager Engineer',
@@ -146,7 +158,9 @@ const optionsArea = [
   'ICT',
   'MDA',
   'ISP',
-  'BSI'
+  'BSI',
+  'Programming',
+  'Software Development'
 ]
 
 const optionsTurn = [
@@ -183,6 +197,7 @@ function onReset() {
   userForm.value.empleado = false
   userForm.value.birthday = false
   userForm.value.picture = null
+
 }
 
 async function HandleRegister() {
@@ -276,6 +291,25 @@ function simulateProgress(number) {
     })
   })
 }
+
+function onImageSelected(file) {
+  // Update the image preview when a file is added
+  imageUrl.value = URL.createObjectURL(file);
+}
+
+watch(() => userForm.value.picture, (file) => {
+  // Update image preview when user selects a new image
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      imageUrl.value = reader.result;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    // Set default image if no picture is selected
+    imageUrl.value = "../../../../public/imgs/NoIMgae.png";
+  }
+});
 
 defineOptions({
   name: 'RegisterUser'

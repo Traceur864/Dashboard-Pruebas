@@ -42,7 +42,8 @@
         </div>
         <div class="col-5 column">
           <span class="text-subtitle1 q-mb-sm q-ml-lg">{{ UserTest.NAME }} {{ UserTest.LASTNAME }}</span>
-          <span class="text-subtitle1 q-mb-sm q-ml-lg">{{ UserTest.EMAIL }}</span>
+          <span class="text-subtitle1 q-mb-sm q-ml-lg" v-if="UserTest.EMAIL !== null">{{ UserTest.EMAIL }}</span>
+          <span class="text-subtitle1 q-mb-sm q-ml-lg" v-else>No hay correo Asignado</span>
           <span class="text-subtitle1 q-mb-sm q-ml-lg">{{ UserTest.PHONE }}</span>
           <span class="text-subtitle1 q-mb-sm q-ml-lg">{{ UserTest.NOEMPLOYEE }}</span>
         </div>

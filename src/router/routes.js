@@ -104,7 +104,7 @@ const routes = [
       {
         path: "ict",
         name: "ict",
-        component: () => import("pages/TeamTests/ICT.vue"),
+        component: () => import("pages/ict/ICTIndex.vue"),
         meta: {
           requiresAuth: true,
           rol: ["Administrador", "Full ICT", "Jr ICT"],

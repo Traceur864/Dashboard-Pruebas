@@ -1,6 +1,6 @@
 <template>
     <div class="col">
-        <span class="flex justify-center text-h4">Fallas por tipo de error</span>
+        <span class="flex justify-center text-h4">Fallas por componente</span>
         <div class="row">
             <div class="col-auto">
                 <div class="text-h6">Filtro por rango de fecha</div>
@@ -14,8 +14,8 @@
                 <q-input v-model="date" type="date" label="Fin" filled />
             </div>
         </div>
-        <div v-for="info in fixtures" v-bind:key="info.FIXTURE_BARCODE" class="col-6">
-            <individual-paretto :data="info" />
+        <div v-for="info in data" v-bind:key="info.FIXTURE_BARCODE" class="col-6">
+            <individual-component :data="info" />
         </div>
     </div>
 
@@ -26,7 +26,7 @@
 
 /* Imports */
 import { api } from 'boot/axios'
-import IndividualParetto from './component/individualParetto.vue';
+import IndividualComponent from './component/individualComponent.vue';
 
 export default {
     data() {
@@ -42,25 +42,36 @@ export default {
         }
     },
     components: {
-        IndividualParetto
+        IndividualComponent
     },
     methods: {
         getData() {
-            api.get('/ict_data/errors/bb/nv_errors').then(response => {
+            api.get('/ict_data/errors/bb/component_error').then(response => {
                 var data = response.data;
+                // console.log(data);
 
                 this.data = new Map()
-                this.fixtures = new Map()
 
-                data.forEach(dat => {
-                    if (!this.fixtures.has(dat.FIXTURE_BARCODE)) {
-                        this.fixtures.set(dat.FIXTURE_BARCODE, [])
+                data.general_f.forEach(dat => {
+                    if (!this.data.has(dat.FIXTURE_BARCODE)) {
+                        this.data.set(dat.FIXTURE_BARCODE, [])
                     }
 
-                    var temp_data = this.fixtures.get(dat.FIXTURE_BARCODE)
+                    var temp_data = this.data.get(dat.FIXTURE_BARCODE)
                     temp_data.push(dat)
 
-                    this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
+                    this.data.set(dat.FIXTURE_BARCODE, temp_data)
+                });
+
+                data.short_f.forEach(dat => {
+                    if (!this.data.has(dat.FIXTURE_BARCODE)) {
+                        this.data.set(dat.FIXTURE_BARCODE, [])
+                    }
+
+                    var temp_data = this.data.get(dat.FIXTURE_BARCODE)
+                    temp_data.push(dat)
+
+                    this.data.set(dat.FIXTURE_BARCODE, temp_data)
                 });
 
             }).catch(err => {

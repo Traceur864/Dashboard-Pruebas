@@ -69,12 +69,12 @@ export default {
             // Create axes
             // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
             let xRenderer = am5xy.AxisRendererX.new(root, {
-                minGridDistance: 85,
+                minGridDistance: 15,
                 minorGridEnabled: true
             })
 
             let xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-                categoryField: "ERROR_DESC",
+                categoryField: "FAILURE",
                 renderer: xRenderer
             }));
 
@@ -83,7 +83,7 @@ export default {
             })
 
             xRenderer.labels.template.setAll({
-                paddingTop: 20
+                rotation: -90
             });
 
             xAxis.data.setAll(data);
@@ -112,7 +112,7 @@ export default {
                 xAxis: xAxis,
                 yAxis: yAxis,
                 valueYField: "TOTAL",
-                categoryXField: "ERROR_DESC"
+                categoryXField: "FAILURE"
             }));
 
             series.columns.template.setAll({
@@ -133,7 +133,7 @@ export default {
                 xAxis: xAxis,
                 yAxis: paretoAxis,
                 valueYField: "pareto",
-                categoryXField: "ERROR_DESC",
+                categoryXField: "FAILURE",
                 stroke: root.interfaceColors.get("alternativeBackground"),
                 maskBullets: false
             }));
@@ -160,7 +160,7 @@ export default {
     },
     mounted() {
         this.drawChart()
-        // console.log(this.data);
+        console.log(this.data);
     },
     /*watch: {
         data: {
@@ -185,6 +185,6 @@ export default {
 <style scoped>
 .graph {
     width: 100%;
-    height: 400px;
+    height: 800px;
 }
 </style>

@@ -11,12 +11,13 @@
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
-import { data } from "autoprefixer";
 
 export default {
     data() {
         return {
-            helper: ''
+            helper_series: '',
+            helper_pareto: '',
+            xAxis: '',
         }
     },
     props: ['data'],
@@ -132,6 +133,7 @@ export default {
             let paretoSeries = chart.series.push(am5xy.LineSeries.new(root, {
                 xAxis: xAxis,
                 yAxis: paretoAxis,
+                // minBulletDistance: 20,
                 valueYField: "pareto",
                 categoryXField: "FAILURE",
                 stroke: root.interfaceColors.get("alternativeBackground"),
@@ -145,40 +147,61 @@ export default {
                         radius: 5,
                         fill: series.get("fill"),
                         stroke: root.interfaceColors.get("alternativeBackground")
-                    })
+                    }),
                 })
             })
 
             series.data.setAll(data);
             paretoSeries.data.setAll(data);
 
+            //Reduce lag
+            root.fps = 60
+
             // Make stuff animate on load
             series.appear();
             chart.appear(1000, 100);
 
+            this.helper_series = series
+            this.helper_pareto = paretoSeries
+            this.xAxis = xAxis
         }
     },
     mounted() {
         this.drawChart()
-        console.log(this.data);
     },
-    /*watch: {
+    watch: {
         data: {
             handler() {
-                this.helper.data.clear()
+                let data = this.data[1];
+                // console.log(data);
 
-                this.helper.data.setAll([{
-                    category: "Pases",
-                    value: this.data.PASS,
-                },
-                {
-                    category: "Fallas",
-                    value: this.data.FAIL,
-                }])
+                prepareParetoData();
 
+                function prepareParetoData() {
+                    let total = 0;
+
+                    for (var i = 0; i < data.length; i++) {
+                        let value = data[i].TOTAL;
+                        total += value;
+                    }
+
+                    let sum = 0;
+                    for (var i = 0; i < data.length; i++) {
+                        let value = data[i].TOTAL;
+                        sum += value;
+                        data[i].pareto = sum / total * 100;
+                    }
+                }
+
+                this.helper_series.data.clear();
+                this.helper_pareto.data.clear();
+                this.xAxis.data.clear();
+                this.helper_series.data.setAll(data);
+                this.helper_pareto.data.setAll(data);
+                this.xAxis.data.setAll(data);
             }
         }
-    }*/
+    }
 }
 </script>
 

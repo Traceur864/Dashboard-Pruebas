@@ -8,10 +8,10 @@
         </div>
         <div class="row q-col-gutter-sm">
             <div class="col-3">
-                <q-input v-model="date" type="date" label="Inicio" filled />
+                <q-input v-model="start_date" type="date" label="Inicio" filled />
             </div>
             <div class="col-3">
-                <q-input v-model="date" type="date" label="Fin" filled />
+                <q-input v-model="last_date" type="date" label="Fin" filled />
             </div>
         </div>
         <div v-for="info in data" v-bind:key="info.FIXTURE_BARCODE" class="col-6">
@@ -37,7 +37,8 @@ export default {
             shift: '',
             machine: '',
             model: '',
-            date: '',
+            start_date: '',
+            last_date: '',
             options: [],
         }
     },
@@ -49,21 +50,9 @@ export default {
             api.get('/ict_data/errors/bb/component_error').then(response => {
                 var data = response.data;
                 // console.log(data);
-
                 this.data = new Map()
 
-                data.general_f.forEach(dat => {
-                    if (!this.data.has(dat.FIXTURE_BARCODE)) {
-                        this.data.set(dat.FIXTURE_BARCODE, [])
-                    }
-
-                    var temp_data = this.data.get(dat.FIXTURE_BARCODE)
-                    temp_data.push(dat)
-
-                    this.data.set(dat.FIXTURE_BARCODE, temp_data)
-                });
-
-                data.short_f.forEach(dat => {
+                data.forEach(dat => {
                     if (!this.data.has(dat.FIXTURE_BARCODE)) {
                         this.data.set(dat.FIXTURE_BARCODE, [])
                     }
@@ -78,9 +67,55 @@ export default {
                 console.error(err);
             });
         },
+        filterData(start_date, last_date) {
+            api.get('/ict_data/errors/bb/nv_errors/' + start_date + "/" + last_date).then(response => {
+                var data = response.data;
+
+                this.fixtures.clear()
+
+                data.forEach(dat => {
+                    if (!this.fixtures.has(dat.FIXTURE_BARCODE)) {
+                        this.fixtures.set(dat.FIXTURE_BARCODE, [])
+                    }
+
+                    var temp_data = this.fixtures.get(dat.FIXTURE_BARCODE)
+                    temp_data.push(dat)
+
+                    this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
+                });
+
+                console.log(this.fixtures);
+            }).catch(err => {
+                console.error(err);
+            });
+        },
     },
     mounted() {
         this.getData()
+    },
+    wacth: {
+        start_date: {
+            handler() {
+                console.log(this.start_date);
+
+                if (this.start_date != "" && this.last_date != "") {
+                    if (this.start_date <= this.last_date && this.last_date != "") {
+                        console.log(this.start_date, " - ", this.last_date);
+                        this.filterData(this.start_date, this.last_date)
+                    }
+                }
+            }
+        },
+        last_date: {
+            handler() {
+                if (this.start_date != "" && this.last_date != "") {
+                    if (this.start_date <= this.last_date && this.last_date != "") {
+                        console.log(this.start_date, " - ", this.last_date);
+                        this.filterData(this.start_date, this.last_date)
+                    }
+                }
+            }
+        }
     }
 }
 </script>

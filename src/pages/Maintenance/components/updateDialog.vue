@@ -44,6 +44,7 @@ export default {
             updateDialog: false,
             comments: '',
             data: {},
+            current_user: {},
         }
     },
     methods: {
@@ -87,7 +88,7 @@ export default {
             params.append('id_tester', this.data.tester_sn)
             params.append('event_type', this.data.event_type)
             params.append('comments', this.comments)
-            params.append('updated_by', 1)
+            params.append('updated_by', this.current_user.id)
             // TODO: GET USER ID FROM LOCAL STORAGE
 
             const config = {
@@ -149,7 +150,7 @@ export default {
 
     },
     mounted() {
-
+        this.current_user = JSON.parse(localStorage.getItem("userLogin"))
     }
 }
 </script>

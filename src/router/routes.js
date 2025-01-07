@@ -161,7 +161,7 @@ const routes = [
       {
         path: "straingauge",
         name: "strain-gauge",
-        component: () => import("pages/TeamTests/StrainGauge.vue"),
+        component: () => import("src/pages/strain_gauge/StrainGauge.vue"),
         meta: {
           requiresAuth: true,
           rol: ["Administrador", "Full ISP", "Jr ISP"],

@@ -152,6 +152,9 @@ export default {
             fixture_id: null,
             atm_sn: null,
             calendar_id: null,
+
+            //Login variables
+            current_user: {},
         }
     },
     methods: {
@@ -275,7 +278,7 @@ export default {
 
             params.append('start_date', this.start_date)
             params.append('event_type', this.event_type)
-            params.append('created_by', 1)
+            params.append('created_by', this.current_user.id)
             //TODO: GET USER ID FROM LOCAL STORAGE
 
             const config = {
@@ -336,7 +339,7 @@ export default {
 
             params.append('start_date', this.start_date)
             params.append('event_type', this.event_type)
-            params.append('created_by', 1)
+            params.append('created_by', this.current_user.id)
             //TODO: GET USER ID FROM LOCAL STORAGE
 
             const config = {
@@ -522,6 +525,7 @@ export default {
         let self = this
         this.loadData()
         this.get_events()
+        this.current_user = JSON.parse(localStorage.getItem("userLogin"))
     },
     watch: {
         tester_sn: function () {

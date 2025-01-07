@@ -93,10 +93,10 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { api } from 'boot/axios'
 
 //Importing components
-import TesterDialog from './Components/StrainGauge/Tester/TesterDialog.vue'
-import FixtureDialog from './Components/StrainGauge/Fixture/FixtureDialog.vue'
-import EventDialog from './Components/StrainGauge/Event/EventDialog.vue'
-import ShowEvents from './Components/StrainGauge/Historic/ShowEvents.vue'
+import TesterDialog from './components/Tester/TesterDialog.vue'
+import FixtureDialog from './components/Fixture/FixtureDialog.vue'
+import EventDialog from './components/Event/EventDialog.vue'
+import ShowEvents from './components/Historic/ShowEvents.vue'
 
 export default {
   components: {

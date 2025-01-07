@@ -158,6 +158,9 @@ export default {
             updated_comments: null,
             updated_by: null,
             updated_at: null,
+
+            //Login variables
+            current_user: {},
         }
     },
     emits: ['reload'],
@@ -261,7 +264,7 @@ export default {
 
             const params = new URLSearchParams()
             params.append('id_maintenance', this.id_maintenance)
-            params.append('made_by', 1)
+            params.append('made_by', this.current_user.id)
             // TODO: GET USER_ID FROM LOCAL STORAGE
 
             const config = {
@@ -493,6 +496,7 @@ export default {
     mounted() {
         this.loadData()
         this.getData()
+        this.current_user = JSON.parse(localStorage.getItem("userLogin"))
     }
 }
 

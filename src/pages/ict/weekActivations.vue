@@ -14,7 +14,7 @@
                 <q-input v-model="last_date" type="date" label="Fin" filled />
             </div>
         </div>
-        <div ref="chartContainer" :v-html="chart">
+        <div ref="chartContainer">
             <div ref="chartdiv" class="graph"></div>
         </div>
     </div>
@@ -42,9 +42,11 @@ export default {
             start_date: '',
             last_date: '',
             options: [],
-            helper: [],
+            legend: null,
             chart: null,
             root: null,
+            xAxis: null,
+            yAxis: null,
         }
     },
     methods: {
@@ -125,10 +127,27 @@ export default {
                 });
 
                 if (this.data.size > 0) {
+                    // this.reDrawChart(this.root)
                 }
             }).catch(err => {
                 console.error(err);
             });
+        },
+        reDrawChart(root) {
+            //Clear chart
+            this.xAxis.data.clear()
+            this.legend.data.clear()
+
+            let xAxis = this.xAxis
+            let yAxis = this.yAxis
+
+            this.chart.series._values.forEach(element => {
+                console.log(element);
+            });
+
+            this.root.dispose()
+
+            this.drawChart()
         },
         drawChart() {
             // Create root element
@@ -228,12 +247,14 @@ export default {
             });
 
             //Reduce lag
-            root.fps = 60
+            // root.fps = 60    
 
             // Make stuff animate on load
             chart.appear(1000, 100);
-
-            this.helper = chart;
+            this.legend = legend;
+            this.chart = chart;
+            this.xAxis = xAxis;
+            this.yAxis = yAxis;
             this.root = root;
         }
     },

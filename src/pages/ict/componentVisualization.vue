@@ -14,8 +14,8 @@
                 <q-input v-model="last_date" type="date" label="Fin" filled />
             </div>
         </div>
-        <div v-for="info in data" v-bind:key="info.FIXTURE_BARCODE" class="col-6">
-            <individual-component :data="info" />
+        <div v-for="info in fixtures" v-bind:key="info.FIXTURE_BARCODE" class="col-6">
+            <individual-component :data_comp="info" />
         </div>
     </div>
 
@@ -31,12 +31,12 @@ import IndividualComponent from './component/individualComponent.vue';
 export default {
     data() {
         return {
-            data: [],
             info: [],
             fixtures: [],
             shift: '',
             machine: '',
             model: '',
+            prueba: '',
             start_date: '',
             last_date: '',
             options: [],
@@ -49,42 +49,46 @@ export default {
         getData() {
             api.get('/ict_data/errors/bb/component_error').then(response => {
                 var data = response.data;
-                // console.log(data);
-                this.data = new Map()
 
-                data.forEach(dat => {
-                    if (!this.data.has(dat.FIXTURE_BARCODE)) {
-                        this.data.set(dat.FIXTURE_BARCODE, [])
-                    }
+                if (data.length > 0) {
+                    this.fixtures = new Map()
 
-                    var temp_data = this.data.get(dat.FIXTURE_BARCODE)
-                    temp_data.push(dat)
+                    data.forEach(dat => {
+                        if (!this.fixtures.has(dat.FIXTURE_BARCODE)) {
+                            this.fixtures.set(dat.FIXTURE_BARCODE, [])
+                        }
 
-                    this.data.set(dat.FIXTURE_BARCODE, temp_data)
-                });
+                        var temp_data = this.fixtures.get(dat.FIXTURE_BARCODE)
+                        temp_data.push(dat)
+
+                        this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
+                    });
+                }
 
             }).catch(err => {
                 console.error(err);
             });
         },
         filterData(start_date, last_date) {
-            api.get('/ict_data/errors/bb/nv_errors/' + start_date + "/" + last_date).then(response => {
+            api.get('/ict_data/errors/bb/component_error/' + start_date + "/" + last_date).then(response => {
                 var data = response.data;
 
-                this.fixtures.clear()
+                if (data.length > 0) {
 
-                data.forEach(dat => {
-                    if (!this.fixtures.has(dat.FIXTURE_BARCODE)) {
-                        this.fixtures.set(dat.FIXTURE_BARCODE, [])
-                    }
+                    this.fixtures = new Map()
 
-                    var temp_data = this.fixtures.get(dat.FIXTURE_BARCODE)
-                    temp_data.push(dat)
+                    data.forEach(dat => {
+                        if (!this.fixtures.has(dat.FIXTURE_BARCODE)) {
+                            this.fixtures.set(dat.FIXTURE_BARCODE, [])
+                        }
 
-                    this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
-                });
+                        var temp_data = this.fixtures.get(dat.FIXTURE_BARCODE)
+                        temp_data.push(dat)
 
-                console.log(this.fixtures);
+                        this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
+                    });
+                }
+
             }).catch(err => {
                 console.error(err);
             });
@@ -93,14 +97,11 @@ export default {
     mounted() {
         this.getData()
     },
-    wacth: {
+    watch: {
         start_date: {
             handler() {
-                console.log(this.start_date);
-
                 if (this.start_date != "" && this.last_date != "") {
                     if (this.start_date <= this.last_date && this.last_date != "") {
-                        console.log(this.start_date, " - ", this.last_date);
                         this.filterData(this.start_date, this.last_date)
                     }
                 }
@@ -110,12 +111,11 @@ export default {
             handler() {
                 if (this.start_date != "" && this.last_date != "") {
                     if (this.start_date <= this.last_date && this.last_date != "") {
-                        console.log(this.start_date, " - ", this.last_date);
                         this.filterData(this.start_date, this.last_date)
                     }
                 }
             }
-        }
+        },
     }
 }
 </script>

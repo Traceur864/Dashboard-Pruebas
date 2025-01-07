@@ -1,10 +1,12 @@
 <template>
-    <div class="row q-col-gutter-md q-pt-md">
-        <div class="col-auto">
-            <q-badge color="primary" class="text-h6">Fixtura: {{ data[0] }} </q-badge>
+    <div class="col">
+        <div class="row q-col-gutter-md q-pt-md">
+            <div class="col-auto">
+                <q-badge color="primary" class="text-h6">Fixtura: {{ data[0] }} </q-badge>
+            </div>
         </div>
+        <div ref="chartdiv" class="graph"></div>
     </div>
-    <div ref="chartdiv" class="graph"></div>
 </template>
 
 <script>
@@ -69,7 +71,7 @@ export default {
             // Create axes
             // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
             let xRenderer = am5xy.AxisRendererX.new(root, {
-                minGridDistance: 85,
+                minGridDistance: 20,
                 minorGridEnabled: true
             })
 
@@ -83,7 +85,7 @@ export default {
             })
 
             xRenderer.labels.template.setAll({
-                paddingTop: 20
+                rotation: 90
             });
 
             xAxis.data.setAll(data);
@@ -148,9 +150,6 @@ export default {
             series.data.setAll(data);
             paretoSeries.data.setAll(data);
 
-            //Reduce lag
-            root.fps = 60
-
             // Make stuff animate on load
             series.appear();
             chart.appear(1000, 100);
@@ -166,6 +165,8 @@ export default {
     watch: {
         data: {
             handler() {
+                // console.log(this.helper_series);
+
                 let data = this.data[1];
 
                 prepareParetoData();
@@ -200,7 +201,7 @@ export default {
 
 <style scoped>
 .graph {
-    width: 100%;
-    height: 400px;
+    /*width: 100%;*/
+    height: 450px;
 }
 </style>

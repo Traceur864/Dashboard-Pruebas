@@ -1,7 +1,7 @@
 <template>
     <div class="row q-col-gutter-md q-pt-md">
         <div class="col-auto">
-            <q-badge color="primary" class="text-h6">Fixtura: {{ data[0] }} </q-badge>
+            <q-badge color="primary" class="text-h6">Fixtura: {{ data_comp[0] }} </q-badge>
         </div>
     </div>
     <div ref="chartdiv" class="graph"></div>
@@ -20,7 +20,7 @@ export default {
             xAxis: '',
         }
     },
-    props: ['data'],
+    props: ['data_comp'],
     methods: {
         drawChart() {
             let root = am5.Root.new(this.$refs.chartdiv);
@@ -47,7 +47,7 @@ export default {
 
             let colors = chart.get("colors");
 
-            let data = this.data[1];
+            let data = this.data_comp[1];
 
             prepareParetoData();
 
@@ -154,9 +154,6 @@ export default {
             series.data.setAll(data);
             paretoSeries.data.setAll(data);
 
-            //Reduce lag
-            root.fps = 60
-
             // Make stuff animate on load
             series.appear();
             chart.appear(1000, 100);
@@ -170,10 +167,9 @@ export default {
         this.drawChart()
     },
     watch: {
-        data: {
+        data_comp: {
             handler() {
-                let data = this.data[1];
-                // console.log(data);
+                let data = this.data_comp[1];
 
                 prepareParetoData();
 

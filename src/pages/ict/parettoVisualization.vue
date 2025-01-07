@@ -14,8 +14,10 @@
                 <q-input v-model="last_date" type="date" label="Fin" filled />
             </div>
         </div>
-        <div v-for="info in fixtures" v-bind:key="info.FIXTURE_BARCODE" class="col-6">
-            <individual-paretto :data="info" />
+        <div class="row">
+            <div v-for="info in fixtures" v-bind:key="info.FIXTURE_BARCODE" class="col-6 q-px-md">
+                <individual-paretto :data="info" />
+            </div>
         </div>
     </div>
 
@@ -71,18 +73,29 @@ export default {
             api.get('/ict_data/errors/bb/nv_errors/' + start_date + "/" + last_date).then(response => {
                 var data = response.data;
 
-                this.fixtures.clear()
+                if (data.length > 0) {
+                    this.fixtures.clear()
 
-                data.forEach(dat => {
-                    if (!this.fixtures.has(dat.FIXTURE_BARCODE)) {
-                        this.fixtures.set(dat.FIXTURE_BARCODE, [])
-                    }
+                    data.forEach(dat => {
+                        if (!this.fixtures.has(dat.FIXTURE_BARCODE)) {
+                            this.fixtures.set(dat.FIXTURE_BARCODE, [])
+                        }
 
-                    var temp_data = this.fixtures.get(dat.FIXTURE_BARCODE)
-                    temp_data.push(dat)
+                        var temp_data = this.fixtures.get(dat.FIXTURE_BARCODE)
+                        temp_data.push(dat)
 
-                    this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
-                });
+                        this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
+                    });
+                } else {
+                    this.$q.notify(
+                        {
+                            type: 'warning',
+                            message: 'No hay información que mostrar',
+                            position: 'center',
+                            timeout: 3000
+                        }
+                    )
+                }
 
             }).catch(err => {
                 console.error(err);
@@ -97,8 +110,6 @@ export default {
             handler() {
                 if (this.start_date != "" && this.last_date != "") {
                     if (this.start_date <= this.last_date && this.last_date != "") {
-                        console.log(this.start_date, " - ", this.last_date);
-
                         this.filterData(this.start_date, this.last_date)
                     }
                 }
@@ -108,7 +119,6 @@ export default {
             handler() {
                 if (this.start_date != "" && this.last_date != "") {
                     if (this.start_date <= this.last_date && this.last_date != "") {
-                        console.log(this.start_date, " - ", this.last_date);
                         this.filterData(this.start_date, this.last_date)
                     }
                 }

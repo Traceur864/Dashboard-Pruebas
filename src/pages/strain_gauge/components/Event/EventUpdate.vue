@@ -17,7 +17,7 @@
                     label="Fecha planeada para SG" />
             </div>
             <div class="col">
-                <q-select v-model="shift" :options="['Turno 1', 'Turno 2', 'Turno 3']" label="Turno" square />
+                <q-input v-model="shift" readonly type="text" label="Turno" square />
             </div>
         </div>
 
@@ -102,6 +102,9 @@ export default {
 
             comments: '',
             updated_by: '',
+
+            //Login variables
+            current_user: {},
         }
     },
     methods: {
@@ -117,10 +120,9 @@ export default {
             params.append('tester_id', this.tester_sn.value)
             params.append('fixture_id', this.fixture_id.value)
             params.append('start_date', this.start_date)
-            params.append('shift', this.shift)
             params.append('comments', this.comments)
             //UPDATE these lines to take USER_ID from local storage when USER DB is done
-            params.append('updated_by', 1)
+            params.append('updated_by', this.current_user.id)
             // params.append('updated_by', this.updated_by)
             params.append('asigned_to', this.asigned_to.value)
 
@@ -300,6 +302,7 @@ export default {
     mounted() {
         this.loadData()
         this.getData()
+        this.current_user = JSON.parse(localStorage.getItem('userLogin'))
     }
 }
 

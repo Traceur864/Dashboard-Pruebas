@@ -7,6 +7,12 @@
             <q-card-section>
                 <div class="row">
                     <div class="col">
+                        <q-input v-model="sg_file" type="file" accept=".xls, .xlsx, .csv" hint="Archivo de calibración"
+                            filled square />
+                    </div>
+                </div>
+                <div class="row q-pt-md">
+                    <div class="col">
                         <q-input v-model="comments" square filled type="textarea" label="Comentarios"
                             hint='En caso de no haber comentarios coloca "N/A"' maxlength="255" />
                     </div>
@@ -49,6 +55,8 @@ export default {
             users: [],
             asigned_to: '',
             shift: '',
+            file: null,
+            sg_file: null
         }
     },
     methods: {
@@ -95,6 +103,7 @@ export default {
             params.append('comments', this.comments)
             params.append('shift', this.shift)
             params.append('asigned_to', this.asigned_to.value)
+            params.append('sg_report', this.sg_report[0])
 
             const config = {
                 headers: {

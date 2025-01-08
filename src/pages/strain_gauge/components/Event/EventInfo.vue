@@ -24,7 +24,7 @@
                     label="Fecha planeada para SG" />
             </div>
             <div class="col">
-                <q-select v-model="shift" readonly :options="['Turno 1', 'Turno 2', 'Turno 3']" label="Turno" square />
+                <q-input v-model="shift" readonly type="text" label="Turno" square />
             </div>
         </div>
 
@@ -237,7 +237,7 @@ export default {
                 // this.updated_by = data.UPDATED_BY;
                 this.updated_by = data.UPDATED_BY;
                 if (data.UPDATED_BY != null) {
-                    this.updated_by = "Isela";
+                    this.updated_by = data.UPDATED_NAME + " " + data.UPDATED_LASTNAME;
                 }
                 this.updated_comments = data.UPDATED_COMMENTS;
             }).catch((error) => {

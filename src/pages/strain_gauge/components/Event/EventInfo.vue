@@ -90,6 +90,11 @@
                     <q-input v-model="finish_comments" type="text" readonly label="Comentarios" />
                 </div>
             </div>
+            <div class="row q-pt-sm">
+                <div class="col">
+                    <a :href="sg_file">Archivo de finzalización</a>
+                </div>
+            </div>
         </q-card-section>
     </div>
 
@@ -144,6 +149,7 @@ export default {
             updated_by: '',
             updated_comments: '',
             updated_at: '',
+            sg_file: '',
 
             fixture_ids: [],
             fixtures: [],
@@ -205,6 +211,7 @@ export default {
                 this.created_by = data.CREATED_BY;
                 this.finish_comments = data.FINISH_COMMENTS;
                 this.asigned_to = data.ASIGNED_NAME + " " + data.ASIGNED_LASTNAME
+                this.sg_file = 'http://localhost:3000/uploads/sg_files/' + data.SG_FILE
 
                 if (data.FINISH_DATE != null) {
                     this.finish_date = data.FINISH_DATE.substring(0, 10);

@@ -107,7 +107,7 @@ export default {
       end_date: null,
       employee_name: null,
       start_date: null,
-      shift: null,
+      shift: '',
       comments: null,
 
       //login variables
@@ -296,7 +296,7 @@ export default {
     },
     shift: {
       handler: function (val) {
-        if (val == "Todos") {
+        if (val == "Todos" || val == "") {
           this.getEvents()
         } else {
           this.filter_vacations()

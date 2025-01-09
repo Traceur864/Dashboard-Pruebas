@@ -7,8 +7,8 @@
             <q-card-section>
                 <div class="row">
                     <div class="col">
-                        <q-input v-model="sg_file" type="file" accept=".xls, .xlsx, .csv" hint="Archivo de calibración"
-                            filled square />
+                        <q-input v-model="sg_report" type="file" accept=".xls, .xlsx, .csv"
+                            hint="Archivo de calibración" filled square />
                     </div>
                 </div>
                 <div class="row q-pt-md">
@@ -21,10 +21,6 @@
                     <div class="col">
                         <q-select square filled v-model="asigned_to" label="Responsable de SG" :options="usuarios"
                             @filter="filterUser" use-input input-debounce="0" />
-                    </div>
-                    <div class="col">
-                        <q-select v-model="shift" :options="['Turno 1', 'Turno 2', 'Turno 3']" label="Turno" square
-                            filled />
                     </div>
                 </div>
             </q-card-section>
@@ -54,9 +50,8 @@ export default {
             usuarios: [],
             users: [],
             asigned_to: '',
-            shift: '',
             file: null,
-            sg_file: null
+            sg_report: null
         }
     },
     methods: {
@@ -98,21 +93,20 @@ export default {
                 timeout: 0
             })
 
-            const params = new URLSearchParams()
-            params.append('event_id', this.props.event_id)
-            params.append('comments', this.comments)
-            params.append('shift', this.shift)
-            params.append('asigned_to', this.asigned_to.value)
-            params.append('sg_report', this.sg_report[0])
+            const formData = new FormData()
+            formData.append('event_id', this.props.event_id)
+            formData.append('comments', this.comments)
+            formData.append('asigned_to', this.asigned_to.value)
+            formData.append('sg_report', this.sg_report[0])
 
             const config = {
                 headers: {
-                    'content-type': 'application/x-www-form-urlencoded',
+                    'content-type': 'multipart/form-data',
                     'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
                 }
             }
 
-            api.put('/strain_gauge/finish', params, config).then((response) => {
+            api.put('/strain_gauge/finish', formData, config).then((response) => {
                 dismiss()
                 response.data.data.forEach(data => {
                     this.$q.notify({

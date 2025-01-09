@@ -96,12 +96,12 @@ import interactionPlugin from '@fullcalendar/interaction'
 
 //Enable Api requests
 import { api } from 'boot/axios'
-import TesterDialog from '../TeamTests/Components/StrainGauge/Tester/TesterDialog.vue'
-import FixtureDialog from '../TeamTests/Components/StrainGauge/Fixture/FixtureDialog.vue'
-import AtmDialog from '../TeamTests/Components/StrainGauge/Atm/AtmDialog.vue'
 import MaintenanceDialog from './components/maintenance/maintenanceDialog.vue'
 import MaintenanceFinish from './components/maintenance/maintenanceFinish.vue'
 import HistoricMaintenance from './components/historicMaintenance.vue'
+import TesterDialog from '../strain_gauge/components/Tester/TesterDialog.vue'
+import FixtureDialog from '../strain_gauge/components/Fixture/FixtureDialog.vue'
+import AtmDialog from '../strain_gauge/components/Atm/AtmDialog.vue'
 
 //Importing components
 export default {

@@ -88,6 +88,7 @@ export default {
         reload() {
             this.getData()
             this.getInfo()
+            this.$emit('reload')
         },
         loadData() {
 

@@ -100,7 +100,7 @@ export default {
 
             api.put('/maintenance', params, config).then((response) => {
                 dismiss()
-                console.log(response);
+                // console.log(response);
 
                 this.$q.notify({
                     type: "positive",

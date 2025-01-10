@@ -84,7 +84,7 @@
         <AtmDialog ref="atmDialog" @reload="reload" />
         <MaintenanceDialog ref="maintenanceDialog" @reload="reload" />
         <MaintenanceFinish ref="maintenanceFinishDialog" />
-        <HistoricMaintenance ref="historicMaintenance" />
+        <HistoricMaintenance ref="historicMaintenance" @reload="reload" />
 
     </q-page>
 </template>
@@ -351,7 +351,7 @@ export default {
 
             api.post('/calibration/', params, config).then((response) => {
                 dismiss()
-                console.log(response.data);
+                // console.log(response.data);
 
                 this.$q.notify({
                     type: "positive",

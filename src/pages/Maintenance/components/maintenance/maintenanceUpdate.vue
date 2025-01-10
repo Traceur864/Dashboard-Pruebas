@@ -98,7 +98,7 @@
     <q-card-section class="q-pb-lg" v-if="status != 'Cancelado'">
         <div class="float-right">
             <q-btn v-if="status != 'En proceso' && status != 'Finalizado'" color="purple" label="Comenzar"
-                @click="startMaintenance" />
+                @click="confirmMaintenance" />
             <q-btn v-if="status == 'En proceso'" color="positive" label="Finalizar"
                 @click="this.$refs.finishDialog.openDialog(event_type)" />
         </div>
@@ -194,6 +194,22 @@ export default {
             }
 
             this.$refs.updateDialog.openDialog(data)
+        },
+        confirmMaintenance() {
+            this.$q.dialog({
+                title: '¿Comenzar Mantenimiento?',
+                ok: {
+                    label: 'Aceptar',
+                    color: 'positive',
+                },
+                cancel: {
+                    label: 'Cerrar',
+                    color: 'black',
+                    flat: true,
+                },
+            }).onOk(() => {
+                this.startMaintenance()
+            })
         },
         startMaintenance() {
             const dismiss = this.$q.notify({

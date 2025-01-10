@@ -43,7 +43,7 @@
             </q-card-actions>
         </q-card>
     </q-dialog>
-    <MaintenanceDialog ref="dialog" />
+    <MaintenanceDialog ref="dialog" @reload="reload" />
 </template>
 
 <script>

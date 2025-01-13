@@ -5,10 +5,10 @@
       <q-card bordered square>
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="showprofile">
-            <ShowProfile @reload="reload" />
+            <ShowProfile />
           </q-tab-panel>
           <q-tab-panel name="editprofile">
-            <EditProfile @reload="reload" />
+            <EditProfile />
           </q-tab-panel>
         </q-tab-panels>
 
@@ -38,29 +38,6 @@ const $q = useQuasar()
 const testerusers = ref([])
 
 const tab = ref('showprofile')
-
-/* const fetchUsers = async () => {
-  try {
-    const response = await api.get('/api/testusers') // Asegúrate de que esta URL sea correcta según tu backend
-    testerusers.value = response.data // Almacenar los datos recibidos
-
-    console.log(response.data);
-
-  } catch (error) {
-
-    console.error('Error fetching users:', error)
-    $q.notify({
-      color: 'warning',
-      message: 'No hay usuarios registrados',
-      icon: 'warning',
-    });
-
-  }
-}
-
-onMounted(() => {
-  fetchUsers()
-}) */
 
 defineOptions({
   name: 'ProfilePage'

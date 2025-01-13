@@ -1,5 +1,6 @@
 <template>
   <q-page class="q-pa-md">
+
     <div class="flex row q-pa-md justify-between">
       <q-btn push label="Registrar" color="blue-grey-8" @click="openDialog" />
       <q-btn push flat label="Organigrama" color="black" @click="openDiagrama" />
@@ -101,6 +102,7 @@ const selectedUserDelete = ref(false)
 const registerUser = ref(false)
 const router = useRouter();
 
+// Redirecciona o invoca algun componente
 function openDialog() {
   registerUser.value = true;
 }
@@ -109,11 +111,12 @@ const openDiagrama = () => {
   router.push('organigrama');
 }
 
+// Trae todos los usuarios registrador
 const fetchUsers = async () => {
   try {
+
     const response = await api.get('/api/testusersall')
     testerusersAll.value = response.data // Almacenar los datos recibidos
-
     console.log(response.data);
 
   } catch (error) {
@@ -135,6 +138,7 @@ const History = defineProps({
 onMounted(() => {
   fetchUsers()
 })
+
 // Usamos un watcher para reaccionar al cambio en la propiedad 'reload'
 watch(() => History.reload, async () => {
   // Cuando 'reload' cambie, obtenemos la lista actualizada de usuarios
@@ -153,16 +157,17 @@ function showUserDelete(UserAllTestDelete) {
 
 function showUserInfo(UserAllTest) {
   selectedAllUser.value = UserAllTest  // Asignamos el usuario seleccionado
-  infoAllUserTest.value = true  // Abrimos el diálogo // Abrimos el dialogo editar
+  infoAllUserTest.value = true  // Abrimos el diálogo
   console.log(UserAllTest);
 }
 
 function showUserEdit(UserAllTestEdit) {
   selectedAllUserEdit.value = UserAllTestEdit  // Asignamos el usuario seleccionado
-  editAllUserTest.value = true  // Abrimos el diálogo // Abrimos el dialogo editar
+  editAllUserTest.value = true  // Abrimos el dialogo editar
   console.log(UserAllTestEdit);
 }
 
+// Llama una funcion de la api para dar de baja un usuario
 function deletes() {
   $q.dialog({
 
@@ -211,6 +216,7 @@ function closeDialogEdit() {
   editAllUserTest.value = false;
 }
 
+// Array donde se mustra los datos en los campos correspondientes
 const columns = ref([
   { name: 'picture', field: 'PICTURE', required: true, label: 'Foto', align: 'left' },
   { name: 'name', field: 'NAME', required: true, label: 'Nombre', align: 'left', sortable: true },
@@ -218,7 +224,7 @@ const columns = ref([
   { name: 'workstation', field: 'WORKSTATION', required: true, label: 'Puesto de trabajo', align: 'left', sortable: true },
   { name: 'area', field: 'AREA', required: true, label: 'Area', align: 'left', sortable: true },
   { name: 'turn', field: 'TURN', required: true, label: 'Turno', align: 'left', sortable: true },
-  { name: 'status', field: 'STATUS', required: true, label: 'Turno', align: 'left', sortable: true },
+  { name: 'status', field: 'STATUS', required: true, label: 'Estatus', align: 'left', sortable: true },
   { name: 'actions', field: 'btn', required: true, label: 'Acciones', align: 'left' }
 ])
 

@@ -10,7 +10,7 @@
         </q-card-section>
         <q-card-section>
           <q-form @submit="handleLogin" ref="loginForm">
-            <q-input v-model="userForm.email" label="Nombre completo o correo" type="text"
+            <q-input v-model="userForm.email" label="Nombre o correo" type="text"
               :rules="[val => val && val.length > 0 || 'Este campo es requerido']" outlined dense />
             <q-input v-model="userForm.password" label="Contraseña" :type="isPwd ? 'password' : 'text'" :rules="[
               val => val && val.length > 0 || 'Este campo es requerido',

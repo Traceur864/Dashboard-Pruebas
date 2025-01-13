@@ -25,14 +25,7 @@ export const linksList = [
     icon: "las la-users",
     link: "organigrama",
     meta: {
-      rol: [
-        "Administrador",
-        "Full MDA",
-        "Full ISP",
-        "Full BSI",
-        "Full MDA",
-        "Full Programming",
-      ],
+      rol: ["Administrador"],
     },
   },
   {

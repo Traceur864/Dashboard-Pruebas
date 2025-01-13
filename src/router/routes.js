@@ -8,13 +8,6 @@ const routes = [
         name: "home",
         component: () => import("pages/IndexPage.vue"),
       },
-      // Routes for Proves
-      {
-        path: "typography",
-        name: "typography",
-        component: () => import("pages/Typography.vue"),
-      },
-      { path: "flex", name: "flex", component: () => import("pages/Flex.vue") },
       {
         path: "profile",
         name: "profile",
@@ -61,6 +54,7 @@ const routes = [
         path: "login",
         name: "login",
         component: () => import("pages/Profile/Login.vue"),
+        meta: { requiresGuest: true },
       },
       {
         path: "notifications",
@@ -75,20 +69,10 @@ const routes = [
         meta: { requiresAuth: true, rol: ["Administrador"] },
       },
       {
-        path: "register",
-        name: "register",
-        component: () => import("pages/Profile/Register.vue"),
-        meta: {
-          requiresAuth: true,
-          rol: [
-            "Administrador",
-            "Full ICT",
-            "Full ISP",
-            "Full MDA",
-            "Full BSI",
-            "Full Programming",
-          ],
-        },
+        path: "config",
+        name: "config",
+        component: () => import("pages/Config.vue"),
+        meta: { requiresAuth: true, rol: ["Administrador"] },
       },
 
       // Routes for ICT
@@ -104,7 +88,7 @@ const routes = [
       {
         path: "ict",
         name: "ict",
-        component: () => import("pages/TeamTests/ICT.vue"),
+        component: () => import("pages/ict/ICTIndex.vue"),
         meta: {
           requiresAuth: true,
           rol: ["Administrador", "Full ICT", "Jr ICT"],
@@ -116,14 +100,7 @@ const routes = [
         component: () => import("pages/TeamTests/Organigrama.vue"),
         meta: {
           requiresAuth: true,
-          rol: [
-            "Administrador",
-            "Full ICT",
-            "Full ISP",
-            "Full MDA",
-            "Full BSI",
-            "Full Programming",
-          ],
+          rol: ["Administrador"],
         },
       },
       {

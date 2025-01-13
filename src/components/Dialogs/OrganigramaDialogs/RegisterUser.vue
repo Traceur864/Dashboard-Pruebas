@@ -9,7 +9,7 @@
     <q-card-section>
       <q-form @submit="HandleRegister" ref="loginForm">
         <div class="row justify-between q-mb-sm">
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userForm.nombre" label="Nombre(s)" type="text" color="grey-3"
               label-color="secondary" lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
               <template v-slot:prepend>
@@ -17,7 +17,7 @@
               </template>
             </q-input>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userForm.apellido" label="Apellido(s)" type="text" color="grey-3"
               label-color="secondary" lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
               <template v-slot:prepend>
@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="row justify-between q-mb-sm">
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userForm.email" label="Correo electrónico" color="grey-3" type="email"
               label-color="secondary">
               <template v-slot:prepend>
@@ -35,7 +35,7 @@
               </template>
             </q-input>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userForm.phone" label="Teléfono" color="grey-3" type="number"
               label-color="secondary" lazy-rules :rules="[
                 val => val && val.length > 0 || 'Este campo es requerido',
@@ -50,7 +50,7 @@
           </div>
         </div>
         <div class="row justify-between q-mb-sm">
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-select dense square filled v-model="userForm.puesto" label="Puesto" color="grey-3"
               label-color="secondary" :options="optionsJob" lazy-rules
               :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
@@ -59,7 +59,7 @@
               </template>
             </q-select>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-select dense square filled v-model="userForm.area" label="Area" color="grey-3" label-color="secondary"
               :options="optionsArea" lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
               <template v-slot:prepend>
@@ -69,7 +69,7 @@
           </div>
         </div>
         <div class="row justify-between q-mb-sm">
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-select dense square filled v-model="userForm.turno" label="Turno" color="grey-3" label-color="secondary"
               :options="optionsTurn" lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
               <template v-slot:prepend>
@@ -77,7 +77,7 @@
               </template>
             </q-select>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userForm.empleado" label="No. Empleado" color="grey-3" type="number"
               label-color="secondary" counter maxlength="8" lazy-rules :rules="[
 
@@ -93,7 +93,7 @@
           </div>
         </div>
         <div class="row justify-between q-mb-sm">
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userForm.birthday" label="Birthday" color="grey-3" type="date"
               label-color="secondary" :mask="YYYY - MM - DD" lazy-rules
               :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
@@ -102,7 +102,7 @@
               </template>
             </q-input>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-file dense square filled v-model="userForm.picture" label="Foto" color="grey-3" label-color="secondary"
               counter accept="image/*" @added="onImageSelected">
               <template v-slot:prepend>
@@ -112,10 +112,10 @@
           </div>
         </div>
         <div class="row justify-between q-mb-md">
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
 
           </div>
-          <div class="flex justify-center col-md-5">
+          <div class="flex justify-center col-md-6 q-gutter-md">
             <q-avatar size="50px" font-size="52px" v-if="imageUrl">
               <img src="../../../../public/imgs/NoIMgae.png" v-if="!imageUrl" />
               <img :src="imageUrl" v-else />
@@ -147,11 +147,13 @@ const loginForm = ref(null)
 const $q = useQuasar()
 const imageUrl = ref('')
 
+// Arrays para la seleccion en el formulario
 const optionsJob = [
   'Test Manager Engineer',
   'Test Engineer Senior',
+  'Test Engineer Full',
   'Test Engineer Jr',
-  'Test Jr'
+  'Test Technician'
 ]
 
 const optionsArea = [
@@ -185,6 +187,7 @@ const userForm = ref({
 
 })
 
+// Limpia los campos en el formulario
 function onReset() {
 
   userForm.value.nombre = ''
@@ -200,6 +203,7 @@ function onReset() {
 
 }
 
+// Valida que los campos esten completos conforme a las reglas del formulario
 async function HandleRegister() {
 
   if (loginForm.value && loginForm.value.validate()) {
@@ -217,6 +221,7 @@ async function HandleRegister() {
   }
 }
 
+// Alerta de confirmacion
 function confirm() {
 
   $q.dialog({
@@ -236,6 +241,7 @@ function confirm() {
 
 }
 
+// Se obtiene los datos del formulario una vez confirmado para hacer la peticion mediante la api
 function simulateProgress(number) {
   // Activamos el estado de carga
   loading.value[number] = true;
@@ -281,14 +287,25 @@ function simulateProgress(number) {
     onReset()
   }).catch(error => {
 
-    loading.value[number] = false
+    if (error.response && error.response.data) {
+      // Mostrar el mensaje de error del servidor
+      $q.notify({
+        color: 'negative',
+        message: error.response.data.msg || 'Error desconocido',
+        icon: 'warning',
+      });
+      loading.value[number] = false;
+    } else {
+      // En caso de que no haya respuesta, mostrar un mensaje genérico
+      $q.notify({
+        color: 'negative',
+        message: 'Hubo un error al registrar el usuario.',
+        icon: 'error',
+      });
+      console.error('Error al registrar el usuario:', error);
 
-    console.error(error)
-    $q.notify({
-      color: 'negative',
-      message: 'Hubo un error al registrar al usuario.',
-      icon: 'error'
-    })
+      loading.value[number] = false;
+    }
   })
 }
 
@@ -298,7 +315,7 @@ function onImageSelected(file) {
 }
 
 watch(() => userForm.value.picture, (file) => {
-  // Update image preview when user selects a new image
+  // Actualiza la imagen previa cuando el usuario selecciona una nueva imagen
   if (file) {
     const reader = new FileReader();
     reader.onload = () => {
@@ -306,7 +323,7 @@ watch(() => userForm.value.picture, (file) => {
     };
     reader.readAsDataURL(file);
   } else {
-    // Set default image if no picture is selected
+    // Envia la imagen por default en caso de que no exista
     imageUrl.value = "../../../../public/imgs/NoIMgae.png";
   }
 });

@@ -1,4 +1,5 @@
 <template>
+  <!-- Vista para editar los datos de usuario -->
   <q-card style="width: 700px; max-width: 80vw;">
     <q-card-section>
       <div class="text-h6">Editar</div>
@@ -9,7 +10,7 @@
     <q-card-section>
       <q-form @submit="HandleLoginEdit" ref="loginFormEdit">
         <div class="row justify-between q-mb-md">
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userFormEdit.nombre" label="Nombre(s)" type="text" color="grey-3"
               label-color="secondary" lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
               <template v-slot:prepend>
@@ -17,7 +18,7 @@
               </template>
             </q-input>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userFormEdit.apellido" label="Apellido(s)" type="text" color="grey-3"
               label-color="secondary" lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
               <template v-slot:prepend>
@@ -27,7 +28,7 @@
           </div>
         </div>
         <div class="row justify-between q-mb-md">
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userFormEdit.email" label="Correo electrónico" color="grey-3"
               type="email" label-color="secondary">
               <template v-slot:prepend>
@@ -35,7 +36,7 @@
               </template>
             </q-input>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userFormEdit.phone" label="Teléfono" color="grey-3" type="number"
               label-color="secondary" lazy-rules :rules="[
                 val => val && val.length > 0 || 'Este campo es requerido',
@@ -50,7 +51,7 @@
           </div>
         </div>
         <div class="row justify-between q-mb-md">
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-select dense square filled v-model="userFormEdit.puesto" label="Puesto" color="grey-3"
               label-color="secondary" :options="optionsJob" lazy-rules
               :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
@@ -59,7 +60,7 @@
               </template>
             </q-select>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-select dense square filled v-model="userFormEdit.area" label="Area" color="grey-3"
               label-color="secondary" :options="optionsArea" lazy-rules
               :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
@@ -70,7 +71,7 @@
           </div>
         </div>
         <div class="row justify-between q-mb-md">
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-select dense square filled v-model="userFormEdit.turno" label="Turno" color="grey-3"
               label-color="secondary" :options="optionsTurn" lazy-rules
               :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
@@ -79,7 +80,7 @@
               </template>
             </q-select>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userFormEdit.empleado" label="No. Empleado" color="grey-3"
               type="number" label-color="secondary" counter maxlength="8" lazy-rules :rules="[
 
@@ -95,7 +96,7 @@
           </div>
         </div>
         <div class="row justify-between q-mb-md">
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-input dense square filled v-model="userFormEdit.birthday" label="Birthday" color="grey-3" type="date"
               label-color="secondary" lazy-rules :rules="[val => val && val.length > 0 || 'Este campo es requerido']">
               <template v-slot:prepend>
@@ -103,7 +104,7 @@
               </template>
             </q-input>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-6 q-gutter-md">
             <q-file dense square filled v-model="userFormEdit.picture" label="Foto" color="grey-3"
               label-color="secondary" counter accept="image/*" @added="onImageSelected">
               <template v-slot:prepend>
@@ -113,7 +114,7 @@
           </div>
         </div>
         <div class="row justify-between q-mb-md">
-          <div class="col-md-5" v-if="userProfile.rol == 'Administrador' && userFormEdit.rol != null">
+          <div class="col-md-6 q-gutter-md" v-if="userProfile.rol == 'Administrador' && userFormEdit.rol != null">
             <q-select dense square filled v-model="userFormEdit.rol" label="Rol" color="grey-3" label-color="secondary"
               :options="optionsRol">
               <template v-slot:prepend>
@@ -121,10 +122,10 @@
               </template>
             </q-select>
           </div>
-          <div class="col-md-5" v-else>
+          <div class="col-md-6 q-gutter-md" v-else>
 
           </div>
-          <div class="flex justify-center col-md-5">
+          <div class="flex justify-center col-md-6 q-gutter-md">
             <q-avatar size="50px" font-size="52px">
               <!-- Show the selected image or the default image -->
               <img src="../../../../public/imgs/NoIMgae.png" v-if="!imagePreviewUrl" />
@@ -156,6 +157,7 @@ const loginFormEdit = ref(null)
 const $q = useQuasar()
 const imagePreviewUrl = ref('');
 
+// Props ayudan a enviar datos en un objeto entre componentes
 const props = defineProps({
   UserTestEdit: {
     type: Object,
@@ -163,6 +165,7 @@ const props = defineProps({
   }
 });
 
+// Hace referencia a los campos del formulario para asignar la informacion correspondiente
 const userFormEdit = ref({
 
   nombre: props.UserTestEdit.NAME,
@@ -179,6 +182,7 @@ const userFormEdit = ref({
 
 });
 
+// Valida el formulario de que cumpla con todas la reglas establecidas
 function HandleLoginEdit() {
 
   if (loginFormEdit.value && loginFormEdit.value.validate()) {
@@ -196,6 +200,7 @@ function HandleLoginEdit() {
   }
 }
 
+// Pequeño dialogo que realiza una alerta de confirmacion antes de continuar con el proceso
 function confirm() {
 
   $q.dialog({
@@ -214,6 +219,7 @@ function confirm() {
 
 }
 
+// Se reciben los datos enviados del formulario para enviar a la api y realice cambios en la base de datos
 async function simulateProgress(number) {
   // Activamos el estado de carga
   loadingEdit.value[number] = true;
@@ -244,6 +250,10 @@ async function simulateProgress(number) {
 
     if (userFormEdit.value.picture) {
       formData.append('picture', userFormEdit.value.picture)
+    }
+
+    if (userFormEdit.value.rol) {
+      formData.append('rol', userFormEdit.value.rol)
     }
 
     const response = await api.put(`api/testers/${userId}`, formData, {
@@ -278,13 +288,16 @@ async function simulateProgress(number) {
 
 }
 
+// CIerra el dialogo que se ejecuto por el usuario
 function cancel() {
   // Aquí emitimos el evento 'close-dialog' al componente padre
   emit('close-dialog-Edit');
 }
-// FUnciones de evento 'Imagen'-----
+
+// FUnciones de evento 'Imagen'
 watch(() => userFormEdit.value.picture, (newVal) => {
-  // Update image preview when user selects a new image
+
+  // Actualiza la imagen previa cuando se selecciona una nueva foto o imagen
   if (newVal) {
     const reader = new FileReader();
     reader.onload = () => {
@@ -292,7 +305,7 @@ watch(() => userFormEdit.value.picture, (newVal) => {
     };
     reader.readAsDataURL(newVal);
   } else {
-    // Set default image if no picture is selected
+    // Se pone la imagen por default en caso de no existir
     imagePreviewUrl.value = "../../../../public/imgs/NoIMgae.png";
   }
 });
@@ -301,17 +314,19 @@ if (userFormEdit.value.picture) {
   imagePreviewUrl.value = `http://localhost:3000/uploads/${userFormEdit.value.picture}`;
 }
 
+// Se envia el archivo
 function onImageSelected(file) {
   // Update the image preview when a file is added
   imagePreviewUrl.value = URL.createObjectURL(file);
 }
-// ----------------------------------------------------------------
 
+// Se crea un array de opciones para el formulario
 const optionsJob = [
   'Test Manager Engineer',
   'Test Engineer Senior',
+  'Test Engineer Full',
   'Test Engineer Jr',
-  'Test Jr'
+  'Test Technician'
 ]
 
 const optionsArea = [
@@ -347,4 +362,5 @@ const optionsRol = [
 defineOptions({
   name: 'EditUser'
 });
+
 </script>

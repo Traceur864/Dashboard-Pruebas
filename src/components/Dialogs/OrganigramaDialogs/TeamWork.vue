@@ -74,9 +74,10 @@ const selectedUser = ref(false)
 const selectedUserEdit = ref(false)
 const selectedUserDelete = ref(false)
 
+// Realiza una peticion a la api para obtener los datos de usuario
 const fetchUsers = async () => {
   try {
-    const response = await api.get('/api/testusers') // Asegúrate de que esta URL sea correcta según tu backend
+    const response = await api.get('/api/testusers')
     testerusers.value = response.data // Almacenar los datos recibidos
 
     console.log(response.data);
@@ -118,16 +119,18 @@ function showUserDelete(UserTestDelete) {
 
 function showUserInfo(UserTest) {
   selectedUser.value = UserTest  // Asignamos el usuario seleccionado
-  infoUserTest.value = true  // Abrimos el diálogo // Abrimos el dialogo editar
+  infoUserTest.value = true  // Abrimos el diálogo
   console.log(UserTest);
 }
 
 function showUserEdit(UserTestEdit) {
   selectedUserEdit.value = UserTestEdit  // Asignamos el usuario seleccionado
-  editUserTest.value = true  // Abrimos el diálogo // Abrimos el dialogo editar
+  editUserTest.value = true // Abrimos el dialogo editar
   console.log(UserTestEdit);
 }
 
+
+// Hace la peticion a la api para dar de baja al usuario
 function deletes() {
   $q.dialog({
 
@@ -176,6 +179,7 @@ function closeDialog() {
   editUserTest.value = false;
 }
 
+// Array para acomodar los datos en los campos correspondientes
 const columns = ref([
   { name: 'picture', label: 'Foto', align: 'center', field: row => row.PICTURE, sortable: false },
   { name: 'name', label: 'Nombre', align: 'left', field: row => `${row.NAME} ${row.LASTNAME}`, sortable: true },

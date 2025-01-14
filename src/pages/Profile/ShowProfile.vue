@@ -5,8 +5,11 @@
     </q-card-section>
 
     <q-card-section class="flex justify-center q-pt-none">
-      <q-avatar size="72px" font-size="52px">
+      <q-avatar size="72px" font-size="52px" v-if="!userProfile.picture == '' || !userProfile.picture == null">
         <img :src="'http://localhost:3000/uploads/' + userProfile.picture" />
+      </q-avatar>
+      <q-avatar size="72px" font-size="52px" v-else>
+        <img src="../../../public/imgs/NoIMgae.png" />
       </q-avatar>
     </q-card-section>
 
@@ -69,11 +72,18 @@
     </div>
   </q-card>
 </template>
+
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 const userProfile = ref(JSON.parse(localStorage.getItem('userLogin')))
+
+onMounted(() => {
+  // Verifica que los datos se estén obteniendo correctamente
+  console.log(userProfile.value);
+});
 
 defineOptions({
   name: 'ShowProfilePage'
-});
+})
+
 </script>

@@ -8,7 +8,7 @@
 
     <div class="q-gutter-md" v-else>
       <div>
-        <q-btn-group push>
+        <q-btn-group push v-if="userProfileIndex.rol == 'Administrador'">
           <q-btn flat label="Organigrama" color="black" icon-right="arrow_right_alt" @click="goToOrganigrama" />
         </q-btn-group>
 
@@ -52,6 +52,7 @@ const testusersView = ref([])
 const $q = useQuasar()
 const router = useRouter()
 const slide = ref(0)
+const userProfileIndex = ref(JSON.parse(localStorage.getItem('userLogin')))
 
 const fetchUsers = async () => {
   try {

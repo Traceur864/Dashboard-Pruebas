@@ -29,7 +29,8 @@
                 <q-btn size="sm" label="Notifications" color="secondary" push @click="goToNotifications"
                   class="display: hidden" />
 
-                <q-btn size="sm" label="Configuración" color="secondary" push @click="goToConfigurations" />
+                <!--                 <q-btn size="sm" label="Configuración" color="secondary" push @click="goToConfigurations" />
+ --> <q-btn size="sm" label="Configuración" color="secondary" push @click="goToConfig" />
               </div>
 
               <q-separator vertical inset class="q-mx-sm" />
@@ -80,16 +81,14 @@
 
 <script setup>
 import useUI from '../composables/useUI'
-import { useRouter } from 'vue-router';
-import { ref, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { ref, computed, watch, onMounted } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 import { linksList } from '../router/link-list'
 
 const leftDrawerOpen = ref(false)
 const isLoggedIn = ref(localStorage.getItem('authToken') !== null)
-// Función para ir a la página de login
 const { sideMenuOpen, toggleSideMenu } = useUI()
-
 const userLogin = ref(JSON.parse(localStorage.getItem('userLogin')))
 const userRoles = computed(() => userLogin.value ? userLogin.value.rol : [])
 
@@ -98,7 +97,6 @@ const logout = () => {
 
   localStorage.removeItem('authToken')  // Eliminar el token
   localStorage.removeItem('userLogin')  // Eliminar los datos del usuario
-  localStorage.removeItem('userTest')   // Eliminar los datos adicionales
 
   isLoggedIn.value = false  // Cambiar el estado de login
 
@@ -126,6 +124,11 @@ watch(() => localStorage.getItem('userLogin'), (newVal) => {
   }
 });
 
+onMounted(() => {
+  // Verifica que los datos se estén obteniendo correctamente
+  console.log(userLogin.value);
+});
+
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
@@ -142,6 +145,10 @@ const goToNotifications = () => {
 
 const goToConfigurations = () => {
   router.push({ name: 'configurations' })
+}
+
+const goToConfig = () => {
+  router.push({ name: 'config' })
 }
 
 const goToLogin = () => {

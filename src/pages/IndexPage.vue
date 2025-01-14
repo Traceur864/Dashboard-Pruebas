@@ -10,10 +10,7 @@
 </template>
 
 <script setup>
-
-import { ref } from 'vue'
 import Carousel from '../pages/TeamTests/ViewHome/Carousel.vue'
-const slide = ref('style')
 
 defineOptions({
   name: 'IndexPage'

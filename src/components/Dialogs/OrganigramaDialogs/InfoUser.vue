@@ -39,6 +39,15 @@
 
             No. Empleado:
           </span>
+          <span class="text-subtitle1 text-weight-medium q-mb-sm q-ml-md" v-if="UserTest.ROL != null">
+
+            <q-icon name="las la-user-tag" color="black" size="20px" class="q-mr-sm" />
+
+            Rol:
+          </span>
+          <span class="text-subtitle1 text-weight-medium q-mb-sm q-ml-md" v-else>
+
+          </span>
         </div>
         <div class="col-5 column">
           <span class="text-subtitle1 q-mb-sm q-ml-lg">{{ UserTest.NAME }} {{ UserTest.LASTNAME }}</span>
@@ -46,6 +55,9 @@
           <span class="text-subtitle1 q-mb-sm q-ml-lg" v-else>No hay correo Asignado</span>
           <span class="text-subtitle1 q-mb-sm q-ml-lg">{{ UserTest.PHONE }}</span>
           <span class="text-subtitle1 q-mb-sm q-ml-lg">{{ UserTest.NOEMPLOYEE }}</span>
+          <span class="text-subtitle1 q-mb-sm q-ml-lg" v-if="UserTest.ROL != null">{{ UserTest.ROL
+            }}</span>
+          <span class="text-subtitle1 q-mb-sm q-ml-lg" v-else></span>
         </div>
       </div>
 

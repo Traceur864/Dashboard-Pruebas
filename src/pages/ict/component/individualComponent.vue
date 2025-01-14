@@ -1,12 +1,10 @@
 <template>
-    <div class="col">
-        <div class="row q-col-gutter-md q-pt-md">
-            <div class="col-auto">
-                <q-badge color="primary" class="text-h6">Fixtura: {{ data[0] }} </q-badge>
-            </div>
+    <div class="row q-col-gutter-md q-pt-md">
+        <div class="col-auto">
+            <q-badge color="primary" class="text-h6">Fixtura: {{ data_comp[0] }} </q-badge>
         </div>
-        <div ref="chartdiv" class="graph"></div>
     </div>
+    <div ref="chartdiv" class="graph"></div>
 </template>
 
 <script>
@@ -22,7 +20,7 @@ export default {
             xAxis: '',
         }
     },
-    props: ['data'],
+    props: ['data_comp'],
     methods: {
         drawChart() {
             let root = am5.Root.new(this.$refs.chartdiv);
@@ -46,9 +44,10 @@ export default {
                 orientation: "horizontal"
             }));
 
+
             let colors = chart.get("colors");
 
-            let data = this.data[1];
+            let data = this.data_comp[1];
 
             prepareParetoData();
 
@@ -71,12 +70,12 @@ export default {
             // Create axes
             // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
             let xRenderer = am5xy.AxisRendererX.new(root, {
-                minGridDistance: 20,
+                minGridDistance: 15,
                 minorGridEnabled: true
             })
 
             let xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-                categoryField: "ERROR_DESC",
+                categoryField: "FAILURE",
                 renderer: xRenderer
             }));
 
@@ -85,7 +84,7 @@ export default {
             })
 
             xRenderer.labels.template.setAll({
-                rotation: 90
+                rotation: -90
             });
 
             xAxis.data.setAll(data);
@@ -107,11 +106,14 @@ export default {
             paretoAxisRenderer.grid.template.set("forceHidden", true);
             paretoAxis.set("numberFormat", "#'%");
 
+
+            // Add series
+            // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
             let series = chart.series.push(am5xy.ColumnSeries.new(root, {
                 xAxis: xAxis,
                 yAxis: yAxis,
                 valueYField: "TOTAL",
-                categoryXField: "ERROR_DESC"
+                categoryXField: "FAILURE"
             }));
 
             series.columns.template.setAll({
@@ -126,12 +128,14 @@ export default {
                 return chart.get("colors").getIndex(series.dataItems.indexOf(target.dataItem));
             })
 
+
             // pareto series
             let paretoSeries = chart.series.push(am5xy.LineSeries.new(root, {
                 xAxis: xAxis,
                 yAxis: paretoAxis,
+                // minBulletDistance: 20,
                 valueYField: "pareto",
-                categoryXField: "ERROR_DESC",
+                categoryXField: "FAILURE",
                 stroke: root.interfaceColors.get("alternativeBackground"),
                 maskBullets: false
             }));
@@ -143,7 +147,7 @@ export default {
                         radius: 5,
                         fill: series.get("fill"),
                         stroke: root.interfaceColors.get("alternativeBackground")
-                    })
+                    }),
                 })
             })
 
@@ -163,11 +167,9 @@ export default {
         this.drawChart()
     },
     watch: {
-        data: {
+        data_comp: {
             handler() {
-                // console.log(this.helper_series);
-
-                let data = this.data[1];
+                let data = this.data_comp[1];
 
                 prepareParetoData();
 
@@ -201,7 +203,7 @@ export default {
 
 <style scoped>
 .graph {
-    /*width: 100%;*/
-    height: 450px;
+    width: 100%;
+    height: 800px;
 }
 </style>

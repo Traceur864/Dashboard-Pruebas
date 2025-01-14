@@ -1,6 +1,6 @@
 <template>
     <div class="col">
-        <span class="flex justify-center text-h4">Fallas por tipo de error</span>
+        <span class="flex justify-center text-h4">Fallas por componente</span>
         <div class="row">
             <div class="col-auto">
                 <div class="text-h6">Filtro por rango de fecha</div>
@@ -14,10 +14,8 @@
                 <q-input v-model="last_date" type="date" label="Fin" filled />
             </div>
         </div>
-        <div class="row">
-            <div v-for="info in fixtures" v-bind:key="info.FIXTURE_BARCODE" class="col-6 q-px-md">
-                <individual-paretto :data="info" />
-            </div>
+        <div v-for="info in fixtures" v-bind:key="info.FIXTURE_BARCODE" class="col-6">
+            <individual-component :data_comp="info" />
         </div>
     </div>
 
@@ -28,53 +26,32 @@
 
 /* Imports */
 import { api } from 'boot/axios'
-import IndividualParetto from './component/individualParetto.vue';
+import IndividualComponent from './component/individualComponent.vue';
 
 export default {
     data() {
         return {
-            data: [],
             info: [],
             fixtures: [],
             shift: '',
             machine: '',
             model: '',
+            prueba: '',
             start_date: '',
             last_date: '',
             options: [],
         }
     },
     components: {
-        IndividualParetto
+        IndividualComponent
     },
     methods: {
         getData() {
-            api.get('/ict_data/errors/bb/nv_errors').then(response => {
-                var data = response.data;
-
-                this.fixtures = new Map()
-
-                data.forEach(dat => {
-                    if (!this.fixtures.has(dat.FIXTURE_BARCODE)) {
-                        this.fixtures.set(dat.FIXTURE_BARCODE, [])
-                    }
-
-                    var temp_data = this.fixtures.get(dat.FIXTURE_BARCODE)
-                    temp_data.push(dat)
-
-                    this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
-                });
-
-            }).catch(err => {
-                console.error(err);
-            });
-        },
-        filterData(start_date, last_date) {
-            api.get('/ict_data/errors/bb/nv_errors/' + start_date + "/" + last_date).then(response => {
+            api.get('/ict_data/errors/bb/component_error').then(response => {
                 var data = response.data;
 
                 if (data.length > 0) {
-                    this.fixtures.clear()
+                    this.fixtures = new Map()
 
                     data.forEach(dat => {
                         if (!this.fixtures.has(dat.FIXTURE_BARCODE)) {
@@ -86,21 +63,36 @@ export default {
 
                         this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
                     });
-                } else {
-                    this.$q.notify(
-                        {
-                            type: 'warning',
-                            message: 'No hay información que mostrar',
-                            position: 'center',
-                            timeout: 3000
-                        }
-                    )
                 }
 
             }).catch(err => {
                 console.error(err);
             });
-        }
+        },
+        filterData(start_date, last_date) {
+            api.get('/ict_data/errors/bb/component_error/' + start_date + "/" + last_date).then(response => {
+                var data = response.data;
+
+                if (data.length > 0) {
+
+                    this.fixtures = new Map()
+
+                    data.forEach(dat => {
+                        if (!this.fixtures.has(dat.FIXTURE_BARCODE)) {
+                            this.fixtures.set(dat.FIXTURE_BARCODE, [])
+                        }
+
+                        var temp_data = this.fixtures.get(dat.FIXTURE_BARCODE)
+                        temp_data.push(dat)
+
+                        this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
+                    });
+                }
+
+            }).catch(err => {
+                console.error(err);
+            });
+        },
     },
     mounted() {
         this.getData()
@@ -123,7 +115,7 @@ export default {
                     }
                 }
             }
-        }
+        },
     }
 }
 </script>

@@ -109,6 +109,9 @@ export default {
       start_date: null,
       shift: null,
       comments: null,
+
+      //login variables
+      current_user: {},
     }
   },
   methods: {
@@ -126,9 +129,7 @@ export default {
         params.append('start_date', this.start_date)
         params.append('finish_date', this.end_date)
         params.append('comments', this.comments)
-        params.append('created_by', 4)
-        //  TODO: GET ID FROM LOGGED USER
-        // params.append('created_by', this.created_by)
+        params.append('created_by', this.current_user.id)
 
         const config = {
           headers: {
@@ -279,6 +280,7 @@ export default {
   mounted() {
     this.loadData()
     this.getEvents()
+    this.current_user = JSON.parse(localStorage.getItem("userLogin"))
   },
   watch: {
     start_date: {

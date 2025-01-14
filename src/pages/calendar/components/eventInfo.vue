@@ -68,6 +68,9 @@ export default {
             start_date: null,
             disabled: true,
             comments: null,
+
+            //Login variables
+            current_user: {},
         }
     },
     emits: ['reload'],
@@ -86,8 +89,7 @@ export default {
             params.append('start_date', this.start_date)
             params.append('finish_date', this.end_date)
             params.append('comments', this.comments)
-            //  TODO: GET ID FROM LOGGED USER
-            // params.append('created_by', this.created_by)
+            params.append('created_by', this.current_user.id)
 
             const config = {
                 headers: {
@@ -298,6 +300,7 @@ export default {
     },
     props: ['calendar_id'],
     mounted() {
+        this.current_user = JSON.parse(localStorage.getItem("userLogin"))
     }
 }
 </script>

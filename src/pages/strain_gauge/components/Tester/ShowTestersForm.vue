@@ -19,8 +19,8 @@
         </template>
     </q-table>
 
-    <EditTesterForm ref="editForm" @reload="getTesters" />
-    <DeleteDialog ref="deleteDialog" @reload="getTesters" />
+    <EditTesterForm ref="editForm" @reload="reload" />
+    <DeleteDialog ref="deleteDialog" @reload="reload" />
 
 </template>
 

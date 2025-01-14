@@ -57,9 +57,11 @@ export default {
             plan_date: null,
             comments: '',
             test: null,
+            current_user: {},
         }
     },
     mounted() {
+        this.current_user = JSON.parse(localStorage.getItem("userLogin"))
     },
     methods: {
         openDialog(id) {
@@ -122,8 +124,7 @@ export default {
             const params = new URLSearchParams()
             params.append('id_main_info', this.id_maintenance)
             params.append('comments', this.comments)
-            // TODO: GET USER ID FROM LOCAL STORAGE
-            // params.append('created_by', this.current_user.id)
+            params.append('created_by', this.current_user.id)
 
             const config = {
                 headers: {
@@ -178,8 +179,7 @@ export default {
             params.append('description', this.event_description)
             params.append('comments', this.comments)
             params.append('plan_date', this.plan_date)
-            // TODO: GET USER ID FROM LOCAL STORAGE
-            // params.append('created_by', this.current_user.id)
+            params.append('created_by', this.current_user.id)
 
             const config = {
                 headers: {

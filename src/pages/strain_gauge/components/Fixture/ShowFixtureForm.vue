@@ -65,7 +65,6 @@ export default {
                 })
                 console.error(error);
             })
-            this.$emit("reload")
         },
         editFixture(row) {
             this.$refs.editFixture.openDialog(row)

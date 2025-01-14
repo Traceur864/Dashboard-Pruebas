@@ -60,9 +60,6 @@
 
           <div class="row q-col-gutter-x-sm">
             <div class="col">
-              <q-select square filled v-model="shift" label="Turno" :options="['Turno 1', 'Turno 2', 'Turno 3']" />
-            </div>
-            <div class="col">
               <q-select square filled v-model="asigned_to" label="Responsable de SG" :options="usuarios"
                 @filter="filterUser" use-input input-debounce="0" />
             </div>
@@ -93,10 +90,10 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { api } from 'boot/axios'
 
 //Importing components
-import TesterDialog from './Components/StrainGauge/Tester/TesterDialog.vue'
-import FixtureDialog from './Components/StrainGauge/Fixture/FixtureDialog.vue'
-import EventDialog from './Components/StrainGauge/Event/EventDialog.vue'
-import ShowEvents from './Components/StrainGauge/Historic/ShowEvents.vue'
+import TesterDialog from './components/Tester/TesterDialog.vue'
+import FixtureDialog from './components/Fixture/FixtureDialog.vue'
+import EventDialog from './components/Event/EventDialog.vue'
+import ShowEvents from './components/Historic/ShowEvents.vue'
 
 export default {
   components: {
@@ -142,12 +139,14 @@ export default {
       tester_sn: null,
       fixture_id: null,
       start_date: null,
-      shift: null,
       modelo: null,
       asigned_to: null,
       tester_dialog: false,
       models: null,
       disable: true,
+
+      //Login variables
+      current_user: {},
     }
   },
   //Get functionalities from imported component
@@ -197,7 +196,7 @@ export default {
       this.loadData()
     },
     add_event() {
-      if (this.tester_sn && this.fixture_id && this.start_date && this.shift && this.asigned_to) {
+      if (this.tester_sn && this.fixture_id && this.start_date && this.asigned_to) {
         const dismiss = this.$q.notify({
           spinner: true,
           message: "Por favor, espera...",
@@ -208,7 +207,6 @@ export default {
         params.append('tester_id', this.tester_sn.value)
         params.append('fixture_id', this.fixture_id.value)
         params.append('start_date', this.start_date)
-        params.append('shift', this.shift)
         params.append('asigned_to', this.asigned_to.value)
 
         const config = {
@@ -336,10 +334,13 @@ export default {
     },
 
     get_events() {
+      this.calendarOptions.events = null
       this.calendarOptions.events = []
 
       api.get('/strain_gauge').then((response) => {
         var data = response.data
+        // console.log(data);
+
         data.forEach(el => {
 
           this.calendarOptions.events.push(
@@ -362,12 +363,11 @@ export default {
       this.tester_sn = ""
       this.fixture_id = ""
       this.start_date = ""
-      this.shift = ""
       this.asigned_to = ""
     },
 
     unlock_select() {
-      console.log(this.modelo, this.area);
+      // console.log(this.modelo, this.area);
       if (this.modelo && this.area) {
         this.disable = false
       }
@@ -379,12 +379,12 @@ export default {
     }
   },
   mounted() {
-    let self = this
     this.loadData()
+    this.current_user = JSON.parse(localStorage.getItem("userLogin"))
   },
   watch: {
     modelo: function () {
-      console.log(this.modelo.value);
+      // console.log(this.modelo.value);
     }
   }
 }

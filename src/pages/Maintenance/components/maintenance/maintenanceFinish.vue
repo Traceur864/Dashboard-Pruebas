@@ -46,6 +46,7 @@ export default {
             finishDialog: false,
             comments: '',
             event_type: '',
+            current_user: {},
             // usuarios: [],
             // users: [],
             // asigned_to: '',
@@ -95,10 +96,7 @@ export default {
             const params = new URLSearchParams()
             params.append('id_maintenance', this.id_maintenance)
             params.append('comments', this.comments)
-            params.append('made_by', 1)
-
-            // TODO: GET ISER ID FROM LOCAL STORAGE
-            // params.append('made_by', this.current_user.id)
+            params.append('made_by', this.current_user.id)
 
             const config = {
                 headers: {
@@ -151,7 +149,7 @@ export default {
         }
     },
     mounted() {
-
+        this.current_user = JSON.parse(localStorage.getItem("userLogin"))
     }
 }
 </script>

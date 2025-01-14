@@ -8,13 +8,15 @@
         </div>
         <div class="row q-col-gutter-sm">
             <div class="col-3">
-                <q-input v-model="date" type="date" label="Inicio" filled />
+                <q-input v-model="start_date" type="date" label="Inicio" filled />
             </div>
             <div class="col-3">
-                <q-input v-model="date" type="date" label="Fin" filled />
+                <q-input v-model="last_date" type="date" label="Fin" filled />
             </div>
         </div>
-        <div ref="chartdiv" class="graph"></div>
+        <div ref="chartContainer">
+            <div ref="chartdiv" class="graph"></div>
+        </div>
     </div>
 
 </template>
@@ -37,19 +39,25 @@ export default {
             shift: '',
             machine: '',
             model: '',
-            date: '',
+            start_date: '',
+            last_date: '',
             options: [],
+            legend: null,
+            chart: null,
+            root: null,
+            xAxis: null,
+            yAxis: null,
         }
     },
     methods: {
         getData() {
             api.get('/ict_data/activations/bb').then(response => {
                 var data = response.data;
-                // console.log(data);
 
                 this.data = new Map()
                 this.fixtures = new Map()
 
+                //Format data by fixture and days
                 data.forEach(dat => {
                     let info = new Map()
 
@@ -82,6 +90,64 @@ export default {
             }).catch(err => {
                 console.error(err);
             });
+        },
+        filterData(start_date, last_date) {
+            api.get('/ict_data/activations/bb/' + start_date + "/" + last_date).then(response => {
+                var data = response.data
+
+                this.data = new Map()
+                this.fixtures = new Map()
+
+                data.forEach(dat => {
+                    let info = new Map()
+
+                    info.set(dat.FIXTURE_BARCODE, dat.ACTIVACIONES)
+
+                    this.fixtures.set(dat.FIXTURE_BARCODE, dat.FIXTURE_BARCODE)
+
+                    if (!this.data.has(dat.DATE_TIME.substring(0, 10))) {
+                        var temp = []
+                        temp.push(info)
+                        this.data.set(dat.DATE_TIME.substring(0, 10), temp);
+                    } else {
+                        var temp = this.data.get(dat.DATE_TIME.substring(0, 10))
+                        temp.push(info)
+                        this.data.set(dat.DATE_TIME.substring(0, 10), temp);
+                    }
+                });
+
+                this.data.forEach((el, key) => {
+                    var info = {}
+                    info.DATE_TIME = key
+                    el.forEach(dat => {
+                        var temp = Array.from(dat)
+                        info[temp[0][0]] = temp[0][1]
+                    });
+                    this.info.push(info)
+                });
+
+                if (this.data.size > 0) {
+                    // this.reDrawChart(this.root)
+                }
+            }).catch(err => {
+                console.error(err);
+            });
+        },
+        reDrawChart(root) {
+            //Clear chart
+            this.xAxis.data.clear()
+            this.legend.data.clear()
+
+            let xAxis = this.xAxis
+            let yAxis = this.yAxis
+
+            this.chart.series._values.forEach(element => {
+                console.log(element);
+            });
+
+            this.root.dispose()
+
+            this.drawChart()
         },
         drawChart() {
             // Create root element
@@ -180,12 +246,44 @@ export default {
                 makeSeries(el, el);
             });
 
+            //Reduce lag
+            // root.fps = 60    
+
             // Make stuff animate on load
             chart.appear(1000, 100);
+            this.legend = legend;
+            this.chart = chart;
+            this.xAxis = xAxis;
+            this.yAxis = yAxis;
+            this.root = root;
         }
     },
     mounted() {
         this.getData()
+    },
+    watch: {
+        start_date: {
+            handler() {
+                // Validate that both variables are not empty
+                if (this.last_date != "" && this.start_date != "") {
+                    //Validate that start date is smaller than last date
+                    if (this.start_date <= this.last_date) {
+                        this.filterData(this.start_date, this.last_date)
+                    }
+                }
+            }
+        },
+        last_date: {
+            handler() {
+                // Validate that both variables are not empty
+                if (this.last_date != "" && this.start_date != "") {
+                    //Validate that start date is smaller than last date
+                    if (this.start_date <= this.last_date) {
+                        this.filterData(this.start_date, this.last_date)
+                    }
+                }
+            }
+        }
     }
 }
 </script>

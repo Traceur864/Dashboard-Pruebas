@@ -34,11 +34,12 @@
                             <q-badge :color="props.row.COLOR" :label="props.row.STATUS_M" />
                         </q-td>
                         <q-td align="center">
-                            <q-btn color="warning" class="q-mx-xs" icon="edit" v-if="props.row.STATUS_M != 'Cancelado'"
+                            <q-btn color="warning" class="q-mx-xs" icon="edit"
+                                v-if="props.row.STATUS_M != 'Cancelado' && props.row.STATUS_M != 'Finalizado'"
                                 @click="this.$refs.updateDialog.openDialog(props.row.ID_MAINTENANCE_INFO)" />
                             <q-btn color="positive" class="q-mx-xs" icon="check"
-                                v-if="props.row.STATUS_M != 'Cancelado'"
-                                @click="this.$refs.updateDialog.openDialog(props.row.ID_MAINTENANCE_INFO)" />
+                                v-if="props.row.STATUS_M != 'Cancelado' && props.row.STATUS_M != 'Finalizado'"
+                                @click="this.$refs.finishEvent.openDialog(props.row.ID_MAINTENANCE_INFO)" />
                             <q-btn color="primary" icon="info" class="q-mx-xs"
                                 @click="this.$refs.infoDialog.openDialog(props.row.ID_MAINTENANCE_INFO)" />
                         </q-td>
@@ -51,6 +52,7 @@
     <InsertInfo ref="insertDialog" @reload="reload" />
     <UpdateInfo ref="updateDialog" @reload="reload" />
     <EventInfo ref="infoDialog" />
+    <FinishEvent ref="finishEvent" @reload="reload" />
 
 </template>
 <script>
@@ -58,12 +60,14 @@ import { api } from 'boot/axios'
 import InsertInfo from '../calibration/insertInfo.vue';
 import UpdateInfo from '../calibration/updateInfo.vue';
 import EventInfo from '../calibration/eventInfo.vue';
+import FinishEvent from '../calibration/finishEvent.vue';
 
 export default {
     components: {
         InsertInfo,
         UpdateInfo,
         EventInfo,
+        FinishEvent,
     },
     props: ['id_maintenance'],
     data() {

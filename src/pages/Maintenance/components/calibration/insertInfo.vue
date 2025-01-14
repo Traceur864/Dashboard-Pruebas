@@ -47,6 +47,7 @@ export default {
             event_title: '',
             event_description: '',
             plan_date: null,
+            current_user: {},
         }
     },
     mounted() {
@@ -68,9 +69,7 @@ export default {
             params.append('title', this.event_title)
             params.append('description', this.event_description)
             params.append('plan_date', this.plan_date)
-            params.append('created_by', 1)
-            // TODO: GET USER ID FROM LOCAL STORAGE
-            // params.append('created_by', this.current_user.id)
+            params.append('created_by', this.current_user.id)
 
             const config = {
                 headers: {
@@ -117,6 +116,7 @@ export default {
             this.event_title = ''
             this.event_description = ''
             this.plan_date = null
+            this.current_user = JSON.parse(localStorage.getItem("userLogin"))
         }
     }
 }

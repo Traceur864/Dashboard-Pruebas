@@ -79,7 +79,7 @@ const routes = [
       {
         path: "mda",
         name: "mda",
-        component: () => import("pages/TeamTests/MDA.vue"),
+        component: () => import("src/pages/mda/MDA.vue"),
         meta: {
           requiresAuth: true,
           rol: ["Administrador", "Full MDA", "Jr MDA"],

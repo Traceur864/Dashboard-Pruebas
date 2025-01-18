@@ -43,6 +43,7 @@ import { api } from 'boot/axios'
 const loading = ref([false])
 const supportForm = ref(null)
 const $q = useQuasar()
+const emit = defineEmits(['close-dialog-pass'])
 
 const developSupport = ref({
   asunto: '',
@@ -54,6 +55,10 @@ async function HandleSupport() {
   if (supportForm.value && supportForm.value.validate()) {
 
     console.log('Validation passed');
+    console.log(developSupport.value.asunto);
+    console.log(developSupport.value.comments);
+
+
     confirm()
 
   } else {
@@ -90,13 +95,19 @@ function simulateProgress(number) {
   // Activamos el estado de carga
   loading.value[number] = true;
 
+  const userProfile = ref(JSON.parse(localStorage.getItem('userLogin')))
+
+  const email = userProfile.value.email;
+  console.log(email);
+
   // Crear un objeto FormData y agregar todos los campos del formulario
   const formData = new FormData()
 
   formData.append('asunto', developSupport.value.asunto)
   formData.append('comments', developSupport.value.comments)
+  formData.append('email', email)
 
-  api.post('/?', formData, {
+  api.post('/email/support', formData, {
 
     headers: {
       'Content-Type': 'multipart/form-data' // Importante para indicar que estamos enviando datos de formulario con archivos
@@ -112,7 +123,7 @@ function simulateProgress(number) {
       message: 'Correo enviado con éxito',
       icon: 'check'
     })
-    onReset()
+    close()
   }).catch(error => {
 
     if (error.response && error.response.data) {
@@ -137,6 +148,9 @@ function simulateProgress(number) {
   })
 }
 
+function close() {
+  emit('close-dialog-pass');
+}
 
 defineOptions({
   name: 'SupportPage'

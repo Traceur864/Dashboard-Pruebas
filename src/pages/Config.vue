@@ -110,6 +110,10 @@ const closeDialog = () => {
   change.value = false
 }
 
+const closeDialogSupport = () => {
+  support.value = false
+}
+
 defineOptions({
   name: 'ConfigPages'
 })

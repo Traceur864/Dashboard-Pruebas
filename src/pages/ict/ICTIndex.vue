@@ -7,6 +7,9 @@
             <yield-visualization />
         </div>
         <div class="row q-py-lg">
+            <Input_outputVisualization />
+        </div>
+        <div class="row q-py-lg">
             <paretto-visualization />
         </div>
         <div class="row q-py-lg">
@@ -25,6 +28,7 @@ import YieldVisualization from './yieldVisualization.vue';
 import parettoVisualization from './parettoVisualization.vue';
 import ComponentVisualization from './componentVisualization.vue';
 import RetestVisualization from './retestVisualization.vue';
+import Input_outputVisualization from './input_outputVisualization.vue';
 
 /* Imports */
 
@@ -38,7 +42,8 @@ export default {
         YieldVisualization,
         parettoVisualization,
         ComponentVisualization,
-        RetestVisualization
+        RetestVisualization,
+        Input_outputVisualization
     },
     methods: {
     },

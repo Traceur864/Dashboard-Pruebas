@@ -7,6 +7,9 @@
             <YieldVisualization />
         </div>
         <div class="row q-py-lg">
+            <Input_outputVisualization />
+        </div>
+        <div class="row q-py-lg">
             <ParettoVisualization />
         </div>
         <div class="row q-py-lg">
@@ -15,14 +18,12 @@
         <div class="row q-py-lg">
             <RetestVisualization />
         </div>
-        <div class="row q-py-lg">
-
-        </div>
     </q-page>
 </template>
 
 <script>
 import ComponentVisualization from './componentVisualization.vue';
+import Input_outputVisualization from './input_outputVisualization.vue';
 import ParettoVisualization from './parettoVisualization.vue';
 import RetestVisualization from './retestVisualization.vue';
 import WeekActivations from './weekActivations.vue';
@@ -37,7 +38,8 @@ export default {
         YieldVisualization,
         ParettoVisualization,
         ComponentVisualization,
-        RetestVisualization
+        RetestVisualization,
+        Input_outputVisualization
     },
     methods: {
 

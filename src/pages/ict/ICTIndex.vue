@@ -10,6 +10,9 @@
             <Input_outputVisualization />
         </div>
         <div class="row q-py-lg">
+            <UtilizationVisualization />
+        </div>
+        <div class="row q-py-lg">
             <paretto-visualization />
         </div>
         <div class="row q-py-lg">
@@ -29,7 +32,7 @@ import parettoVisualization from './parettoVisualization.vue';
 import ComponentVisualization from './componentVisualization.vue';
 import RetestVisualization from './retestVisualization.vue';
 import Input_outputVisualization from './input_outputVisualization.vue';
-
+import UtilizationVisualization from './utilizationVisualization.vue';
 /* Imports */
 
 export default {
@@ -43,7 +46,8 @@ export default {
         parettoVisualization,
         ComponentVisualization,
         RetestVisualization,
-        Input_outputVisualization
+        Input_outputVisualization,
+        UtilizationVisualization
     },
     methods: {
     },

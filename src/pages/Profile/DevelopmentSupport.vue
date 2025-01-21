@@ -86,7 +86,6 @@ function confirm() {
     simulateProgress(0)
   }).onCancel(() => {
     console.log('El usuario canceló.')
-    // console.log('>>>> Cancel')
   })
 
 }

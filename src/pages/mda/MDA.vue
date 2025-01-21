@@ -1,10 +1,10 @@
 <template>
     <q-page class="q-pa-md">
         <div class="row q-py-lg">
-            <week-activations />
+            <WeekActivations />
         </div>
         <div class="row q-py-lg">
-            <yield-visualization />
+            <YieldVisualization />
         </div>
         <div class="row q-py-lg">
             <Input_outputVisualization />
@@ -13,45 +13,44 @@
             <UtilizationVisualization />
         </div>
         <div class="row q-py-lg">
-            <paretto-visualization />
+            <ParettoVisualization />
         </div>
         <div class="row q-py-lg">
-            <component-visualization />
+            <ComponentVisualization />
         </div>
         <div class="row q-py-lg">
             <RetestVisualization />
         </div>
     </q-page>
-
 </template>
 
 <script>
+import ComponentVisualization from './componentVisualization.vue';
+import Input_outputVisualization from './input_outputVisualization.vue';
+import ParettoVisualization from './parettoVisualization.vue';
+import RetestVisualization from './retestVisualization.vue';
+import UtilizationVisualization from './utilizationVisualization.vue';
 import WeekActivations from './weekActivations.vue';
 import YieldVisualization from './yieldVisualization.vue';
-import parettoVisualization from './parettoVisualization.vue';
-import ComponentVisualization from './componentVisualization.vue';
-import RetestVisualization from './retestVisualization.vue';
-import Input_outputVisualization from './input_outputVisualization.vue';
-import UtilizationVisualization from './utilizationVisualization.vue';
-/* Imports */
 
 export default {
+    name: 'MDA',
     data() {
-        return {
-        }
     },
     components: {
         WeekActivations,
         YieldVisualization,
-        parettoVisualization,
+        ParettoVisualization,
         ComponentVisualization,
         RetestVisualization,
         Input_outputVisualization,
         UtilizationVisualization
     },
     methods: {
+
     },
     mounted() {
+
     }
-}
+};
 </script>

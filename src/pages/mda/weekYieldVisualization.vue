@@ -18,18 +18,10 @@
                     </template>
                 </q-select>
             </div>
-            <div class="col-3">
-                <q-select v-model="model" :options="['PG520', '25612', 'P2312']" label="Modelo" filled>
-                    <template v-slot:append>
-                        <q-icon v-if="model !== null" class="cursor-pointer" name="clear"
-                            @click.stop.prevent="model = null" />
-                    </template>
-                </q-select>
-            </div>
         </div>
 
         <div v-for="info in data" v-bind:key="info.FIXTURE" class="col-6">
-            <individual-fixture :data="info" />
+            <YieldWeek :data="info" />
         </div>
 
     </div>
@@ -41,7 +33,7 @@
 
 /* Imports */
 import { api } from 'boot/axios'
-import IndividualFixture from "./components/individualFixture.vue";
+import YieldWeek from './components/yield/yieldWeek.vue';
 
 export default {
     data() {
@@ -57,19 +49,33 @@ export default {
         }
     },
     components: {
-        IndividualFixture
+        YieldWeek
     },
     methods: {
         getData() {
             //TODO: GET CURRENT DATE AND FILTER BY THAT
-            api.get('/mda_data/errors/yield/2025-01-06/null').then(response => {
-                this.data = response.data[0];
+            api.get('/mda_data/errors/week_yield').then(response => {
+                // this.data = response.data[0];
+                var data = response.data[0]
+                this.data = new Map()
+
+                // console.log(data);
+                data.forEach(dat => {
+                    if (this.data.has(dat.FIXTURE)) {
+                        var temp = this.data.get(dat.FIXTURE)
+                        temp.push(dat)
+                        this.data.set(dat.FIXTURE, temp);
+                    } else {
+                        this.data.set(dat.FIXTURE, [dat]);
+                    }
+                });
+
             }).catch(err => {
                 console.error(err);
             });
         },
         filterData() {
-            api.get('/mda_data/errors/yield/' + this.date + '/' + this.shift).then(response => {
+            api.get('/mda_data/errors/week_yield').then(response => {
                 this.data = []
                 this.data = response.data[0];
                 // this.drawChart();

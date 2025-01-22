@@ -21,7 +21,7 @@
         </div>
 
         <div v-for="info in data" v-bind:key="info.FIXTURE" class="col-6">
-            <individual-fixture :data="info" />
+            <YieldWeek :data="info" />
         </div>
 
     </div>
@@ -34,6 +34,7 @@
 /* Imports */
 import { api } from 'boot/axios'
 import IndividualFixture from "./component/individualFixture.vue";
+import YieldWeek from './component/yield/yieldWeek.vue';
 
 export default {
     data() {
@@ -49,19 +50,33 @@ export default {
         }
     },
     components: {
-        IndividualFixture
+        YieldWeek
     },
     methods: {
         getData() {
             //TODO: GET CURRENT DATE AND FILTER BY THAT
-            api.get('/ict_data/errors/bb/yield/2025-01-06/null').then(response => {
-                this.data = response.data[0];
+            api.get('/ict_data/errors/bb/week_yield').then(response => {
+                // this.data = response.data[0];
+                var data = response.data[0]
+                this.data = new Map()
+
+                // console.log(data);
+                data.forEach(dat => {
+                    if (this.data.has(dat.FIXTURE)) {
+                        var temp = this.data.get(dat.FIXTURE)
+                        temp.push(dat)
+                        this.data.set(dat.FIXTURE, temp);
+                    } else {
+                        this.data.set(dat.FIXTURE, [dat]);
+                    }
+                });
+
             }).catch(err => {
                 console.error(err);
             });
         },
         filterData() {
-            api.get('/ict_data/errors/bb/yield/' + this.date + '/' + this.shift).then(response => {
+            api.get('/ict_data/errors/bb/week_yield').then(response => {
                 this.data = []
                 this.data = response.data[0];
                 // this.drawChart();

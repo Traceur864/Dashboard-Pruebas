@@ -87,6 +87,13 @@ export default {
 
                         this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
                     });
+                } else {
+                    this.$q.notify({
+                        type: 'negative',
+                        message: 'No hay datos dentro del rango de fechas.',
+                        timeout: 700,
+                        position: 'center',
+                    })
                 }
 
             }).catch(err => {

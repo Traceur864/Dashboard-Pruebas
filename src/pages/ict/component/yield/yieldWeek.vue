@@ -25,8 +25,6 @@ export default {
     components: {
         YieldDay
     },
-    props: ['data'],
-    methods: {
-    },
+    props: ['data']
 }
 </script>

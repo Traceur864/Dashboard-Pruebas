@@ -11,7 +11,6 @@
 import * as am5 from "@amcharts/amcharts5";
 import * as am5percent from "@amcharts/amcharts5/percent";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
-import { data } from "autoprefixer";
 
 export default {
     data() {
@@ -44,7 +43,11 @@ export default {
                     valueField: "value",
                     categoryField: "category",
                     color: "color",
-                    endAngle: 270
+                    endAngle: 270,
+                    tooltip: am5.Tooltip.new(root, {
+                        pointerOrientation: "horizontal",
+                        labelText: "Unidades: {value}"
+                    })
                 })
             );
 
@@ -52,7 +55,6 @@ export default {
                 am5.color(0x50b300),
                 am5.color(0xb30000)
             ])
-
 
             series.states.create("hidden", {
                 endAngle: -90

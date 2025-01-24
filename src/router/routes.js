@@ -96,7 +96,7 @@ const routes = [
       },
       {
         path: "component_report",
-        name: "Reportes de componente",
+        name: "component_report",
         component: () => import("pages/component_report/componentReport.vue"),
         meta: {
           requiresAuth: true,

@@ -21,8 +21,8 @@ export const linksList = [
   },
   {
     title: "Reporte de componente",
-    caption: "Reporte de componente",
-    icon: "manufacturing",
+    caption: "Comportamiento de componente",
+    icon: "query_stats",
     link: "component_report",
     meta: { rol: ["Administrador", "Full ICT", "Jr ICT"] },
   },

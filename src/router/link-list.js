@@ -56,10 +56,4 @@ export const linksList = [
     link: "label-center",
     meta: { rol: ["Administrador"] },
   },
-  {
-    title: "Docs",
-    caption: "quasar.dev",
-    icon: "las la-graduation-cap",
-    link: "https://quasar.dev",
-  },
 ];

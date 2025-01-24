@@ -31,7 +31,7 @@ import ParettoVisualization from './parettoVisualization.vue';
 import RetestVisualization from './retestVisualization.vue';
 import UtilizationVisualization from './utilizationVisualization.vue';
 import WeekActivations from './weekActivations.vue';
-import YieldVisualization from './yieldVisualization.vue';
+import YieldVisualization from './weekYieldVisualization.vue';
 
 export default {
     name: 'MDA',

@@ -18,14 +18,6 @@
                     </template>
                 </q-select>
             </div>
-            <div class="col-3">
-                <q-select v-model="model" :options="['PG520', '25612', 'P2312']" label="Modelo" filled>
-                    <template v-slot:append>
-                        <q-icon v-if="model !== null" class="cursor-pointer" name="clear"
-                            @click.stop.prevent="model = null" />
-                    </template>
-                </q-select>
-            </div>
         </div>
 
         <div v-for="info in data" v-bind:key="info.FIXTURE" class="col-6">

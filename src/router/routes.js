@@ -95,6 +95,15 @@ const routes = [
         },
       },
       {
+        path: "component_report",
+        name: "Reportes de componente",
+        component: () => import("pages/component_report/componentReport.vue"),
+        meta: {
+          requiresAuth: true,
+          rol: ["Administrador", "Full ICT", "Jr ICT"],
+        },
+      },
+      {
         path: "organigrama",
         name: "organigrama",
         component: () => import("pages/TeamTests/Organigrama.vue"),

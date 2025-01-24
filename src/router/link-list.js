@@ -20,6 +20,13 @@ export const linksList = [
     meta: { rol: ["Administrador", "Full MDA", "Jr MDA"] },
   },
   {
+    title: "Reporte de componente",
+    caption: "Reporte de componente",
+    icon: "manufacturing",
+    link: "component_report",
+    meta: { rol: ["Administrador", "Full ICT", "Jr ICT"] },
+  },
+  {
     title: "Organigrama",
     caption: "Informacion de equipo de trabajo",
     icon: "las la-users",

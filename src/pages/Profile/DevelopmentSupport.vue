@@ -97,7 +97,9 @@ function simulateProgress(number) {
   const userProfile = ref(JSON.parse(localStorage.getItem('userLogin')))
 
   const email = userProfile.value.email;
+  const userId = userProfile.value.id;
   console.log(email);
+  console.log(userId);
 
   // Crear un objeto FormData y agregar todos los campos del formulario
   const formData = new FormData()
@@ -105,11 +107,13 @@ function simulateProgress(number) {
   formData.append('asunto', developSupport.value.asunto)
   formData.append('comments', developSupport.value.comments)
   formData.append('email', email)
+  formData.append('idUser', userId)
 
   api.post('/email/support', formData, {
 
     headers: {
-      'Content-Type': 'multipart/form-data' // Importante para indicar que estamos enviando datos de formulario con archivos
+      'Content-Type': 'multipart/form-data', // Importante para indicar que estamos enviando datos de formulario con archivos
+      'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
     }
 
   }).then(response => {

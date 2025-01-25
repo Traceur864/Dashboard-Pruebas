@@ -204,6 +204,6 @@ export default {
 <style scoped>
 .graph {
     width: 100%;
-    height: 800px;
+    height: 600px;
 }
 </style>

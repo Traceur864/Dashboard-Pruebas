@@ -44,7 +44,11 @@ export default {
                     valueField: "value",
                     categoryField: "category",
                     color: "color",
-                    endAngle: 270
+                    endAngle: 270,
+                    tooltip: am5.Tooltip.new(root, {
+                        pointerOrientation: "horizontal",
+                        labelText: "Unidades: {value}"
+                    })
                 })
             );
 
@@ -60,7 +64,7 @@ export default {
 
             series.data.setAll([{
                 category: "Pases",
-                value: this.data.PASS,
+                value: this.data.PASS
             },
             {
                 category: "Fallas",

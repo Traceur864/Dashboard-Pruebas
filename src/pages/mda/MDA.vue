@@ -3,21 +3,27 @@
         <div class="row q-py-lg">
             <WeekActivations />
         </div>
+        <hr>
         <div class="row q-py-lg">
             <YieldVisualization />
         </div>
+        <hr>
         <div class="row q-py-lg">
             <Input_outputVisualization />
         </div>
+        <hr>
         <div class="row q-py-lg">
             <UtilizationVisualization />
         </div>
+        <hr>
         <div class="row q-py-lg">
             <ParettoVisualization />
         </div>
+        <hr>
         <div class="row q-py-lg">
             <ComponentVisualization />
         </div>
+        <hr>
         <div class="row q-py-lg">
             <RetestVisualization />
         </div>

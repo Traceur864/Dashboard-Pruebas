@@ -5,13 +5,13 @@
                 <q-badge color="primary" class="text-h6">Componente: {{ name }} </q-badge>
             </div>
             <div class="col-auto">
-                <q-badge color="positive" class="text-h6">Media: {{ median }} </q-badge>
+                <q-badge color="positive" class="text-h6">Media: {{ median + measure }} </q-badge>
             </div>
             <div class="col-auto">
-                <q-badge color="black" class="text-h6">Low limit: {{ lLimit }}% </q-badge>
+                <q-badge color="black" class="text-h6">Low limit: {{ lLimit + measure }} </q-badge>
             </div>
             <div class="col-auto">
-                <q-badge color="black" class="text-h6">High limit: {{ hLimit }}% </q-badge>
+                <q-badge color="black" class="text-h6">High limit: {{ hLimit + measure }} </q-badge>
             </div>
         </div>
 
@@ -37,6 +37,7 @@ export default {
             median: '',
             lLimit: '',
             hLimit: '',
+            measure: '',
         }
     },
     methods: {
@@ -49,23 +50,56 @@ export default {
 
                 var counter = 1
                 data.forEach(element => {
-                    element.MSR_V = Number(element.MSR_V.split("V")[0]);
+                    element.MSR_V = Number(element.MSR_V.replace(/[^0-9.]+/g, ''));
                     element.x = counter
                     counter++
                 });
 
+                var base_value = media[0].STD_V.replace(/[^0-9.]+/g, '')
+                this.measure = media[0].STD_V.replace(/[^A-Za-z]+/g, '')
                 this.data = data
                 this.media = media
                 this.name = this.data[0].PART_NAME
-                this.lLimit = this.media[0].HLIM
-                this.hLimit = this.media[0].LLIM
                 this.median = this.media[0].MEDIA
+
+                this.media[0].MAX = this.media[0].MAX.replace(/[^0-9.]+/g, '')
+                this.media[0].MIN = this.media[0].MIN.replace(/[^0-9.]+/g, '')
+
+                //CALCULAR LIMITE INFIERIOR Y SUPERIOR
+                this.hLimit = this.calculatePercentage(this.media[0].HLIM, base_value, "add");
+                this.lLimit = this.calculatePercentage(this.media[0].LLIM, base_value, "less");
 
                 this.drawChart()
 
             }).catch(err => {
                 console.error(err);
             });
+        },
+        calculatePercentage(limit, base_value, operation) {
+            function isInt(value) {
+                if (isNaN(value)) {
+                    return false;
+                }
+                var x = parseFloat(value);
+                if ((x | 0) === x) {
+                    return value
+                }
+            }
+
+            var temp_limit = isInt(limit)
+
+            if (temp_limit < 0) {
+                limit = -100
+            } else {
+                temp_limit = (temp_limit / 100)
+                // console.log(temp_limit, base_value);
+                if (operation == "add")
+                    limit = Number(base_value) + Number((temp_limit * base_value));
+                else if (operation == "less")
+                    limit = Number(base_value) - Number((temp_limit * base_value));
+            }
+
+            return limit
         },
         drawChart() {
             let root = am5.Root.new(this.$refs.chartdiv);
@@ -91,6 +125,7 @@ export default {
             // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
             let xAxis = chart.xAxes.push(
                 am5xy.ValueAxis.new(root, {
+                    end: 0.3,
                     renderer: am5xy.AxisRendererX.new(root, {
                         minGridDistance: 50
                     }),
@@ -98,9 +133,29 @@ export default {
                 })
             );
 
+            var h_min = 0
+            var h_max = 0
+
+            if (this.media[0].MIN < this.lLimit) {
+                h_min = this.media[0].MIN
+            } else {
+                h_min = this.lLimit
+            }
+
+            if (this.media[0].MAX > this.hLimit) {
+                h_max = this.media[0].MAX
+            } else {
+                h_max = this.hLimit
+            }
+
+            console.log(this.media[0]);
+
             let yAxis = chart.yAxes.push(
                 am5xy.ValueAxis.new(root, {
-                    renderer: am5xy.AxisRendererY.new(root, {})
+                    start: 0.6,
+                    min: h_min,
+                    max: h_max,
+                    renderer: am5xy.AxisRendererY.new(root, {}),
                 })
             );
 
@@ -146,17 +201,14 @@ export default {
 
             // add scrollbar
             chart.set("scrollbarX", am5.Scrollbar.new(root, {
-                orientation: "horizontal"
+                orientation: "horizontal",
+                end: 0.3,
             }));
 
             chart.set("scrollbarY", am5.Scrollbar.new(root, {
-                orientation: "vertical"
+                orientation: "vertical",
+                start: 0.6,
             }));
-
-            // Make stuff animate on load
-            // https://www.amcharts.com/docs/v5/concepts/animations/
-            series.appear(1000, 100);
-            chart.appear(1000, 100);
 
             function createRange(value, endValue, label, color, dashed) {
                 let rangeDataItem = yAxis.makeDataItem({
@@ -197,7 +249,10 @@ export default {
                     });
                 }
 
-
+                // Make stuff animate on load
+                // https://www.amcharts.com/docs/v5/concepts/animations/
+                series.appear(1000, 100);
+                chart.appear(1000, 100);
             }
 
             // Function to add process control ranges
@@ -208,13 +263,11 @@ export default {
                 // Add upper/average/lower lines
                 createRange(lower, undefined, "High limit", am5.color(0xD20103));
                 createRange(upper, undefined, "Low limit", am5.color(0xD20103));
-                createRange(median, undefined, "Comportamiento promedio", am5.color(0x000000), true);
+                createRange(median, undefined, "Promedio", am5.color(0x000000), true);
 
             }
-            console.log(Number(this.media[0].MEDIA))
 
-
-            addLimits(0.7514, 0.4046, this.media[0].MEDIA)
+            addLimits(this.lLimit, this.hLimit, this.media[0].MEDIA)
         }
     },
     mounted() {

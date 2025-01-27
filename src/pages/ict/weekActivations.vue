@@ -15,7 +15,7 @@
             </div>
         </div>
         <div ref="chartContainer">
-            <div ref="chartdiv" class="graph"></div>
+            <div ref="chartdiv" class="graph" id="Manolito"></div>
         </div>
     </div>
 
@@ -127,29 +127,26 @@ export default {
                 });
 
                 if (this.data.size > 0) {
-                    // this.reDrawChart(this.root)
+                    console.log(this.data);
+                    this.root.dispose()
+                    this.chart.dispose()
+                    this.drawChart();
                 }
+
             }).catch(err => {
                 console.error(err);
             });
         },
-        reDrawChart(root) {
-            //Clear chart
-            this.xAxis.data.clear()
-            this.legend.data.clear()
-
-            let xAxis = this.xAxis
-            let yAxis = this.yAxis
-
-            this.chart.series._values.forEach(element => {
-                console.log(element);
-            });
-
-            this.root.dispose()
-
-            this.drawChart()
-        },
         drawChart() {
+            am5.array.each(am5.registry.rootElements, function (root) {
+                if (root) {
+                    if (this.$refs != undefined) {
+                        if (root.dom.id == this.$refs.chartdiv.id) {
+                            root.dispose();
+                        }
+                    }
+                }
+            });
             // Create root element
             let root = am5.Root.new(this.$refs.chartdiv);
 
@@ -251,10 +248,7 @@ export default {
 
             // Make stuff animate on load
             chart.appear(1000, 100);
-            this.legend = legend;
             this.chart = chart;
-            this.xAxis = xAxis;
-            this.yAxis = yAxis;
             this.root = root;
         }
     },
@@ -283,7 +277,7 @@ export default {
                     }
                 }
             }
-        }
+        },
     }
 }
 </script>

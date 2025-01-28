@@ -28,6 +28,7 @@
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
+import color_palette from '@amcharts/amcharts5/themes/Dataviz'
 import { api } from 'boot/axios'
 
 export default {
@@ -152,7 +153,8 @@ export default {
 
             // Set themes
             root.setThemes([
-                am5themes_Animated.new(root)
+                am5themes_Animated.new(root),
+                color_palette.new(root)
             ]);
 
             // Create chart

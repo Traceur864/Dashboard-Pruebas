@@ -42,6 +42,7 @@ import IndividualParetto from './component/individualParetto.vue';
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
+import color_palette from '@amcharts/amcharts5/themes/Kelly';
 
 export default {
     data() {
@@ -130,7 +131,8 @@ export default {
             let root = am5.Root.new(this.$refs.chartdiv);
 
             root.setThemes([
-                am5themes_Animated.new(root)
+                am5themes_Animated.new(root),
+                color_palette.new(root)
             ]);
 
             // Create chart
@@ -214,6 +216,16 @@ export default {
                 yAxis: yAxis,
                 valueYField: "TOTAL",
                 categoryXField: "ERROR_DESC"
+            }));
+
+            series.columns.template.set("fillGradient", am5.LinearGradient.new(root, {
+                stops: [{
+                    color: am5.color(0xE5181A)
+                }, {
+                    color: am5.color(0x82F753)
+                }],
+                rotation: 90,
+                target: chart.plotContainer
             }));
 
             series.columns.template.setAll({

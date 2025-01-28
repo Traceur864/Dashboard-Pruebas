@@ -38,6 +38,12 @@ export default {
             lLimit: '',
             hLimit: '',
             measure: '',
+
+            //Require report variables
+            Component_name: '',
+            start_date: '',
+            end_date: '',
+
         }
     },
     methods: {
@@ -89,7 +95,11 @@ export default {
             var temp_limit = isInt(limit)
 
             if (temp_limit < 0) {
-                limit = -100
+                if ("less") {
+                    limit = this.media[0].MAX * -1
+                } else {
+                    limit = this.media[0].MAX
+                }
             } else {
                 temp_limit = (temp_limit / 100)
                 // console.log(temp_limit, base_value);
@@ -125,7 +135,6 @@ export default {
             // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
             let xAxis = chart.xAxes.push(
                 am5xy.ValueAxis.new(root, {
-                    end: 0.3,
                     renderer: am5xy.AxisRendererX.new(root, {
                         minGridDistance: 50
                     }),
@@ -152,7 +161,6 @@ export default {
 
             let yAxis = chart.yAxes.push(
                 am5xy.ValueAxis.new(root, {
-                    start: 0.6,
                     min: h_min,
                     max: h_max,
                     renderer: am5xy.AxisRendererY.new(root, {}),
@@ -202,12 +210,10 @@ export default {
             // add scrollbar
             chart.set("scrollbarX", am5.Scrollbar.new(root, {
                 orientation: "horizontal",
-                end: 0.3,
             }));
 
             chart.set("scrollbarY", am5.Scrollbar.new(root, {
                 orientation: "vertical",
-                start: 0.6,
             }));
 
             function createRange(value, endValue, label, color, dashed) {
@@ -261,8 +267,8 @@ export default {
                 createRange(lower, upper, undefined, am5.color(0xffce00));
 
                 // Add upper/average/lower lines
-                createRange(lower, undefined, "High limit", am5.color(0xD20103));
-                createRange(upper, undefined, "Low limit", am5.color(0xD20103));
+                createRange(lower, undefined, "Low limit", am5.color(0xD20103));
+                createRange(upper, undefined, "High limit", am5.color(0xD20103));
                 createRange(median, undefined, "Promedio", am5.color(0x000000), true);
 
             }
@@ -271,7 +277,7 @@ export default {
         }
     },
     mounted() {
-        this.getData()
+        // this.getData()
         // this.drawChart()
     },
     watch: {

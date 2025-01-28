@@ -97,7 +97,7 @@ const routes = [
       {
         path: "component_report",
         name: "component_report",
-        component: () => import("pages/component_report/componentReport.vue"),
+        component: () => import("pages/component_report/historicReports.vue"),
         meta: {
           requiresAuth: true,
           rol: ["Administrador", "Full ICT", "Jr ICT"],

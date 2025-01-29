@@ -104,6 +104,15 @@ const routes = [
         },
       },
       {
+        path: "component_report/:id",
+        name: "component_report_data",
+        component: () => import("pages/component_report/componentReport.vue"),
+        meta: {
+          requiresAuth: true,
+          rol: ["Administrador", "Full ICT", "Jr ICT"],
+        },
+      },
+      {
         path: "organigrama",
         name: "organigrama",
         component: () => import("pages/TeamTests/Organigrama.vue"),

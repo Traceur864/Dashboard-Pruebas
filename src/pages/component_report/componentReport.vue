@@ -1,11 +1,22 @@
 <template>
     <q-page class="q-pa-md">
-        <div class="row q-col-gutter-lg q-pt-md">
+        <div class="row q-col-gutter-md">
+            <div class="col-auto">
+                <q-btn color="primary" icon="arrow_back" @click="$router.push('/component_report')" />
+            </div>
+            <div class="col-auto">
+                <q-badge color="purple" class="text-h6"> Reporte # {{ $route.params.id }} </q-badge>
+            </div>
             <div class="col-auto">
                 <q-badge color="primary" class="text-h6">Componente: {{ name }} </q-badge>
             </div>
+        </div>
+        <div class="row q-col-gutter-lg q-pt-md">
             <div class="col-auto">
                 <q-badge color="positive" class="text-h6">Media: {{ median + measure }} </q-badge>
+            </div>
+            <div class="col-auto">
+                <q-badge color="positive" class="text-h6">STD_V: {{ std_v }} </q-badge>
             </div>
             <div class="col-auto">
                 <q-badge color="black" class="text-h6">Low limit: {{ lLimit + measure }} </q-badge>
@@ -38,6 +49,7 @@ export default {
             lLimit: '',
             hLimit: '',
             measure: '',
+            std_v: '',
 
             //Require report variables
             Component_name: '',
@@ -49,7 +61,7 @@ export default {
     methods: {
         getData() {
             //TODO: GET CURRENT DATE AND FILTER BY THAT
-            api.get('/ict_data/activations/bb/component_report').then(response => {
+            api.get('/ict_data/activations/bb/component_report/data/' + this.$route.params.id).then(response => {
                 // this.data = response.data[0];
                 var data = response.data[0]
                 var media = response.data[1]
@@ -61,15 +73,13 @@ export default {
                     counter++
                 });
 
+                this.std_v = media[0].STD_V
                 var base_value = media[0].STD_V.replace(/[^0-9.]+/g, '')
                 this.measure = media[0].STD_V.replace(/[^A-Za-z]+/g, '')
                 this.data = data
                 this.media = media
                 this.name = this.data[0].PART_NAME
                 this.median = this.media[0].MEDIA
-
-                this.media[0].MAX = this.media[0].MAX.replace(/[^0-9.]+/g, '')
-                this.media[0].MIN = this.media[0].MIN.replace(/[^0-9.]+/g, '')
 
                 //CALCULAR LIMITE INFIERIOR Y SUPERIOR
                 this.hLimit = this.calculatePercentage(this.media[0].HLIM, base_value, "add");
@@ -277,14 +287,11 @@ export default {
         }
     },
     mounted() {
-        // this.getData()
-        // this.drawChart()
+        this.getData()
     },
     watch: {
-        data_comp: {
-            handler() {
-
-            }
+        '$route.params.id': function (newId) {
+            this.getData()
         }
     }
 }

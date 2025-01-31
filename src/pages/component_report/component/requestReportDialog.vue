@@ -82,6 +82,7 @@ export default {
                 this.atm_sn = ''
                 this.location = ''
                 this.$emit('reload')
+                this.clear_data()
                 this.requestDialog = false
             }).catch((error) => {
                 var error = err.response.data.error
@@ -99,6 +100,12 @@ export default {
                 this.requestDialog = false
             })
         },
+        clear_data() {
+            this.comp_name = ''
+            this.start_date = ''
+            this.end_date = ''
+            this.model = []
+        }
     },
 
 }

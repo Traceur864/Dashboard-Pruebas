@@ -101,15 +101,16 @@ export default {
                     return value
                 }
             }
-
             var temp_limit = isInt(limit)
 
             if (temp_limit < 0) {
                 if ("less") {
-                    limit = this.media[0].MAX * -1
+                    limit = this.media[0].MIN - 2
                 } else {
                     limit = this.media[0].MAX
                 }
+            } else if (!temp_limit) {
+                limit = limit.replace(/[^0-9.]+/g, '')
             } else {
                 temp_limit = (temp_limit / 100)
                 // console.log(temp_limit, base_value);
@@ -167,7 +168,7 @@ export default {
                 h_max = this.hLimit
             }
 
-            console.log(this.media[0]);
+            // console.log(this.media[0]);
 
             let yAxis = chart.yAxes.push(
                 am5xy.ValueAxis.new(root, {
@@ -283,7 +284,7 @@ export default {
 
             }
 
-            addLimits(this.lLimit, this.hLimit, this.media[0].MEDIA)
+            addLimits(Number(this.lLimit), Number(this.hLimit), this.media[0].MEDIA.replace(/[^0-9.]+/g, ''))
         }
     },
     mounted() {

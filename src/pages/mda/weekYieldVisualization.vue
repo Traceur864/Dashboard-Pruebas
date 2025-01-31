@@ -8,15 +8,10 @@
         </div>
         <div class="row q-col-gutter-sm">
             <div class="col-3">
-                <q-input v-model="date" type="date" label="Fecha del Yield" filled />
+                <q-input v-model="start_date" type="date" label="Fecha de inicio" filled />
             </div>
             <div class="col-3">
-                <q-select v-model="shift" :options="['Turno 1', 'Turno 2', 'Turno 3']" label="Turno" filled>
-                    <template v-slot:append>
-                        <q-icon v-if="shift !== null" class="cursor-pointer" name="clear"
-                            @click.stop.prevent="shift = null" />
-                    </template>
-                </q-select>
+                <q-input v-model="end_date" type="date" label="Fecha del fin" filled />
             </div>
         </div>
 
@@ -44,7 +39,8 @@ export default {
             shift: null,
             machine: '',
             model: null,
-            date: '',
+            start_date: '',
+            end_date: '',
             options: [],
         }
     },
@@ -75,9 +71,20 @@ export default {
             });
         },
         filterData() {
-            api.get('/mda_data/errors/week_yield').then(response => {
-                this.data = []
-                this.data = response.data[0];
+            api.get('/mda_data/errors/week_yield/' + this.start_date + "/" + this.end_date).then(response => {
+                var data = response.data[0]
+                this.data = new Map()
+
+                // console.log(data);
+                data.forEach(dat => {
+                    if (this.data.has(dat.FIXTURE)) {
+                        var temp = this.data.get(dat.FIXTURE)
+                        temp.push(dat)
+                        this.data.set(dat.FIXTURE, temp);
+                    } else {
+                        this.data.set(dat.FIXTURE, [dat]);
+                    }
+                });
                 // this.drawChart();
             }).catch(err => {
                 console.error(err);
@@ -88,21 +95,21 @@ export default {
         this.getData()
     },
     watch: {
-        date: {
+        start_date: {
             handler() {
-                this.filterData();
+                if (this.start_date != "" && this.end_date != "" && this.start_date <= this.end_date) {
+                    this.filterData();
+                } else if (this.start_date == "" && this.end_date == "") {
+                    this.getData();
+                }
             }
         },
-        shift: {
+        end_date: {
             handler() {
-                if (this.date != '') {
+                if (this.start_date != "" && this.end_date != "" && this.start_date <= this.end_date) {
                     this.filterData();
-                } else if (this.shift != '') {
-                    this.$q.notify({
-                        message: 'Debe seleccionar una fecha',
-                        type: 'warning',
-                        timeout: 1000
-                    })
+                } else if (this.start_date == "" && this.end_date == "") {
+                    this.getData();
                 }
             }
         }

@@ -65,7 +65,7 @@ export default {
                 { name: 'component_name', field: 'COMPONENT_NAME', required: true, label: 'Componente', align: 'center', sortable: true },
                 { name: 'date_range', field: 'range', required: true, label: 'Rangos de busqueda', align: 'center', sortable: true },
                 { name: 'requested_at', field: 'REQUESTED_AT', required: true, label: 'Solicitado el', align: 'center', sortable: true },
-                { name: 'finished_at', field: 'FINISHED_AT', required: true, label: 'Finalizado el', align: 'center', sortable: true },
+                { name: 'finished_at', field: 'FINISHED_AT', required: true, label: 'Ultima actualización', align: 'center', sortable: true },
                 { name: 'status', field: 'REPORT_STATUS', required: true, label: 'Estado', align: 'center', sortable: true },
                 { name: 'actions', field: 'btn', required: true, label: 'Acciones', align: 'center', sortable: false },
             ]

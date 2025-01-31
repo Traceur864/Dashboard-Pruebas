@@ -15,7 +15,7 @@
             </div>
         </div>
         <div ref="chartContainer">
-            <div ref="chartdiv" class="graph" id="Manolito"></div>
+            <div v-if="show_ch" ref="chartdiv" class="graph" id="Manolito"></div>
         </div>
     </div>
 
@@ -43,11 +43,8 @@ export default {
             start_date: '',
             last_date: '',
             options: [],
-            legend: null,
-            chart: null,
-            root: null,
-            xAxis: null,
-            yAxis: null,
+            show_ch: true,
+            xAxis: '',
         }
     },
     methods: {
@@ -128,10 +125,8 @@ export default {
                 });
 
                 if (this.data.size > 0) {
-                    console.log(this.data);
-                    this.root.dispose()
-                    this.chart.dispose()
-                    this.drawChart();
+                    this.data = []
+                    this.drawChart()
                 }
 
             }).catch(err => {
@@ -139,15 +134,6 @@ export default {
             });
         },
         drawChart() {
-            am5.array.each(am5.registry.rootElements, function (root) {
-                if (root) {
-                    if (this.$refs != undefined) {
-                        if (root.dom.id == this.$refs.chartdiv.id) {
-                            root.dispose();
-                        }
-                    }
-                }
-            });
             // Create root element
             let root = am5.Root.new(this.$refs.chartdiv);
 
@@ -245,13 +231,10 @@ export default {
                 makeSeries(el, el);
             });
 
-            //Reduce lag
-            // root.fps = 60    
-
-            // Make stuff animate on load
             chart.appear(1000, 100);
             this.chart = chart;
             this.root = root;
+            this.xAxis = xAxis;
         }
     },
     mounted() {
@@ -264,8 +247,18 @@ export default {
                 if (this.last_date != "" && this.start_date != "") {
                     //Validate that start date is smaller than last date
                     if (this.start_date <= this.last_date) {
+                        this.root.container.children.clear()
+                        this.root.dispose()
+                        this.xAxis.data.clear()
+                        this.info = []
                         this.filterData(this.start_date, this.last_date)
                     }
+                } else if (this.start_date == "" && this.last_date == "") {
+                    this.root.container.children.clear()
+                    this.root.dispose()
+                    this.xAxis.data.clear()
+                    this.info = []
+                    this.getData()
                 }
             }
         },
@@ -275,8 +268,19 @@ export default {
                 if (this.last_date != "" && this.start_date != "") {
                     //Validate that start date is smaller than last date
                     if (this.start_date <= this.last_date) {
+                        // this.root.container.children.clear();
+                        this.root.container.children.clear()
+                        this.root.dispose()
+                        this.xAxis.data.clear()
+                        this.info = []
                         this.filterData(this.start_date, this.last_date)
                     }
+                } else if (this.start_date == "" && this.last_date == "") {
+                    this.root.container.children.clear()
+                    this.root.dispose()
+                    this.xAxis.data.clear()
+                    this.info = []
+                    this.getData()
                 }
             }
         },

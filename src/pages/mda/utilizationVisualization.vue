@@ -144,6 +144,8 @@ export default {
                         })
                     }
                     this.filterData();
+                } else if (this.start_date == "" && this.end_date == "") {
+                    this.getData();
                 }
             }
         },
@@ -158,6 +160,8 @@ export default {
                         })
                     }
                     this.filterData();
+                } else if (this.start_date == "" && this.end_date == "") {
+                    this.getData();
                 }
             }
         }

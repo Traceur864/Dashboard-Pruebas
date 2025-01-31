@@ -82,7 +82,7 @@ export default {
             }));
 
             xRenderer.grid.template.setAll({
-                location: 1
+                location: 1,
             })
 
             xRenderer.labels.template.setAll({
@@ -162,8 +162,8 @@ export default {
             }));
 
             // Make stuff animate on load
-            series.appear();
-            chart.appear(1000, 100);
+            // series.appear();
+            // chart.appear(1000, 100);
 
             this.helper_series = series
             this.helper_pareto = paretoSeries

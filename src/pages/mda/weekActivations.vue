@@ -15,7 +15,7 @@
             </div>
         </div>
         <div ref="chartContainer">
-            <div ref="chartdiv" class="graph"></div>
+            <div v-if="show_ch" ref="chartdiv" class="graph"></div>
         </div>
     </div>
 
@@ -43,11 +43,8 @@ export default {
             start_date: '',
             last_date: '',
             options: [],
-            legend: null,
-            chart: null,
-            root: null,
-            xAxis: null,
-            yAxis: null,
+            show_ch: true,
+            xAxis: '',
         }
     },
     methods: {
@@ -95,6 +92,7 @@ export default {
         filterData(start_date, last_date) {
             api.get('/mda_data/activations/' + start_date + "/" + last_date).then(response => {
                 var data = response.data
+                console.log(data);
 
                 this.data = new Map()
                 this.fixtures = new Map()
@@ -128,27 +126,12 @@ export default {
                 });
 
                 if (this.data.size > 0) {
-                    // this.reDrawChart(this.root)
+                    this.drawChart()
                 }
+
             }).catch(err => {
                 console.error(err);
             });
-        },
-        reDrawChart(root) {
-            //Clear chart
-            this.xAxis.data.clear()
-            this.legend.data.clear()
-
-            let xAxis = this.xAxis
-            let yAxis = this.yAxis
-
-            this.chart.series._values.forEach(element => {
-                console.log(element);
-            });
-
-            this.root.dispose()
-
-            this.drawChart()
         },
         drawChart() {
             // Create root element
@@ -248,16 +231,10 @@ export default {
                 makeSeries(el, el);
             });
 
-            //Reduce lag
-            // root.fps = 60    
-
-            // Make stuff animate on load
             chart.appear(1000, 100);
-            this.legend = legend;
             this.chart = chart;
-            this.xAxis = xAxis;
-            this.yAxis = yAxis;
             this.root = root;
+            this.xAxis = xAxis;
         }
     },
     mounted() {
@@ -270,8 +247,18 @@ export default {
                 if (this.last_date != "" && this.start_date != "") {
                     //Validate that start date is smaller than last date
                     if (this.start_date <= this.last_date) {
+                        this.root.container.children.clear()
+                        this.root.dispose()
+                        this.xAxis.data.clear()
+                        this.info = []
                         this.filterData(this.start_date, this.last_date)
                     }
+                } else if (this.start_date == "" && this.last_date == "") {
+                    this.root.container.children.clear()
+                    this.root.dispose()
+                    this.xAxis.data.clear()
+                    this.info = []
+                    this.getData()
                 }
             }
         },
@@ -281,11 +268,22 @@ export default {
                 if (this.last_date != "" && this.start_date != "") {
                     //Validate that start date is smaller than last date
                     if (this.start_date <= this.last_date) {
+                        // this.root.container.children.clear();
+                        this.root.container.children.clear()
+                        this.root.dispose()
+                        this.xAxis.data.clear()
+                        this.info = []
                         this.filterData(this.start_date, this.last_date)
                     }
+                } else if (this.start_date == "" && this.last_date == "") {
+                    this.root.container.children.clear()
+                    this.root.dispose()
+                    this.xAxis.data.clear()
+                    this.info = []
+                    this.getData()
                 }
             }
-        }
+        },
     }
 }
 </script>

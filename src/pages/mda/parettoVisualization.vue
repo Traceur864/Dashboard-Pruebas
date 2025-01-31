@@ -93,6 +93,15 @@ export default {
                 console.error(err);
             });
         },
+        restartChart() {
+            api.get('/mda_data/errors/nv_errors/week').then(response => {
+                var data = response.data;
+                this.week = data;
+                this.updatChart()
+            }).catch(err => {
+                console.error(err);
+            });
+        },
         filterData(start_date, last_date) {
             api.get('/mda_data/errors/nv_errors/' + start_date + "/" + last_date).then(response => {
                 var data = response.data;
@@ -312,6 +321,9 @@ export default {
                     if (this.start_date <= this.last_date && this.last_date != "") {
                         this.filterData(this.start_date, this.last_date)
                     }
+                } else if (this.start_date == "" && this.last_date == "") {
+                    this.getData()
+                    this.restartChart()
                 }
             }
         },
@@ -321,6 +333,9 @@ export default {
                     if (this.start_date <= this.last_date && this.last_date != "") {
                         this.filterData(this.start_date, this.last_date)
                     }
+                } else if (this.start_date == "" && this.last_date == "") {
+                    this.getData()
+                    this.restartChart()
                 }
             }
         }

@@ -173,6 +173,15 @@ const routes = [
           rol: ["Administrador", "Full ISP", "Jr ISP"],
         },
       },
+      {
+        path: "/other_models",
+        name: "other_models",
+        component: () => import("pages/pg_charts/Index_pg.vue"),
+        meta: {
+          requiresAuth: true,
+          rol: ["Administrador", "Full ISP", "Jr ISP"],
+        }
+      },
     ],
   },
 

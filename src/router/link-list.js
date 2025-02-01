@@ -13,9 +13,16 @@ export const linksList = [
     meta: { rol: ["Administrador", "Full ICT", "Jr ICT"] },
   },
   {
+    title: "PG520 / P2312",
+    caption: "Información graficada",
+    icon: "las la-folder-open",
+    link: "other_models",
+    meta: { rol: ["Administrador", "Full ISP", "Jr ISP"] },
+  },
+  {
     title: "MDA",
     caption: "Visualizacion de datos MDA",
-    icon: "las la-project-diagram",
+    icon: "bar_chart",
     link: "mda",
     meta: { rol: ["Administrador", "Full MDA", "Jr MDA"] },
   },

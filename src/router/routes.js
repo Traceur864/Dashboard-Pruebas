@@ -162,7 +162,6 @@ const routes = [
           rol: ["Administrador", "Full ISP", "Jr ISP"],
         },
       },
-
       //Calendar routes
       {
         path: "calendar/vacations",
@@ -176,7 +175,17 @@ const routes = [
       {
         path: "/other_models",
         name: "other_models",
-        component: () => import("pages/pg_charts/Index_pg.vue"),
+        component: () => import("pages/IndexReports.vue"),
+        meta: {
+          requiresAuth: true,
+          rol: ["Administrador", "Full ISP", "Jr ISP"],
+        }
+      },
+      //New Model routes
+      {
+        path: "/other_models/:model",
+        name: "model_data",
+        component: () => import("pages/model_charts/IndexModel.vue"),
         meta: {
           requiresAuth: true,
           rol: ["Administrador", "Full ISP", "Jr ISP"],

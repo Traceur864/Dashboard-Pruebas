@@ -6,25 +6,11 @@ export const linksList = [
     link: "home",
   },
   {
-    title: "ICT",
-    caption: "Visualizacion de datos ICT",
+    title: "Visualización de datos",
+    caption: "Información graficada por modelo",
     icon: "las la-chart-bar",
-    link: "ict",
-    meta: { rol: ["Administrador", "Full ICT", "Jr ICT"] },
-  },
-  {
-    title: "PG520 / P2312",
-    caption: "Información graficada",
-    icon: "las la-folder-open",
     link: "other_models",
     meta: { rol: ["Administrador", "Full ISP", "Jr ISP"] },
-  },
-  {
-    title: "MDA",
-    caption: "Visualizacion de datos MDA",
-    icon: "bar_chart",
-    link: "mda",
-    meta: { rol: ["Administrador", "Full MDA", "Jr MDA"] },
   },
   {
     title: "Reporte de componente",

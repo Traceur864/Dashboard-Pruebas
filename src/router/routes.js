@@ -141,7 +141,7 @@ const routes = [
         component: () => import("src/pages/strain_gauge/StrainGauge.vue"),
         meta: {
           requiresAuth: true,
-          rol: ["Administrador", "Full ISP", "Jr ISP"],
+          rol: ["Administrador", "SG Full", "SG Jr"],
         },
       },
 
@@ -152,7 +152,7 @@ const routes = [
         component: () => import("pages/calendar/VacationCalendar.vue"),
         meta: {
           requiresAuth: true,
-          rol: ["Administrador", "Full ISP", "Jr ISP"],
+          rol: ["Administrador", "VC Full"],
         },
       },
     ],

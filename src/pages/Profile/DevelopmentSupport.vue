@@ -17,11 +17,17 @@
           </div>
         </div>
         <div class="flex row justify-evenly">
-          <div class="col">
+          <div class="col q-mb-lg">
             <q-input v-model="developSupport.comments" square type="textarea" hint="Especifica el problema" rows="2"
               label="Comentarios" :rules="[val => val && val.length > 0 || 'Este campo es requerido']" />
           </div>
         </div>
+        <!-- <div class="flex row justify-center">
+          <div class="row">
+            <q-uploader style="max-width: 500px" max-files="3" label="Capturas del problema" multiple
+              accept=".jpg, image/*" @rejected="onRejected" />
+          </div>
+        </div> -->
         <q-separator class="q-mt-lg" />
         <q-card-actions class="flex justify-end">
           <q-btn flat label="Cancelar" color="primary" v-close-popup />
@@ -49,6 +55,15 @@ const developSupport = ref({
   asunto: '',
   comments: ''
 })
+
+function onRejected(rejectedEntries) {
+  // Notify plugin needs to be installed
+  // https://v2.quasar.dev/quasar-plugins/notify#Installation
+  $q.notify({
+    type: 'negative',
+    message: `${rejectedEntries.length} file(s) did not pass validation constraints`
+  })
+}
 
 async function HandleSupport() {
 

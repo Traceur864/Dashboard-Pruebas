@@ -84,11 +84,13 @@ const optionsRol = [
   'Full MDA',
   'Full ISP',
   'Full BSI',
+  'SG Full',
   'Jr Programming',
   'Jr ICT',
   'Jr MDA',
   'Jr ISP',
-  'Jr BSI'
+  'Jr BSI',
+  'SG Jr'
 ]
 
 const onUserSelect = (selectedUser) => {

@@ -17,7 +17,9 @@ export const linksList = [
     caption: "Visualizacion de datos MDA",
     icon: "las la-project-diagram",
     link: "mda",
-    meta: { rol: ["Administrador", "Full MDA", "Jr MDA"] },
+    meta: {
+      rol: ["Administrador", "Full ISP", "Full BSI", "Full MDA", "Full ICT"],
+    },
   },
   {
     title: "Organigrama",
@@ -33,14 +35,16 @@ export const linksList = [
     caption: "Mantenimiento de equipos",
     icon: "las la-calendar-check",
     link: "strain-gauge",
-    meta: { rol: ["Administrador", "Full ISP", "Jr ISP"] },
+    meta: {
+      rol: ["Administrador", "SG Full", "SG Jr"],
+    },
   },
   {
     title: "Vacation Planner",
     caption: "RH",
     icon: "lar la-calendar",
     link: "vacation_calendar",
-    meta: { rol: ["Administrador", "Full ISP", "Jr ISP"] },
+    meta: { rol: ["Administrador", "VC Full"] },
   },
   {
     title: "Mantenimientos",

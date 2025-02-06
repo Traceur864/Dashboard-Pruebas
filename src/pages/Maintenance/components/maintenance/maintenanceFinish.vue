@@ -299,14 +299,12 @@ export default {
             'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
           }
         }
-        var dateNow = "2025-02-05 13:19:00";
 
         const paramsEmail = new URLSearchParams()
         paramsEmail.append('idUser', this.current_user.id)
         paramsEmail.append('senderEmail', this.current_user.email)
         paramsEmail.append('typeEvent', dataCalibrationEmail.EVENT_TYPE)
-        //paramsEmail.append('newDate', dataCalibrationEmail.PLAN_DATE)
-        paramsEmail.append('newDate', dateNow)
+        paramsEmail.append('newDate', dataCalibrationEmail.PLAN_DATE)
         paramsEmail.append('mNumber', dataCalibrationEmail.ID_MAINTENANCE)
 
         if (dataCalibrationEmail.ID_ATM != null && dataCalibrationEmail.ID_TESTER == null) {

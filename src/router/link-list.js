@@ -18,7 +18,7 @@ export const linksList = [
     icon: "las la-project-diagram",
     link: "mda",
     meta: {
-      rol: ["Administrador", "Full ISP", "Full BSI", "Full MDA", "Full ICT"],
+      rol: ["Administrador", "Full MDA", "Full ICT", "Jr ICT", "Jr MDA"],
     },
   },
   {
@@ -51,7 +51,7 @@ export const linksList = [
     caption: "Mantenimientos y calibraciones",
     icon: "engineering",
     link: "maintenance",
-    meta: { rol: ["Administrador", "Full BSI", "Jr BSI"] },
+    meta: { rol: ["Administrador", "M&C Full", "M&C Jr"] },
   },
   {
     title: "Label Center",

@@ -362,11 +362,15 @@ const optionsRol = [
   'Full MDA',
   'Full ISP',
   'Full BSI',
+  'SG Full',
+  'M&C Full',
   'Jr Programming',
   'Jr ICT',
   'Jr MDA',
   'Jr ISP',
-  'Jr BSI'
+  'Jr BSI',
+  'SG Jr',
+  'M&C Jr',
 ]
 
 defineOptions({

@@ -87,6 +87,16 @@ export default {
             })
         },
         finishStrainGauge() {
+            if (this.sg_report == null) {
+                this.$q.notify({
+                    message: 'Debes seleccionar un archivo de calibración',
+                    type: 'warning',
+                    position: 'center',
+                    timeout: 2500
+                })
+                return
+            }
+
             const dismiss = this.$q.notify({
                 spinner: true,
                 message: "Por favor, espera...",

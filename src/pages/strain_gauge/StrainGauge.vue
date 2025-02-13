@@ -40,7 +40,12 @@
             </q-badge>
           </div>
         </div>
-        <div class="col-auto self-end q-pb-lg">
+        <div class="col-auto self-end q-pb-lg"
+          v-if="this.current_user.rol !== 'SG Full' || this.current_user.rol !== 'Administrador'">
+          <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Historial"
+            @click="this.$refs.showEvents.openDialog()" />
+        </div>
+        <div class="col-auto self-end q-pb-lg" v-else>
           <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Historial"
             @click="this.$refs.showEvents.openDialog()" />
           <q-btn class="q-mt-md q-mx-sm" color="secondary" label="Administrar Testers"
@@ -225,6 +230,7 @@ export default {
           })
 
           this.get_events()
+          this.get_eventForEmail()
 
         }).catch((errors) => {
 
@@ -353,6 +359,61 @@ export default {
               'calendar_id': el.ID_EVENT
             })
         });
+      }).catch((error) => {
+        console.error(error);
+      })
+    },
+
+    get_eventForEmail() {
+      api.get('/strain_gauge/lastevent').then((response) => {
+        var dataEmail = response.data
+        //console.log(dataEmail);
+
+        const configs = {
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+          }
+        }
+        const paramsEmail = new URLSearchParams()
+        paramsEmail.append('idAssigned', dataEmail.ASIGNED_TO)
+        paramsEmail.append('idUser', this.current_user.id)
+        paramsEmail.append('senderEmail', this.current_user.email)
+        paramsEmail.append('dateSended', dataEmail.START_DATE)
+        paramsEmail.append('sgNumber', dataEmail.ID_EVENT)
+
+
+        api.post('email/startSG', paramsEmail, configs).then(response => {
+
+          console.log(response.data);
+
+          this.$q.notify({
+            color: 'positive',
+            message: 'Correo enviado con éxito' || response.data,
+            icon: 'check'
+          })
+          close()
+        }).catch(error => {
+
+          if (error.response && error.response.data) {
+            // Mostrar el mensaje de error del servidor
+            this.$q.notify({
+              color: 'negative',
+              message: error.response.data.msg || 'Error desconocido',
+              icon: 'warning',
+            });
+          } else {
+            // En caso de que no haya respuesta, mostrar un mensaje genérico
+            this.$q.notify({
+              color: 'negative',
+              message: 'Hubo un error al enviar el correo',
+              icon: 'error',
+            });
+            console.error('Error al enviar correo:', error);
+
+          }
+        });
+
       }).catch((error) => {
         console.error(error);
       })

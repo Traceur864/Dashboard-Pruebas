@@ -18,6 +18,13 @@ export const linksList = [
     icon: "query_stats",
     link: "component_report",
     meta: { rol: ["Administrador", "Full ICT", "Jr ICT"] },
+    title: "MDA",
+    caption: "Visualizacion de datos MDA",
+    icon: "las la-project-diagram",
+    link: "mda",
+    meta: {
+      rol: ["Administrador", "Full MDA", "Full ICT", "Jr ICT", "Jr MDA"],
+    },
   },
   {
     title: "Organigrama",
@@ -33,21 +40,23 @@ export const linksList = [
     caption: "Mantenimiento de equipos",
     icon: "las la-calendar-check",
     link: "strain-gauge",
-    meta: { rol: ["Administrador", "Full ISP", "Jr ISP"] },
+    meta: {
+      rol: ["Administrador", "SG Full", "SG Jr"],
+    },
   },
   {
     title: "Vacation Planner",
     caption: "RH",
     icon: "lar la-calendar",
     link: "vacation_calendar",
-    meta: { rol: ["Administrador", "Full ISP", "Jr ISP"] },
+    meta: { rol: ["Administrador", "VC Full"] },
   },
   {
     title: "Mantenimientos",
     caption: "Mantenimientos y calibraciones",
     icon: "engineering",
     link: "maintenance",
-    meta: { rol: ["Administrador", "Full BSI", "Jr BSI"] },
+    meta: { rol: ["Administrador", "M&C Full", "M&C Jr"] },
   },
   {
     title: "Label Center",
@@ -56,4 +65,11 @@ export const linksList = [
     link: "label-center",
     meta: { rol: ["Administrador"] },
   },
+  {
+    title: "Programming",
+    caption: "Programacion de componentes",
+    icon: "las la-microchip",
+    link: "Programming",
+    meta: { rol: ["Administrador", "Full Programming", "Jr Programming"] },
+  }
 ];

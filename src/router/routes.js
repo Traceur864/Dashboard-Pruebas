@@ -17,14 +17,14 @@ const routes = [
           rol: [
             "Administrador",
             "Full ICT",
-            "Full ISP",
             "Full MDA",
-            "Full BSI",
+            "SG Full",
+            "M&C Full",
             "Full Programming",
             "Jr ICT",
             "Jr MDA",
-            "Jr BSI",
-            "Jr ISP",
+            "SG Jr",
+            "M&C Jr",
             "Jr Programming",
           ],
         },
@@ -38,14 +38,14 @@ const routes = [
           rol: [
             "Administrador",
             "Full ICT",
-            "Full ISP",
             "Full MDA",
-            "Full BSI",
+            "SG Full",
+            "M&C Full",
             "Full Programming",
             "Jr ICT",
             "Jr MDA",
-            "Jr BSI",
-            "Jr ISP",
+            "SG Jr",
+            "M&C Jr",
             "Jr Programming",
           ],
         },
@@ -72,7 +72,22 @@ const routes = [
         path: "config",
         name: "config",
         component: () => import("pages/Config.vue"),
-        meta: { requiresAuth: true, rol: ["Administrador"] },
+        meta: {
+          requiresAuth: true,
+          rol: [
+            "Administrador",
+            "Full ICT",
+            "Full MDA",
+            "SG Full",
+            "M&C Full",
+            "Full Programming",
+            "Jr ICT",
+            "Jr MDA",
+            "SG Jr",
+            "M&C Jr",
+            "Jr Programming",
+          ],
+        },
       },
 
       // Routes for ICT
@@ -150,7 +165,7 @@ const routes = [
         component: () => import("pages/Maintenance/MaintenanceCalendar.vue"),
         meta: {
           requiresAuth: true,
-          rol: ["Administrador", "Full BSI", "Jr BSI"],
+          rol: ["Administrador", "M&C Full", "M&C Jr"],
         },
       },
       {
@@ -159,7 +174,16 @@ const routes = [
         component: () => import("src/pages/strain_gauge/StrainGauge.vue"),
         meta: {
           requiresAuth: true,
-          rol: ["Administrador", "Full ISP", "Jr ISP"],
+          rol: ["Administrador", "SG Full", "SG Jr"],
+        },
+      },
+      {
+        path: "programming",
+        name: "Programming",
+        component: () => import("pages/programing/Programing.vue"),
+        meta: {
+          requiresAuth: true,
+          rol: ["Administrador", "Full Programming", "Jr Programming"],
         },
       },
       //Calendar routes
@@ -169,7 +193,7 @@ const routes = [
         component: () => import("pages/calendar/VacationCalendar.vue"),
         meta: {
           requiresAuth: true,
-          rol: ["Administrador", "Full ISP", "Jr ISP"],
+          rol: ["Administrador", "VC Full"],
         },
       },
       {

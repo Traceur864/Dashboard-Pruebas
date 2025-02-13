@@ -41,7 +41,8 @@
             </q-badge>
           </div>
         </div>
-        <div class="col-auto self-end q-pb-lg">
+        <div class="col-auto self-end q-pb-lg"
+          v-if="this.current_user.rol == 'Administrador' || this.current_user.rol == 'M&C Full'">
           <q-btn class="q-mt-md q-mx-xs" color="secondary" label="Historial"
             @click="this.$refs.historicMaintenance.openDialog()" />
           <q-btn class="q-mt-md q-mx-xs" color="secondary" label="Testers"
@@ -49,6 +50,10 @@
           <q-btn class="q-mt-md q-mx-xs" color="secondary" label="Fixturas"
             @click="this.$refs.fixtureDialog.openDialog()" />
           <q-btn class="q-mt-md q-ml-xs" color="secondary" label="ATMs" @click="this.$refs.atmDialog.openDialog()" />
+        </div>
+        <div class="col-auto self-end q-pb-lg" v-else>
+          <q-btn class="q-mt-md q-mx-xs" color="secondary" label="Historial"
+            @click="this.$refs.historicMaintenance.openDialog()" />
         </div>
         <div class="q-col-gutter-y-md">
 
@@ -305,6 +310,7 @@ export default {
 
         this.clear_fields()
         this.get_events()
+        this.get_maintenanceForEmail()
 
       }).catch((error) => {
 
@@ -366,6 +372,7 @@ export default {
         })
         this.clear_fields()
         this.get_events()
+        this.get_calibrationForEmail()
       }).catch((error) => {
 
         var errors = error.response.data.error
@@ -506,6 +513,140 @@ export default {
               'calendar_id': el.ID_MAINTENANCE
             })
         });
+      }).catch((error) => {
+        console.error(error);
+      })
+    },
+    get_maintenanceForEmail() {
+      api.get('/maintenance/lastmaintenance').then((response) => {
+        var dataMaintenanceEmail = response.data
+        console.log(dataMaintenanceEmail);
+
+        const configs = {
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+          }
+        }
+
+        const paramsEmail = new URLSearchParams()
+        paramsEmail.append('idUser', this.current_user.id)
+        paramsEmail.append('senderEmail', this.current_user.email)
+        paramsEmail.append('typeEvent', dataMaintenanceEmail.EVENT_TYPE)
+        paramsEmail.append('planDate', dataMaintenanceEmail.PLAN_DATE)
+        paramsEmail.append('mNumber', dataMaintenanceEmail.ID_MAINTENANCE)
+
+        if (dataMaintenanceEmail.ID_ATM != null && dataMaintenanceEmail.ID_FIXTURE == null && dataMaintenanceEmail.ID_TESTER == null) {
+          paramsEmail.append('machine', dataMaintenanceEmail.ID_ATM)
+          paramsEmail.append('machineCheck', 'ATM')
+
+        } else if (dataMaintenanceEmail.ID_ATM == null && dataMaintenanceEmail.ID_FIXTURE != null && dataMaintenanceEmail.ID_TESTER == null) {
+          paramsEmail.append('machine', dataMaintenanceEmail.ID_FIXTURE)
+          paramsEmail.append('machineCheck', 'Fixture')
+
+        } else if (dataMaintenanceEmail.ID_ATM == null && dataMaintenanceEmail.ID_FIXTURE == null && dataMaintenanceEmail.ID_TESTER != null) {
+          paramsEmail.append('machine', dataMaintenanceEmail.ID_TESTER)
+          paramsEmail.append('machineCheck', 'Tester')
+
+        }
+
+        api.post('emailMC/startMaintenance', paramsEmail, configs).then(response => {
+
+          console.log(response.data);
+
+          this.$q.notify({
+            color: 'positive',
+            message: 'Correo enviado con éxito' || response.data,
+            icon: 'check',
+            position: 'top'
+          })
+
+        }).catch(error => {
+
+          if (error.response && error.response.data) {
+            // Mostrar el mensaje de error del servidor
+            this.$q.notify({
+              color: 'negative',
+              message: error.response.data.msg || 'Error desconocido',
+              icon: 'warning',
+            });
+          } else {
+            // En caso de que no haya respuesta, mostrar un mensaje genérico
+            this.$q.notify({
+              color: 'negative',
+              message: 'Hubo un error al enviar el correo',
+              icon: 'error',
+            });
+            console.error('Error al enviar correo:', error);
+
+          }
+        });
+
+      }).catch((error) => {
+        console.error(error);
+      })
+    },
+    get_calibrationForEmail() {
+      api.get('/maintenance/lastcalibration').then((response) => {
+        var dataCalibrationEmail = response.data
+        console.log(dataCalibrationEmail);
+
+        const configs = {
+          headers: {
+            'content-type': 'application/x-www-form-urlencoded',
+            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+          }
+        }
+
+        const paramsEmail = new URLSearchParams()
+        paramsEmail.append('idUser', this.current_user.id)
+        paramsEmail.append('senderEmail', this.current_user.email)
+        paramsEmail.append('typeEvent', dataCalibrationEmail.EVENT_TYPE)
+        paramsEmail.append('planDate', dataCalibrationEmail.PLAN_DATE)
+        paramsEmail.append('mNumber', dataCalibrationEmail.ID_MAINTENANCE)
+
+        if (dataCalibrationEmail.ID_ATM != null && dataCalibrationEmail.ID_TESTER == null) {
+          paramsEmail.append('machine', dataCalibrationEmail.ID_ATM)
+          paramsEmail.append('machineCheck', 'ATM')
+
+        } else if (dataCalibrationEmail.ID_ATM == null && dataCalibrationEmail.ID_TESTER != null) {
+          paramsEmail.append('machine', dataCalibrationEmail.ID_TESTER)
+          paramsEmail.append('machineCheck', 'Tester')
+
+        }
+
+        api.post('emailMC/startCalibration', paramsEmail, configs).then(response => {
+
+          console.log(response.data);
+
+          this.$q.notify({
+            color: 'positive',
+            message: 'Correo enviado con éxito' || response.data,
+            icon: 'check',
+            position: 'top'
+          })
+
+        }).catch(error => {
+
+          if (error.response && error.response.data) {
+            // Mostrar el mensaje de error del servidor
+            this.$q.notify({
+              color: 'negative',
+              message: error.response.data.msg || 'Error desconocido',
+              icon: 'warning',
+            });
+          } else {
+            // En caso de que no haya respuesta, mostrar un mensaje genérico
+            this.$q.notify({
+              color: 'negative',
+              message: 'Hubo un error al enviar el correo',
+              icon: 'error',
+            });
+            console.error('Error al enviar correo:', error);
+
+          }
+        });
+
       }).catch((error) => {
         console.error(error);
       })

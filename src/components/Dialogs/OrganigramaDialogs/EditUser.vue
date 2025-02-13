@@ -28,9 +28,17 @@
           </div>
         </div>
         <div class="row justify-between q-mb-md">
-          <div class="col-md-6 q-gutter-md">
+          <div class="col-md-6 q-gutter-md" v-if="userFormEdit.email !== 'Correo no asignado'">
             <q-input dense square filled v-model="userFormEdit.email" label="Correo electrónico" color="grey-3"
               type="email" label-color="secondary">
+              <template v-slot:prepend>
+                <q-icon name="las la-at" color="secondary" />
+              </template>
+            </q-input>
+          </div>
+          <div class="col-md-6 q-gutter-md" v-else>
+            <q-input clearable dense square filled v-model="userFormEdit.email" label="Correo electrónico"
+              color="grey-3" type="email" label-color="secondary">
               <template v-slot:prepend>
                 <q-icon name="las la-at" color="secondary" />
               </template>
@@ -181,6 +189,8 @@ const userFormEdit = ref({
   picture: props.UserTestEdit.PICTURE
 
 });
+
+
 
 // Valida el formulario de que cumpla con todas la reglas establecidas
 function HandleLoginEdit() {
@@ -352,11 +362,15 @@ const optionsRol = [
   'Full MDA',
   'Full ISP',
   'Full BSI',
+  'SG Full',
+  'M&C Full',
   'Jr Programming',
   'Jr ICT',
   'Jr MDA',
   'Jr ISP',
-  'Jr BSI'
+  'Jr BSI',
+  'SG Jr',
+  'M&C Jr',
 ]
 
 defineOptions({

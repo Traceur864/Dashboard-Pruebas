@@ -61,6 +61,13 @@ export const linksList = [
     meta: { rol: ["Administrador"] },
   },
   {
+    title: "Programming",
+    caption: "Programacion de componentes",
+    icon: "las la-microchip",
+    link: "Programming",
+    meta: { rol: ["Administrador", "Full Programming", "Jr Programming"] },
+  },
+  {
     title: "Docs",
     caption: "quasar.dev",
     icon: "las la-graduation-cap",

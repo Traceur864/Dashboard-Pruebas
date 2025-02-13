@@ -159,8 +159,15 @@ const routes = [
           rol: ["Administrador", "SG Full", "SG Jr"],
         },
       },
-
-      //Calendar routes
+      {
+        path: "programming",
+        name: "Programming",
+        component: () => import("pages/programing/Programing.vue"),
+        meta: {
+          requiresAuth: true,
+          rol: ["Administrador", "Full Programming", "Jr Programming"],
+        },
+      },
       {
         path: "calendar/vacations",
         name: "vacation_calendar",

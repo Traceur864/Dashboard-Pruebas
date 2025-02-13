@@ -236,7 +236,8 @@ const fetchUsers = async () => {
 
     //imagePreviewUrl.value = profileuser.PICTURE || '../../../public/imgs/NoIMgae.png'
     if (userFormProfile.value.picture) {
-      imagePreviewUrl.value = `http://localhost:3000/uploads/${userFormProfile.value.picture}`;
+      //imagePreviewUrl.value = `http://localhost:3000/uploads/${userFormProfile.value.picture}`;
+      imagePreviewUrl.value = `http://localhost:3000/uploads/${profileuser.PICTURE}`;
     }
 
     watch(() => userFormProfile.value.picture, (newVal) => {
@@ -351,8 +352,15 @@ async function simulateProgress(number) {
     if (response.status === 200) {
 
       // Actualiza el localStorage con los nuevos datos
-      const updatedUser = { ...userFormProfile.value, id: idUser }; // Mantén el ID original
+      const updatedUser = {
+        ...userFormProfile.value,
+        id: idUser, // Mantén el ID original
+        //picture: userFormProfile.value.picture // Aquí almacenas la URL de la imagen
+      };
+
       localStorage.setItem('userLogin', JSON.stringify(updatedUser)); // Actualiza el localStorage
+
+      console.log(updatedUser);
 
       $q.notify({
         color: 'positive',
@@ -384,12 +392,21 @@ function onImageSelected(files) {
   // Verifica si se ha seleccionado un archivo
   if (files && files[0]) {
     const file = files[0]; // Obtiene el primer archivo
+    console.log(file);
+
     // Crea una URL temporal para la imagen seleccionada
     imagePreviewUrl.value = URL.createObjectURL(file);
     // También podemos actualizar el modelo de datos si queremos guardarlo
     userFormProfile.value.picture = file; // O almacenar la ruta del archivo si es necesario
   }
 }
+
+/* function onImageSelected(file) {
+  // Update the image preview when a file is added
+  imagePreviewUrl.value = URL.createObjectURL(file);
+  console.log(imagePreviewUrl.value);
+
+} */
 
 // Arrays de opciones para el formulario
 const optionsJob = [

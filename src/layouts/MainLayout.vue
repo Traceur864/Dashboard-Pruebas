@@ -111,7 +111,7 @@ const filteredLinks = computed(() => {
   return linksList.filter(link => {
     // Verifica si la ruta tiene roles definidos en su meta
     if (link.meta && Array.isArray(link.meta.rol)) {
-      return link.meta.rol.some(role => userRoles.value.includes(role))
+      return link.meta.rol.some(role => userRoles.value.includes(role));
     }
     return true // Si no tiene roles definidos, es accesible para todos
   })

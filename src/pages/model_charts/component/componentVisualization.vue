@@ -62,7 +62,7 @@ export default {
     },
     methods: {
         getData() {
-            api.get('/ict_data/errors/bb/component_error').then(response => {
+            api.get('/other_models/errors/component_error/' + this.$route.params.model).then(response => {
                 var data = response.data;
 
                 if (data.length > 0) {
@@ -85,7 +85,7 @@ export default {
             });
         },
         getWeekData() {
-            api.get('/ict_data/errors/bb/component_error/week').then(response => {
+            api.get('/other_models/errors/component_error/week/' + this.$route.params.model).then(response => {
                 var data = response.data;
                 this.week_data = data;
                 this.drawChart()
@@ -93,12 +93,45 @@ export default {
                 console.error(err);
             });
         },
+        updatChart() {
+            if (this.helper_series != undefined) {
+                let data = this.week_data;
+
+                prepareParetoData();
+
+                function prepareParetoData() {
+                    let total = 0;
+
+                    for (var i = 0; i < data.length; i++) {
+                        let value = data[i].TOTAL;
+                        total += value;
+                    }
+
+                    let sum = 0;
+                    for (var i = 0; i < data.length; i++) {
+                        let value = data[i].TOTAL;
+                        sum += value;
+                        data[i].pareto = sum / total * 100;
+                    }
+                }
+
+                this.helper_series.data.clear();
+                this.helper_pareto.data.clear();
+                this.xAxis.data.clear();
+                this.helper_series.data.setAll(data);
+                this.helper_pareto.data.setAll(data);
+                this.xAxis.data.setAll(data);
+            } else {
+                this.drawChart()
+            }
+
+        },
         filterData(start_date, last_date) {
-            api.get('/ict_data/errors/bb/component_error/' + start_date + "/" + last_date).then(response => {
-                var data = response.data;
+            api.get('/other_models/errors/component_error/' + start_date + "/" + last_date + "/" + this.$route.params.model).then(response => {
+                var data = response.data[0];
 
                 if (data.length > 0) {
-
+                    this.week_data = response.data[1];
                     this.fixtures = new Map()
 
                     data.forEach(dat => {
@@ -111,6 +144,8 @@ export default {
 
                         this.fixtures.set(dat.FIXTURE_BARCODE, temp_data)
                     });
+
+                    this.updatChart()
                 }
 
             }).catch(err => {
@@ -212,6 +247,14 @@ export default {
                 categoryXField: "FAILURE"
             }));
 
+            series.columns.template.setAll({
+                tooltipText: "{categoryX}: {valueY}",
+                tooltipY: 0,
+                strokeOpacity: 0,
+                cornerRadiusTL: 6,
+                cornerRadiusTR: 6
+            });
+
             series.columns.template.set("fillGradient", am5.LinearGradient.new(root, {
                 stops: [{
                     color: am5.color(0xE5181A)
@@ -221,18 +264,6 @@ export default {
                 rotation: 90,
                 target: chart.plotContainer
             }));
-
-            series.columns.template.setAll({
-                tooltipText: "{categoryX}: {valueY}",
-                tooltipY: 0,
-                strokeOpacity: 0,
-                cornerRadiusTL: 6,
-                cornerRadiusTR: 6
-            });
-
-            series.columns.template.adapters.add("fill", function (fill, target) {
-                return chart.get("colors").getIndex(series.dataItems.indexOf(target.dataItem));
-            })
 
 
             // pareto series
@@ -272,6 +303,7 @@ export default {
     mounted() {
         this.getData()
         this.getWeekData()
+        // this.drawChart()
     },
     watch: {
         start_date: {

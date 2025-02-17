@@ -30,7 +30,7 @@
 
 /* Imports */
 import { api } from 'boot/axios'
-import IndividualUtilization from './components/individualUtilization.vue';
+import IndividualUtilization from './utilization/individualUtilization.vue';
 
 export default {
     data() {
@@ -54,7 +54,7 @@ export default {
             this.data = new Map()
             this.fixtures = new Map()
             //TODO: GET CURRENT DATE AND FILTER BY THAT
-            api.get('/mda_data/activations/utilization').then(response => {
+            api.get('/other_models/activations/utilization/' + this.$route.params.model).then(response => {
                 this.data = response.data[0];
 
                 this.data.forEach(info => {
@@ -86,7 +86,7 @@ export default {
             });
         },
         filterData() {
-            api.get('/mda_data/activations/utilization/' + this.start_date + '/' + this.end_date).then(response => {
+            api.get('/other_models/activations/utilization/' + this.$route.params.model + '/' + this.start_date + '/' + this.end_date).then(response => {
                 var data = response.data[0];
 
                 if (data.length > 0) {
@@ -144,8 +144,6 @@ export default {
                         })
                     }
                     this.filterData();
-                } else if (this.start_date == "" && this.end_date == "") {
-                    this.getData();
                 }
             }
         },
@@ -160,8 +158,6 @@ export default {
                         })
                     }
                     this.filterData();
-                } else if (this.start_date == "" && this.end_date == "") {
-                    this.getData();
                 }
             }
         }

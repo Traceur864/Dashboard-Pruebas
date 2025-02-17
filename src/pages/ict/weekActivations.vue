@@ -15,7 +15,7 @@
             </div>
         </div>
         <div ref="chartContainer">
-            <div ref="chartdiv" class="graph"></div>
+            <div v-if="show_ch" ref="chartdiv" class="graph" id="Manolito"></div>
         </div>
     </div>
 
@@ -28,6 +28,7 @@
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
+import color_palette from '@amcharts/amcharts5/themes/Dataviz'
 import { api } from 'boot/axios'
 
 export default {
@@ -42,11 +43,8 @@ export default {
             start_date: '',
             last_date: '',
             options: [],
-            legend: null,
-            chart: null,
-            root: null,
-            xAxis: null,
-            yAxis: null,
+            show_ch: true,
+            xAxis: '',
         }
     },
     methods: {
@@ -127,27 +125,13 @@ export default {
                 });
 
                 if (this.data.size > 0) {
-                    // this.reDrawChart(this.root)
+                    this.data = []
+                    this.drawChart()
                 }
+
             }).catch(err => {
                 console.error(err);
             });
-        },
-        reDrawChart(root) {
-            //Clear chart
-            this.xAxis.data.clear()
-            this.legend.data.clear()
-
-            let xAxis = this.xAxis
-            let yAxis = this.yAxis
-
-            this.chart.series._values.forEach(element => {
-                console.log(element);
-            });
-
-            this.root.dispose()
-
-            this.drawChart()
         },
         drawChart() {
             // Create root element
@@ -155,7 +139,8 @@ export default {
 
             // Set themes
             root.setThemes([
-                am5themes_Animated.new(root)
+                am5themes_Animated.new(root),
+                color_palette.new(root)
             ]);
 
             // Create chart
@@ -246,16 +231,10 @@ export default {
                 makeSeries(el, el);
             });
 
-            //Reduce lag
-            // root.fps = 60    
-
-            // Make stuff animate on load
             chart.appear(1000, 100);
-            this.legend = legend;
             this.chart = chart;
-            this.xAxis = xAxis;
-            this.yAxis = yAxis;
             this.root = root;
+            this.xAxis = xAxis;
         }
     },
     mounted() {
@@ -268,8 +247,18 @@ export default {
                 if (this.last_date != "" && this.start_date != "") {
                     //Validate that start date is smaller than last date
                     if (this.start_date <= this.last_date) {
+                        this.root.container.children.clear()
+                        this.root.dispose()
+                        this.xAxis.data.clear()
+                        this.info = []
                         this.filterData(this.start_date, this.last_date)
                     }
+                } else if (this.start_date == "" && this.last_date == "") {
+                    this.root.container.children.clear()
+                    this.root.dispose()
+                    this.xAxis.data.clear()
+                    this.info = []
+                    this.getData()
                 }
             }
         },
@@ -279,11 +268,22 @@ export default {
                 if (this.last_date != "" && this.start_date != "") {
                     //Validate that start date is smaller than last date
                     if (this.start_date <= this.last_date) {
+                        // this.root.container.children.clear();
+                        this.root.container.children.clear()
+                        this.root.dispose()
+                        this.xAxis.data.clear()
+                        this.info = []
                         this.filterData(this.start_date, this.last_date)
                     }
+                } else if (this.start_date == "" && this.last_date == "") {
+                    this.root.container.children.clear()
+                    this.root.dispose()
+                    this.xAxis.data.clear()
+                    this.info = []
+                    this.getData()
                 }
             }
-        }
+        },
     }
 }
 </script>

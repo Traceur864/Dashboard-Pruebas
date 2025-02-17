@@ -15,7 +15,7 @@
             </div>
         </div>
         <div ref="chartContainer">
-            <div v-if="show_ch" ref="chartdiv" class="graph"></div>
+            <div v-if="show_ch" ref="chartdiv" class="graph" id="Manolito"></div>
         </div>
     </div>
 
@@ -28,7 +28,7 @@
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
-import color_palette from '@amcharts/amcharts5/themes/Dataviz';
+import color_palette from '@amcharts/amcharts5/themes/Dataviz'
 import { api } from 'boot/axios'
 
 export default {
@@ -49,9 +49,9 @@ export default {
     },
     methods: {
         getData() {
-            api.get('/mda_data/activations').then(response => {
+            api.get('/other_models/activations/' + this.$route.params.model).then(response => {
                 var data = response.data;
-
+                this.info = []
                 this.data = new Map()
                 this.fixtures = new Map()
 
@@ -90,12 +90,11 @@ export default {
             });
         },
         filterData(start_date, last_date) {
-            api.get('/mda_data/activations/' + start_date + "/" + last_date).then(response => {
+            api.get('/other_models/activations/' + this.$route.params.model + "/" + start_date + "/" + last_date).then(response => {
                 var data = response.data
-                console.log(data);
-
                 this.data = new Map()
                 this.fixtures = new Map()
+                this.info = []
 
                 data.forEach(dat => {
                     let info = new Map()
@@ -126,6 +125,7 @@ export default {
                 });
 
                 if (this.data.size > 0) {
+                    this.data = []
                     this.drawChart()
                 }
 
@@ -134,6 +134,11 @@ export default {
             });
         },
         drawChart() {
+            if (this.root != undefined) {
+                this.root.container.children.clear()
+                this.root.dispose()
+                this.xAxis.data.clear()
+            }
             // Create root element
             let root = am5.Root.new(this.$refs.chartdiv);
 
@@ -247,17 +252,9 @@ export default {
                 if (this.last_date != "" && this.start_date != "") {
                     //Validate that start date is smaller than last date
                     if (this.start_date <= this.last_date) {
-                        this.root.container.children.clear()
-                        this.root.dispose()
-                        this.xAxis.data.clear()
-                        this.info = []
                         this.filterData(this.start_date, this.last_date)
                     }
                 } else if (this.start_date == "" && this.last_date == "") {
-                    this.root.container.children.clear()
-                    this.root.dispose()
-                    this.xAxis.data.clear()
-                    this.info = []
                     this.getData()
                 }
             }
@@ -268,18 +265,9 @@ export default {
                 if (this.last_date != "" && this.start_date != "") {
                     //Validate that start date is smaller than last date
                     if (this.start_date <= this.last_date) {
-                        // this.root.container.children.clear();
-                        this.root.container.children.clear()
-                        this.root.dispose()
-                        this.xAxis.data.clear()
-                        this.info = []
                         this.filterData(this.start_date, this.last_date)
                     }
                 } else if (this.start_date == "" && this.last_date == "") {
-                    this.root.container.children.clear()
-                    this.root.dispose()
-                    this.xAxis.data.clear()
-                    this.info = []
                     this.getData()
                 }
             }

@@ -110,6 +110,24 @@ const routes = [
         },
       },
       {
+        path: "component_report",
+        name: "component_report",
+        component: () => import("pages/component_report/historicReports.vue"),
+        meta: {
+          requiresAuth: true,
+          rol: ["Administrador", "Full ICT", "Jr ICT"],
+        },
+      },
+      {
+        path: "component_report/:id",
+        name: "component_report_data",
+        component: () => import("pages/component_report/componentReport.vue"),
+        meta: {
+          requiresAuth: true,
+          rol: ["Administrador", "Full ICT", "Jr ICT"],
+        },
+      },
+      {
         path: "organigrama",
         name: "organigrama",
         component: () => import("pages/TeamTests/Organigrama.vue"),
@@ -168,6 +186,7 @@ const routes = [
           rol: ["Administrador", "Full Programming", "Jr Programming"],
         },
       },
+      //Calendar routes
       {
         path: "calendar/vacations",
         name: "vacation_calendar",
@@ -175,6 +194,25 @@ const routes = [
         meta: {
           requiresAuth: true,
           rol: ["Administrador", "VC Full"],
+        },
+      },
+      {
+        path: "/other_models",
+        name: "other_models",
+        component: () => import("pages/IndexReports.vue"),
+        meta: {
+          requiresAuth: true,
+          rol: ["Administrador", "Full ISP", "Jr ISP"],
+        },
+      },
+      //New Model routes
+      {
+        path: "/other_models/:model",
+        name: "model_data",
+        component: () => import("pages/model_charts/IndexModel.vue"),
+        meta: {
+          requiresAuth: true,
+          rol: ["Administrador", "Full ISP", "Jr ISP"],
         },
       },
     ],

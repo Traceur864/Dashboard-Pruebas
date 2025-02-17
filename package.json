@@ -25,6 +25,8 @@
     "jwt-decode": "^4.0.0",
     "nodemon": "^3.1.7",
     "quasar": "^2.17.4",
+    "vite": "^2.9.15",
+    "vite-plugin-resolve": "^2.5.2",
     "vue": "^3.4.18",
     "vue-router": "^4.0.12",
     "vuex": "^4.0.1"

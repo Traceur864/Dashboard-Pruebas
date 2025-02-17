@@ -1,6 +1,6 @@
 <template>
     <div class="col">
-        <span class="flex justify-center text-h4">Reportes de utilización</span>
+        <span class="flex justify-center text-h4">Input / Output</span>
         <div class="row">
             <div class="col-auto">
                 <div class="text-h6">Filtro por rango de fecha</div>
@@ -17,7 +17,7 @@
 
         <div class="row">
             <div v-for="info in fixtures" v-bind:key="info.FIXTURE_BARCODE" class="col-6">
-                <IndividualUtilization :data="info" />
+                <IndividualOutput :data="info" />
             </div>
         </div>
 
@@ -30,7 +30,7 @@
 
 /* Imports */
 import { api } from 'boot/axios'
-import IndividualUtilization from './components/individualUtilization.vue';
+import IndividualOutput from './output/individualOutput.vue';
 
 export default {
     data() {
@@ -47,25 +47,26 @@ export default {
         }
     },
     components: {
-        IndividualUtilization
+        IndividualOutput
     },
     methods: {
         getData() {
             this.data = new Map()
             this.fixtures = new Map()
             //TODO: GET CURRENT DATE AND FILTER BY THAT
-            api.get('/mda_data/activations/utilization').then(response => {
-                this.data = response.data[0];
+            api.get('/other_models/activations/input_output/' + this.$route.params.model).then(response => {
+                this.data = response.data;
 
                 this.data.forEach(info => {
+                    // console.log();
                     var dt = new Date(info.DATE_TIME)
 
                     let temp = {
                         'DATE': dt.getTime(),
                         'DAY': dt.toLocaleDateString(),
-                        'OEE': Number(info.OEE),
-                        'YIELD': Number(info.YIELD),
-                        'UTILIZATION': Number(info.Utilization),
+                        'INPUT': info.INPUT,
+                        'OUTPUT': info.OUTPUT,
+                        'EFFICIENCY': info.EFFICIENCY,
                     }
 
                     if (!this.fixtures.has(info.FIXTURE_BARCODE)) {
@@ -79,28 +80,27 @@ export default {
                     }
 
                 });
-
+                // console.log(this.fixtures);
 
             }).catch(err => {
                 console.error(err);
             });
         },
         filterData() {
-            api.get('/mda_data/activations/utilization/' + this.start_date + '/' + this.end_date).then(response => {
-                var data = response.data[0];
+            api.get('/other_models/activations/input_output/' + this.$route.params.model + '/' + this.start_date + '/' + this.end_date + '/').then(response => {
+                var data = response.data
+                this.fixtures = new Map()
 
                 if (data.length > 0) {
-                    this.fixtures.clear()
-
                     data.forEach(info => {
                         var dt = new Date(info.DATE_TIME)
 
                         let temp = {
                             'DATE': dt.getTime(),
                             'DAY': dt.toLocaleDateString(),
-                            'OEE': Number(info.OEE),
-                            'YIELD': Number(info.YIELD),
-                            'UTILIZATION': Number(info.Utilization),
+                            'INPUT': info.INPUT,
+                            'OUTPUT': info.OUTPUT,
+                            'EFFICIENCY': info.EFFICIENCY,
                         }
 
                         if (!this.fixtures.has(info.FIXTURE_BARCODE)) {
@@ -144,8 +144,6 @@ export default {
                         })
                     }
                     this.filterData();
-                } else if (this.start_date == "" && this.end_date == "") {
-                    this.getData();
                 }
             }
         },
@@ -160,8 +158,6 @@ export default {
                         })
                     }
                     this.filterData();
-                } else if (this.start_date == "" && this.end_date == "") {
-                    this.getData();
                 }
             }
         }

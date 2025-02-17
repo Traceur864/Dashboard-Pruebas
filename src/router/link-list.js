@@ -67,10 +67,4 @@ export const linksList = [
     link: "Programming",
     meta: { rol: ["Administrador", "Full Programming", "Jr Programming"] },
   },
-  {
-    title: "Docs",
-    caption: "quasar.dev",
-    icon: "las la-graduation-cap",
-    link: "https://quasar.dev",
-  },
 ];

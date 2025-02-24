@@ -81,14 +81,14 @@ module.exports = configure(function (/* ctx */) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
-      /*https: {
+      https: {
         // Use ABSOLUTE paths or path.join(__dirname, 'root/relative/path')
-        key: 'C:/Users/carlos_ruvalcaba/Documents/GitHub/Dashboard-Pruebas/Certi/gdlteamL6web.fox-gdl.com.key',
-        pfx: 'C:/Users/carlos_ruvalcaba/Documents/GitHub/Dashboard-Pruebas/Certi/gdlteamL6web.fox-gdl.com.pfx',
-        cert: 'C:/Users/carlos_ruvalcaba/Documents/GitHub/Dashboard-Pruebas/Certi/gdlteamL6web.fox-gdl.com.crt',
-        ca: 'C:/Users/carlos_ruvalcaba/Documents/GitHub/Dashboard-Pruebas/Certi/gdlteamL6web.fox-gdl.com.pem',
+        key: 'C:/Users/Administrator.WIN-G0I4N8I1EC7.000/Documents/Proyectos/Dashboard-Pruebas/Certi/gdlteamL6web.fox-gdl.com.key',
+        pfx: 'C:/Users/Administrator.WIN-G0I4N8I1EC7.000/Documents/Proyectos/Dashboard-Pruebas/Certi/gdlteamL6web.fox-gdl.com.pfx',
+        cert: 'C:/Users/Administrator.WIN-G0I4N8I1EC7.000/Documents/Proyectos/Dashboard-Pruebas/Certi/gdlteamL6web.fox-gdl.com.crt',
+        ca: 'C:/Users/Administrator.WIN-G0I4N8I1EC7.000/Documents/Proyectos/Dashboard-Pruebas/Certi/gdlteamL6web.fox-gdl.com.pem',
         passphrase: 'edwin.lopez@fii-na.com'
-      },*/
+      },
       open: false,
       // host: 'gdlteamL6web.fox-gdl.com',
       // path: 'C:/Users/carlos_ruvalcaba/Documents/GitHub/Dashboard-Pruebas'
